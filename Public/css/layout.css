@@ -1,0 +1,98 @@
+body {
+	color: white;
+	font-family: Microsoft Yahei;
+}
+
+.container {
+	background-color: #1D1E25;
+}
+.content {
+	padding: 40px 70px;
+	background-color: #1D1E25;
+	text-align: center;
+}
+
+.menu-wrap {
+	width: 210px;
+}
+.icon-list a i {
+	position: relative;
+	top: 2px;
+	opacity: 1;
+}
+.icon-list a {
+	width: 96px;
+	color: #aaa;
+	padding-left: 40px;
+	transition: color .2s;
+	-o-transition: color .2s;
+	-moz-transition: color .2s;
+	-webkit-transition: color .2s;
+	transition: border-color .2s;
+	-o-transition: border-color .2s;
+	-moz-transition: border-color .2s;
+	-webkit-transition: border-color .2s;
+	padding-left: 0;
+	margin-left: 40px;
+	padding-right: 0;
+}
+.icon-list a:hover, .icon-list a:focus {
+	color: #F5F6FF;
+}
+.icon-list a.active {
+	color: #F5F6FF;
+}
+.menu {
+	background-color: #383A44;
+	width: calc(100% - 60px);
+	padding-left: 0;
+}
+.morph-shape {
+	width: 60px;
+	fill: #383A44;
+}
+.menu-button {
+	width: 50px;
+	height: 50px;
+	margin: 5px;
+}
+
+header {
+	padding: 20px 50px;
+	border-bottom: 1px solid rgba(220, 220, 220, 0.2);
+	background-color: #0E1018;
+}
+header h1 {
+	margin: 0;
+	font-size: 24px;
+	display: inline-block;
+}
+header h1 span {
+	margin-left: 8px;
+}
+
+header #header-right {
+	float: right;
+	color: #eee;
+}
+header #header-right i {
+	font-size: 20px;
+	position: relative;
+	top: 1px;
+}
+header #header-right span {
+	margin-left: 6px;
+}
+
+.BMap_cpyCtrl, .anchorBL {
+    display: none;
+}
+
+footer {
+	text-align: center;
+	background-color: #0E1018;
+	padding: 30px;
+}
+footer h3 {
+	margin: 0;
+}
