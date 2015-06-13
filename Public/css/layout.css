@@ -1,14 +1,18 @@
 body {
 	color: white;
 	font-family: Microsoft Yahei;
+	background-image: url(../img/sky.jpg);
+	background-size: cover;
+	background-position: center;
+	background-attachment: fixed;
 }
 
 .container {
-	background-color: #1D1E25;
+	background: transparent;
 }
 .content {
 	padding: 40px 70px;
-	background-color: #1D1E25;
+	background: transparent;
 	text-align: center;
 }
 
@@ -46,13 +50,13 @@ body {
 	color: #F5F6FF;
 }
 .menu {
-	background-color: #383A44;
+	background-color: rgba(56, 58, 68, 1);
 	width: calc(100% - 60px);
 	padding-left: 0;
 }
 .morph-shape {
 	width: 60px;
-	fill: #383A44;
+	fill: rgba(56, 58, 68, 1);
 }
 .menu-button {
 	width: 50px;
@@ -63,7 +67,7 @@ body {
 header {
 	padding: 20px 50px;
 	border-bottom: 1px solid rgba(220, 220, 220, 0.2);
-	background-color: #0E1018;
+	background-color: rgba(14, 16, 24, 0.5);
 }
 header h1 {
 	margin: 0;
