@@ -7,24 +7,23 @@ $(document).ready(function() {
 </script>
 <style>
 #cater #capacity {
+    width: 100%;
     height: 300px;
 }
 
 #cater #sale5 {
     height: 250px;
-    width: 49%;
-    display: inline-block;
 }
 
 #cater #count5 {
     height: 250px;
-    width: 49%;
-    display: inline-block;
 }
 
 #cater #cater-stat h3 {
-    margin-top: 0;
+    margin-top: 20px;
     margin-bottom: 15px;
+    font-size: 20px;
+    color: #eee;
 }
 
 #cater #cater-stat span {
@@ -38,45 +37,40 @@ $(document).ready(function() {
 }
 
 #cater #realtime-total {
-    display: inline-block;
-    width: 49%;
     height: 300px;
 }
 
 #cater #history-daily {
-    display: inline-block;
-    width: 49%;
     height: 300px;
 }
 
 #cater #humans {
-    display: inline-block;
-    width: 49%;
     height: 250px;
 }
 
 #cater #carteens {
-    display: inline-block;
-    width: 49%;
     height: 250px;
 }
 </style>
 <div id="cater">
     <div id="capacity"></div>
-    <br>
     <div id="cater-stat">
         <h3>今日餐饮统计</h3>
         <span>当前时间</span>
         <p></p>
     </div>
-    <div id="sale5"></div>
-    <div id="count5"></div>
-    <br>
-    <div id="realtime-total"></div>
-    <div id="history-daily"></div>
-    <br>
-    <div id="humans"></div>
-    <div id="carteens"></div>
+    <div class="row">
+        <div id="sale5" class="col-xs-6 col-sm-6 col-md-6 col-lg-6"></div>
+        <div id="count5" class="col-xs-6 col-sm-6 col-md-6 col-lg-6"></div>
+    </div>
+    <div class="row">
+        <div id="realtime-total" class="col-xs-6 col-sm-6 col-md-6 col-lg-6"></div>
+        <div id="history-daily" class="col-xs-6 col-sm-6 col-md-6 col-lg-6"></div>
+    </div>
+    <div class="row">
+        <div id="humans" class="col-xs-6 col-sm-6 col-md-6 col-lg-6"></div>
+        <div id="carteens" class="col-xs-6 col-sm-6 col-md-6 col-lg-6"></div>
+    </div>
 </div>
 <script>
 $(document).ready(function() {

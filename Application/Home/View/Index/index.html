@@ -7,15 +7,12 @@ $(document).ready(function() {
 </script>
 <style>
 #mobility #allmap {
-    display: inline-block;
-    width: 65%;
-    margin-right: 3%;
     height: 400px;
+    padding: 0 20px;
 }
 
 #mobility #mobility-stat {
-    display: inline-block;
-    width: 30%;
+    height: 400px;
 }
 
 #mobility #mobility-stat #top5,
@@ -34,14 +31,17 @@ $(document).ready(function() {
 }
 </style>
 <div id="mobility">
-    <div id="allmap"></div>
-    <div id="mobility-stat">
-        <div id="top5">
+    <div class="row">
+        <div class="col-xs-8 col-sm-8 col-md-8 col-lg-8">
+            <div id="allmap"></div>
         </div>
-        <div id="bottom5">
+        <div id="mobility-stat" class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+            <div id="top5">
+            </div>
+            <div id="bottom5">
+            </div>
         </div>
     </div>
-    <br>
     <div id="distribution">
     </div>
 </div>
