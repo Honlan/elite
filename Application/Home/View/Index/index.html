@@ -1,45 +1,48 @@
 <script>
 $(document).ready(function() {
-    $('#nav-humidity').addClass('active');
+    $('#nav-mobility').addClass('active');
     $('#header-right i').addClass('fa-group');
     $('#header-right span').text('人流监控');
 });
 </script>
 <style>
-#allmap {
+#mobility #allmap {
     display: inline-block;
     width: 68%;
     height: 400px;
 }
 
-#humidity-stat {
+#mobility #mobility-stat {
     display: inline-block;
     width: 30%;
 }
 
-#humidity-stat #top5,
-#humidity-stat #bottom5 {
+#mobility #mobility-stat #top5,
+#mobility #mobility-stat #bottom5 {
     height: 180px;
 }
 
-#humidity-stat #top5 {
+#mobility #mobility-stat #top5 {
     margin-bottom: 40px;
 }
 
-#distribution {
+#mobility #distribution {
     width: 100%;
     height: 300px;
     margin-top: 40px;
 }
 </style>
-<div id="allmap"></div>
-<div id="humidity-stat">
-    <div id="top5">
+<div id="mobility">
+    <div id="allmap"></div>
+    <div id="mobility-stat">
+        <div id="top5">
+        </div>
+        <div id="bottom5">
+        </div>
     </div>
-    <div id="bottom5">
+    <br>
+    <div id="distribution">
     </div>
-</div>
-<div id="distribution">
 </div>
 <script>
 $(document).ready(function() {
@@ -157,7 +160,7 @@ $(document).ready(function() {
             }
         },
         tooltip: {
-            trigger: 'axis'
+            trigger: 'item'
         },
         legend: {
             show: false,

@@ -15,6 +15,9 @@ body {
 .menu-wrap {
 	width: 210px;
 }
+.icon-list {
+	width: 120px;
+}
 .icon-list a i {
 	position: relative;
 	top: 2px;
