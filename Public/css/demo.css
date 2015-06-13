@@ -15,8 +15,6 @@
 .clearfix:after { clear: both; }
 
 body {
-	background: #b4bad2;
-	color: #fffce1;
 	font-weight: 400;
 	font-size: 1em;
 	font-family: 'Raleway', Arial, sans-serif;
@@ -169,7 +167,6 @@ body #cdawrap {
 	top: auto;
 	bottom: 35px;
 	right: 35px;
-	background: #b4bad2;
 	border: 1px solid rgba(131,135,151,0.6);
 }
 
