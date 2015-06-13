@@ -9,6 +9,8 @@ body {
 
 .container {
 	background: transparent;
+	margin: 0;
+	padding: 0;
 }
 .content {
 	padding: 40px 70px;
@@ -21,6 +23,7 @@ body {
 }
 .icon-list {
 	width: 120px;
+	margin-top: 20px;
 }
 .icon-list a i {
 	position: relative;
@@ -28,20 +31,17 @@ body {
 	opacity: 1;
 }
 .icon-list a {
-	width: 96px;
+	width: 120px;
 	color: #aaa;
-	padding-left: 40px;
-	transition: color .2s;
-	-o-transition: color .2s;
-	-moz-transition: color .2s;
-	-webkit-transition: color .2s;
-	transition: border-color .2s;
-	-o-transition: border-color .2s;
-	-moz-transition: border-color .2s;
-	-webkit-transition: border-color .2s;
-	padding-left: 0;
+	transition: color .3s;
+	-o-transition: color .3s;
+	-moz-transition: color .3s;
+	-webkit-transition: color .3s;
 	margin-left: 40px;
-	padding-right: 0;
+	padding: 10px 0px;
+	padding-bottom: 10px;
+	font-size: 18px;
+	text-decoration: none;
 }
 .icon-list a:hover, .icon-list a:focus {
 	color: #F5F6FF;
@@ -59,9 +59,9 @@ body {
 	fill: rgba(56, 58, 68, 1);
 }
 .menu-button {
-	width: 50px;
-	height: 50px;
-	margin: 5px;
+	width: 40px;
+	height: 40px;
+	margin: 10px;
 }
 
 header {
@@ -71,7 +71,7 @@ header {
 }
 header h1 {
 	margin: 0;
-	font-size: 24px;
+	font-size: 22px;
 	display: inline-block;
 }
 header h1 span {
@@ -81,6 +81,7 @@ header h1 span {
 header #header-right {
 	float: right;
 	color: #eee;
+	font-size: 15px;
 }
 header #header-right i {
 	font-size: 20px;
@@ -102,4 +103,5 @@ footer {
 }
 footer h3 {
 	margin: 0;
+	font-size: 16px;
 }
