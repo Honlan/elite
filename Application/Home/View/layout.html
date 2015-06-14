@@ -20,9 +20,10 @@
     <link rel="stylesheet" type="text/css" href="__PUBLIC__/css/menu_elastic.css" />
     <link rel="stylesheet" type="text/css" href="__PUBLIC__/css/layout.css" />
     <script src="__PUBLIC__/js/snap.svg-min.js"></script>
+    <script src="__PUBLIC__/js/echarts-dark.js"></script>
     <!--[if IE]>
-  		<script src="__PUBLIC__/js/html5.js"></script>
-		<![endif]-->
+        <script src="__PUBLIC__/js/html5.js"></script>
+        <![endif]-->
 </head>
 
 <body>
@@ -32,19 +33,19 @@
             <div id="header-right"><i class="fa fa-fw"></i><span><span></div>
         </header>
 
-		<div class="menu-wrap">
-			<nav class="menu">
-				<div class="icon-list">
-					<a id="nav-mobility" href="{:U('Index/index')}"><i class="fa fa-fw fa-group"></i><span>人流监控</span></a>
-                	<a id="nav-cater" href="{:U('Cater/index')}"><i class="fa fa-fw fa-coffee"></i><span>餐饮分析</span></a>
-                	<a id="nav-affair" href="{:U('Affair/index')}"><i class="fa fa-fw fa-graduation-cap"></i><span>学务管理</span></a>
-                	<a id="nav-education" href=""><i class="fa fa-fw fa-book"></i><span>教学决策</span></a>
-                	<br>
-                	<a id="nav-stat" href=""><i class="fa fa-fw fa-bar-chart"></i><span>个人顾问</span></a>
-                	<a id="nav-info" href=""><i class="fa fa-fw fa-share-square-o"></i><span>信息共享</span></a>
-                	<br>
-                	<a id="nav-web" href=""><i class="fa fa-fw fa-paper-plane-o"></i><span>网站统计</span></a>
-            	</div>
+        <div class="menu-wrap">
+            <nav class="menu">
+                <div class="icon-list">
+                    <a id="nav-mobility" href="{:U('Index/index')}"><i class="fa fa-fw fa-group"></i><span>实时监测</span></a>
+                <a id="nav-cater" href="{:U('Cater/index')}"><i class="fa fa-fw fa-coffee"></i><span>餐饮分析</span></a>
+                <a id="nav-affair" href="{:U('Affair/index')}"><i class="fa fa-fw fa-graduation-cap"></i><span>学务管理</span></a>
+                <a id="nav-education" href=""><i class="fa fa-fw fa-book"></i><span>教学决策</span></a>
+                <br>
+                <a id="nav-stat" href=""><i class="fa fa-fw fa-bar-chart"></i><span>个人顾问</span></a>
+                <a id="nav-info" href=""><i class="fa fa-fw fa-share-square-o"></i><span>信息共享</span></a>
+                <br>
+                <a id="nav-web" href=""><i class="fa fa-fw fa-paper-plane-o"></i><span>网站统计</span></a>
+            </div>
             </nav>
             <!-- <button class="close-button" id="close-button">Close Menu</button> -->
             <div class="morph-shape" id="morph-shape" data-morph-open="M-1,0h101c0,0,0-1,0,395c0,404,0,405,0,405H-1V0z">
@@ -52,13 +53,14 @@
                     <path d="M-1,0h101c0,0-97.833,153.603-97.833,396.167C2.167,627.579,100,800,100,800H-1V0z" />
                 </svg>
             </div>
-    	</div>
-    	<button class="menu-button" id="open-button">Open Menu</button>
-    	<div class="content-wrap">
-        	<div class="content">
-            	{__CONTENT__}
-        	</div>
-    	</div><!-- /content-wrap -->
+    </div>
+    <button class="menu-button" id="open-button">Open Menu</button>
+    <div class="content-wrap">
+        <div class="content">
+            {__CONTENT__}
+        </div>
+    </div>
+    <!-- /content-wrap -->
     </div>
     <!-- /container -->
     <script src="__PUBLIC__/js/classie.js"></script>

@@ -2,13 +2,19 @@
 $(document).ready(function() {
     $('#nav-mobility').addClass('active');
     $('#header-right i').addClass('fa-group');
-    $('#header-right span').text('人流监控');
+    $('#header-right span').text('实时监测');
 });
 </script>
+<script src="__PUBLIC__/js/BMap.js"></script>
 <style>
+#mobility ul[role="tablist"] {
+    margin-bottom: 30px;
+}
+
 #mobility #allmap {
     height: 400px;
     padding: 0 20px;
+    margin-left: 30px;
 }
 
 #mobility #mobility-stat {
@@ -17,11 +23,11 @@ $(document).ready(function() {
 
 #mobility #mobility-stat #top5,
 #mobility #mobility-stat #bottom5 {
-    height: 180px;
+    height: 185px;
 }
 
 #mobility #mobility-stat #top5 {
-    margin-bottom: 40px;
+    margin-bottom: 30px;
 }
 
 #mobility #distribution {
@@ -31,24 +37,41 @@ $(document).ready(function() {
 }
 </style>
 <div id="mobility">
-    <div class="row">
-        <div class="col-xs-8 col-sm-8 col-md-8 col-lg-8">
-            <div id="allmap"></div>
-        </div>
-        <div id="mobility-stat" class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
-            <div id="top5">
+    <div role="tabpanel">
+        <!-- Nav tabs -->
+        <ul class="nav nav-tabs" role="tablist">
+            <li role="presentation" class="active"><a href="#realtime-mobility" aria-controls="realtime-mobility" role="tab" data-toggle="tab">实时人群监测</a></li>
+            <li role="presentation"><a href="#mobility-predict" aria-controls="mobility-predict" role="tab" data-toggle="tab">人群迁移趋势</a></li>
+            <li role="presentation"><a href="#cater-predict" aria-controls="cater-predict" role="tab" data-toggle="tab">就餐人数预测</a></li>
+        </ul>
+        <!-- Tab panes -->
+        <div class="tab-content">
+            <div role="tabpanel" class="tab-pane fade in active" id="realtime-mobility">
+                <div class="row">
+                    <div class="col-xs-12 col-sm-8 col-md-8 col-lg-8">
+                        <div id="allmap"></div>
+                    </div>
+                    <div id="mobility-stat" class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
+                        <div id="top5">
+                        </div>
+                        <div id="bottom5">
+                        </div>
+                    </div>
+                </div>
+                <div id="distribution">
+                </div>
             </div>
-            <div id="bottom5">
+            <div role="tabpanel" class="tab-pane fade" id="mobility-predict">
+                <div id="mobilitymap"></div>
             </div>
+            <div role="tabpanel" class="tab-pane fade" id="cater-predict">...</div>
         </div>
-    </div>
-    <div id="distribution">
     </div>
 </div>
 <script>
 $(document).ready(function() {
     var map = new BMap.Map("allmap"); // 创建地图实例
-    map.centerAndZoom(new BMap.Point(121.445021, 31.032276), 16); // 初始化地图，设置中心点坐标和地图级别
+    map.centerAndZoom(new BMap.Point(121.44821, 31.033276), 15); // 初始化地图，设置中心点坐标和地图级别
     map.enableScrollWheelZoom(); // 允许滚轮缩放 
     map.addControl(new BMap.NavigationControl());
     map.addControl(new BMap.ScaleControl({
@@ -60,14 +83,13 @@ $(document).ready(function() {
     });
 
     // 人流密集top5
-    var top5 = echarts.init(document.getElementById('top5'));
+    var top5 = echarts.init(document.getElementById('top5'), theme);
     option = {
         title: {
-            text: 'Top 5',
-            x: 'center',
-            textStyle: {
-                color: '#eee'
-            }
+            text: 'TOP 5',
+            backgroundColor: '#5a5',
+            x: 'left',
+            padding: [5, 10, 5, 10]
         },
         tooltip: {
             trigger: 'item',
@@ -82,7 +104,7 @@ $(document).ready(function() {
             name: '人流量',
             type: 'pie',
             radius: '55%',
-            center: ['50%', '65%'],
+            center: ['50%', '60%'],
             data: [{
                 value: 315,
                 name: '图书馆'
@@ -104,14 +126,13 @@ $(document).ready(function() {
     top5.setOption(option);
 
     // 人流密集bottom5
-    var bottom5 = echarts.init(document.getElementById('bottom5'));
+    var bottom5 = echarts.init(document.getElementById('bottom5'), theme);
     option = {
         title: {
-            text: 'Last 5',
-            x: 'center',
-            textStyle: {
-                color: '#eee'
-            }
+            text: 'LAST 5',
+            backgroundColor: '#5a5',
+            x: 'left',
+            padding: [5, 10, 5, 10]
         },
         tooltip: {
             trigger: 'item',
@@ -126,7 +147,7 @@ $(document).ready(function() {
             name: '人流量',
             type: 'pie',
             radius: '55%',
-            center: ['50%', '65%'],
+            center: ['50%', '60%'],
             data: [{
                 value: 35,
                 name: '学生活动中心'
@@ -151,14 +172,13 @@ $(document).ready(function() {
     bottom5.setOption(option);
 
     // 人流分布
-    var distribution = echarts.init(document.getElementById('distribution'));
+    var distribution = echarts.init(document.getElementById('distribution'), theme);
     option = {
         title: {
             text: '人流分布',
-            x: 'center',
-            textStyle: {
-                color: '#eee'
-            }
+            backgroundColor: '#5a5',
+            x: 'left',
+            padding: [5, 10, 5, 10]
         },
         tooltip: {
             trigger: 'shadow'
@@ -173,24 +193,23 @@ $(document).ready(function() {
             data: ['学生活动中心', '第三餐饮', '铁生馆', '光彪楼', '西区寝室', '东上院', '图书馆', '东中院', '东下院', '陈瑞球楼'],
             axisLabel: {
                 margin: 12,
-                textStyle: {
-                    color: '#eee'
-                },
             }
         }],
         yAxis: [{
             type: 'value',
             axisLabel: {
                 margin: 12,
-                textStyle: {
-                    color: '#eee'
-                }
             }
         }],
         series: [{
             name: '人流量',
             type: 'bar',
             data: [35, 89, 25, 12, 154, 225, 315, 410, 204, 125],
+            itemStyle: {
+                normal: {
+                    color: '#4ea5ff'
+                }
+            },
             markPoint: {
                 data: [{
                     type: 'max',
@@ -209,6 +228,9 @@ $(document).ready(function() {
         }]
     };
     distribution.setOption(option);
+
+    // 初始化地图
+    
 
 });
 </script>
