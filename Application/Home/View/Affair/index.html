@@ -8,23 +8,29 @@ $(document).ready(function() {
 <style>
 #affair #girl-tag {
     height: 300px;
+    width: 100%;
+    margin-top: 30px;
+    margin-bottom: 50px;
 }
 
 #affair #boy-tag {
+    margin-top: 30px;
+    margin-bottom: 50px;
     height: 300px;
+    width: 100%;
 }
 
 #affair #tags #hot-tags {
     text-align: left;
-    height: 100px;
+    margin-bottom: 20px;
 }
 
 #affair #tags #hot-tags p {
     cursor: pointer;
     display: inline-block;
     padding: 4px 6px;
-    background-color: rgba(220, 220, 220, 0.9);
-    color: #555;
+    background-color: rgba(226, 122, 84, 0.9);
+    color: #ddd;
     margin: 5px 3px;
     border-radius: 2px;
 }
@@ -42,17 +48,18 @@ $(document).ready(function() {
 #affair #undergraduate,
 #affair #master,
 #affair #doctor {
-    height: 200px;
+    height: 223px;
+    background-color: #222 !important;
 }
 
 #scatter-plot {
-    margin-top: 50px;
     width: 100%;
-    height: 300px;
+    height: 273px;
+    background-color: #222 !important;
 }
 </style>
 <div id="affair">
-    <div class="row" style="margin-bottom:50px;">
+    <div class="row" style="margin-bottom:30px;">
         <div class="col-xs-6 col-sm-3 col-md-3 col-lg-3">
             <img src="__PUBLIC__/img/girl.png" id="girl-tag">
         </div>
@@ -78,10 +85,20 @@ $(document).ready(function() {
         </div>
     </div>
     <div class="row">
-        <div id="undergraduate" class="col-xs-12 col-sm-4 col-md-4 col-lg-4"></div>
-        <div id="master" class="col-xs-12 col-sm-4 col-md-4 col-lg-4"></div>
-        <div id="doctor" class="col-xs-12 col-sm-4 col-md-4 col-lg-4"></div>
+        <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
+            <p class="plot-title">本科生流量时间分布</p>
+            <div id="undergraduate"></div>
+        </div>
+        <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
+            <p class="plot-title">硕士生流量时间分布</p>
+            <div id="master"></div>
+        </div>
+        <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
+            <p class="plot-title">博士生流量时间分布</p>
+            <div id="doctor"></div>
+        </div>
     </div>
+    <p class="plot-title" style="margin-top: 30px;">上课和就餐积极性分布</p>
     <div id="scatter-plot"></div>
 </div>
 <script>
@@ -95,7 +112,7 @@ $(document).ready(function() {
             var tags_plot = ec.init(document.getElementById('tags-plot'), theme);
             option = {
                 title: {
-                   show: false
+                    show: false
                 },
                 tooltip: {
                     trigger: 'axis'
@@ -138,14 +155,7 @@ $(document).ready(function() {
             var undergraduate = ec.init(document.getElementById('undergraduate'), theme);
             option = {
                 title: {
-                    text: '本科',
-                    x: 'left',
-                    backgroundColor: '#5a5',
-                    textStyle: {
-                        fontSize: 15,
-                        fontFamily: 'Microsoft Yahei'
-                    },
-                    padding: [3, 10, 8, 10]
+                   show: false
                 },
                 tooltip: {
                     trigger: 'axis'
@@ -261,14 +271,7 @@ $(document).ready(function() {
             var doctor = ec.init(document.getElementById('doctor'), theme);
             option = {
                 title: {
-                    text: '博士',
-                    x: 'left',
-                    backgroundColor: '#5a5',
-                    textStyle: {
-                        fontSize: 15,
-                        fontFamily: 'Microsoft Yahei'
-                    },
-                    padding: [3, 10, 8, 10]
+                    show: false
                 },
                 tooltip: {
                     trigger: 'axis'
@@ -384,14 +387,7 @@ $(document).ready(function() {
             var master = ec.init(document.getElementById('master'), theme);
             option = {
                 title: {
-                    text: '硕士',
-                    x: 'left',
-                    backgroundColor: '#5a5',
-                    textStyle: {
-                        fontSize: 15,
-                        fontFamily: 'Microsoft Yahei'
-                    },
-                    padding: [3, 10, 8, 10]
+                   show: false
                 },
                 tooltip: {
                     trigger: 'axis'
@@ -508,14 +504,7 @@ $(document).ready(function() {
             var scatter_plot = ec.init(document.getElementById('scatter-plot'), theme);
             option = {
                 title: {
-                    text: '上课和就餐积极性分布',
-                    x: 'left',
-                    backgroundColor: '#5a5',
-                    textStyle: {
-                        fontSize: 15,
-                        fontFamily: 'Microsoft Yahei'
-                    },
-                    padding: [3, 10, 8, 10]
+                   show: false
                 },
                 tooltip: {
                     trigger: 'axis',
