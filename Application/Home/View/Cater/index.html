@@ -20,6 +20,7 @@ $(document).ready(function() {
     margin-bottom: 30px;
     border-radius: 5px;
 }
+
 #cater #realtime-total {
     height: 300px;
 }
@@ -52,374 +53,435 @@ $(document).ready(function() {
 </div>
 <script>
 $(document).ready(function() {
-    // 当日总销售额top5
-    var sale5 = echarts.init(document.getElementById('sale5'), theme);
-    option = {
-        title: {
-            text: '今日总额TOP5',
-            backgroundColor: '#5a5',
-            x: 'left',
-            padding: [5, 10, 5, 10]
-        },
-        tooltip: {
-            trigger: 'axis',
-            axisPointer: { // 坐标轴指示器，坐标轴触发有效
-                type: 'shadow' // 默认为直线，可选为：'line' | 'shadow'
-            },
-            formatter: function(params) {
-                var tar = params[0];
-                return tar.name + '<br/>' + tar.seriesName + ' : ' + tar.value;
-            }
-        },
-        xAxis: [{
-            type: 'category',
-            splitLine: {
-                show: false
-            },
-            data: ['餐饮总额', '三餐一楼', '三餐二楼', '上海快餐', '绿园餐厅', '学生餐厅']
-        }],
-        yAxis: [{
-            type: 'value'
-        }],
-        series: [{
-            name: '辅助',
-            type: 'bar',
-            stack: '总量',
-            itemStyle: {
-                normal: {
-                    barBorderColor: 'rgba(0,0,0,0)',
-                    color: 'rgba(0,0,0,0)'
+    require(
+        [
+            'echarts',
+            'echarts/chart/bar' // 使用柱状图就加载bar模块，按需加载
+        ],
+        function(ec) {
+            // 当日总销售额top5
+            var sale5 = ec.init(document.getElementById('sale5'), theme);
+            option = {
+                title: {
+                    text: '今日总额TOP5',
+                    x: 'left',
+                    backgroundColor: '#5a5',
+                    textStyle: {
+                        fontSize: 15
+                    },
+                    padding: [5, 10, 5, 10]
                 },
-                emphasis: {
-                    barBorderColor: 'rgba(0,0,0,0)',
-                    color: 'rgba(0,0,0,0)'
-                }
-            },
-            data: [0, 1700, 1400, 1200, 300, 0]
-        }, {
-            name: '餐饮总额',
-            type: 'bar',
-            stack: '总量',
-            itemStyle: {
-                normal: {
-                    color: '#4ea5ff',
-                    label: {
-                        show: true,
-                        position: 'inside'
+                tooltip: {
+                    trigger: 'axis',
+                    axisPointer: { // 坐标轴指示器，坐标轴触发有效
+                        type: 'shadow' // 默认为直线，可选为：'line' | 'shadow'
+                    },
+                    formatter: function(params) {
+                        var tar = params[0];
+                        return tar.name + '<br/>' + tar.seriesName + ' : ' + tar.value;
                     }
-                }
-            },
-            data: [2900, 1200, 300, 200, 900, 300]
-        }]
-    };
-    sale5.setOption(option);
-
-    // 当日总消费次数top5
-    var count5 = echarts.init(document.getElementById('count5'), theme);
-    option = {
-        title: {
-            text: '今日频次TOP5',
-            backgroundColor: '#5a5',
-            x: 'left',
-            padding: [5, 10, 5, 10]
-        },
-        tooltip: {
-            trigger: 'axis',
-            axisPointer: { // 坐标轴指示器，坐标轴触发有效
-                type: 'shadow' // 默认为直线，可选为：'line' | 'shadow'
-            },
-            formatter: function(params) {
-                var tar = params[0];
-                return tar.name + '<br/>' + tar.seriesName + ' : ' + tar.value;
-            }
-        },
-        xAxis: [{
-            type: 'category',
-            splitLine: {
-                show: false
-            },
-            data: ['频次总和', '上海快餐', '二餐二楼', '三餐一楼', '三餐二楼', '淮扬快餐']
-        }],
-        yAxis: [{
-            type: 'value'
-        }],
-        series: [{
-            name: '辅助',
-            type: 'bar',
-            stack: '总量',
-            itemStyle: {
-                normal: {
-                    barBorderColor: 'rgba(0,0,0,0)',
-                    color: 'rgba(0,0,0,0)'
                 },
-                emphasis: {
-                    barBorderColor: 'rgba(0,0,0,0)',
-                    color: 'rgba(0,0,0,0)'
-                }
-            },
-            data: [0, 5700, 3900, 2300, 800, 0]
-        }, {
-            name: '频次总和',
-            type: 'bar',
-            stack: '总量',
-            itemStyle: {
-                normal: {
-                    color: '#ff6b4e',
-                    label: {
-                        show: true,
-                        position: 'inside'
+                xAxis: [{
+                    type: 'category',
+                    splitLine: {
+                        show: false
+                    },
+                    data: ['餐饮总额', '三餐一楼', '三餐二楼', '上海快餐', '绿园餐厅', '学生餐厅']
+                }],
+                yAxis: [{
+                    type: 'value'
+                }],
+                series: [{
+                    name: '辅助',
+                    type: 'bar',
+                    stack: '总量',
+                    itemStyle: {
+                        normal: {
+                            barBorderColor: 'rgba(0,0,0,0)',
+                            color: 'rgba(0,0,0,0)'
+                        },
+                        emphasis: {
+                            barBorderColor: 'rgba(0,0,0,0)',
+                            color: 'rgba(0,0,0,0)'
+                        }
+                    },
+                    data: [0, 1700, 1400, 1200, 300, 0]
+                }, {
+                    name: '餐饮总额',
+                    type: 'bar',
+                    stack: '总量',
+                    itemStyle: {
+                        normal: {
+                            color: '#4ea5ff',
+                            label: {
+                                show: true,
+                                position: 'inside'
+                            }
+                        }
+                    },
+                    data: [2900, 1200, 300, 200, 900, 300]
+                }]
+            };
+            sale5.setOption(option);
+        });
+
+    require(
+        [
+            'echarts',
+            'echarts/chart/bar' // 使用柱状图就加载bar模块，按需加载
+        ],
+        function(ec) {
+            // 当日总消费次数top5
+            var count5 = ec.init(document.getElementById('count5'), theme);
+            option = {
+                title: {
+                    text: '今日频次TOP5',
+                    x: 'left',
+                    backgroundColor: '#5a5',
+                    textStyle: {
+                        fontSize: 15
+                    },
+                    padding: [5, 10, 5, 10]
+                },
+                tooltip: {
+                    trigger: 'axis',
+                    axisPointer: { // 坐标轴指示器，坐标轴触发有效
+                        type: 'shadow' // 默认为直线，可选为：'line' | 'shadow'
+                    },
+                    formatter: function(params) {
+                        var tar = params[0];
+                        return tar.name + '<br/>' + tar.seriesName + ' : ' + tar.value;
                     }
-                }
-            },
-            data: [8900, 3200, 1800, 1600, 1500, 800]
-        }]
-    };
-    count5.setOption(option);
+                },
+                xAxis: [{
+                    type: 'category',
+                    splitLine: {
+                        show: false
+                    },
+                    data: ['频次总和', '上海快餐', '二餐二楼', '三餐一楼', '三餐二楼', '淮扬快餐']
+                }],
+                yAxis: [{
+                    type: 'value'
+                }],
+                series: [{
+                    name: '辅助',
+                    type: 'bar',
+                    stack: '总量',
+                    itemStyle: {
+                        normal: {
+                            barBorderColor: 'rgba(0,0,0,0)',
+                            color: 'rgba(0,0,0,0)'
+                        },
+                        emphasis: {
+                            barBorderColor: 'rgba(0,0,0,0)',
+                            color: 'rgba(0,0,0,0)'
+                        }
+                    },
+                    data: [0, 5700, 3900, 2300, 800, 0]
+                }, {
+                    name: '频次总和',
+                    type: 'bar',
+                    stack: '总量',
+                    itemStyle: {
+                        normal: {
+                            color: '#ff6b4e',
+                            label: {
+                                show: true,
+                                position: 'inside'
+                            }
+                        }
+                    },
+                    data: [8900, 3200, 1800, 1600, 1500, 800]
+                }]
+            };
+            count5.setOption(option);
+        });
 
-    // 实时校园交易总额
-    var realtime_total = echarts.init(document.getElementById('realtime-total'), theme);
-    var timeTicket;
-    option = {
-        title: {
-            text: '实时餐饮总额',
-            backgroundColor: '#5a5',
-            x: 'left',
-            padding: [5, 10, 5, 10]
-        },
-        tooltip: {
-            trigger: 'axis'
-        },
-        legend: {
-            show: false,
-            data: ['总额']
-        },
-        dataZoom: {
-            show: false,
-            start: 0,
-            end: 100
-        },
-        xAxis: [{
-            type: 'category',
-            boundaryGap: true,
-            data: (function() {
-                var now = new Date();
-                var res = [];
-                var len = 10;
-                while (len--) {
-                    res.unshift(now.toLocaleTimeString().replace(/^\D*/, ''));
-                    now = new Date(now - 2000);
-                }
-                return res;
-            })()
-        }, {
-            type: 'category',
-            boundaryGap: true,
-            data: (function() {
-                var res = [];
-                var len = 10;
-                while (len--) {
-                    res.push(len + 1);
-                }
-                return res;
-            })()
-        }],
-        yAxis: [{
-            type: 'value',
-            scale: true,
-            name: '价格',
-            boundaryGap: [0.2, 0.2]
-        }, {
-            type: 'value',
-            scale: true,
-            name: '预购量',
-            boundaryGap: [0.2, 0.2]
-        }],
-        series: [{
-            name: '预购队列',
-            type: 'bar',
-            xAxisIndex: 1,
-            yAxisIndex: 1,
-            data: (function() {
-                var res = [];
-                var len = 10;
-                while (len--) {
-                    res.push(Math.round(Math.random() * 1000));
-                }
-                return res;
-            })()
-        }, {
-            name: '最新成交价',
-            type: 'line',
-            data: (function() {
-                var res = [];
-                var len = 10;
-                while (len--) {
-                    res.push((Math.random() * 10 + 5).toFixed(1) - 0);
-                }
-                return res;
-            })()
-        }]
-    };
-    var lastData = 11;
-    var axisData;
-    clearInterval(timeTicket);
-    timeTicket = setInterval(function() {
-        lastData += Math.random() * ((Math.round(Math.random() * 10) % 2) == 0 ? 1 : -1);
-        lastData = lastData.toFixed(1) - 0;
-        axisData = (new Date()).toLocaleTimeString().replace(/^\D*/, '');
+    require(
+        [
+            'echarts',
+            'echarts/chart/line',
+            'echarts/chart/bar'
+        ],
+        function(ec) {
+            // 实时校园交易总额
+            var realtime_total = ec.init(document.getElementById('realtime-total'), theme);
+            var timeTicket;
+            option = {
+                title: {
+                    text: '实时餐饮总额',
+                    x: 'left',
+                    backgroundColor: '#5a5',
+                    textStyle: {
+                        fontSize: 15
+                    },
+                    padding: [5, 10, 5, 10]
+                },
+                tooltip: {
+                    trigger: 'axis'
+                },
+                legend: {
+                    show: false,
+                    data: ['总额']
+                },
+                dataZoom: {
+                    show: false,
+                    start: 0,
+                    end: 100
+                },
+                xAxis: [{
+                    type: 'category',
+                    boundaryGap: true,
+                    data: (function() {
+                        var now = new Date();
+                        var res = [];
+                        var len = 10;
+                        while (len--) {
+                            res.unshift(now.toLocaleTimeString().replace(/^\D*/, ''));
+                            now = new Date(now - 2000);
+                        }
+                        return res;
+                    })()
+                }, {
+                    type: 'category',
+                    boundaryGap: true,
+                    data: (function() {
+                        var res = [];
+                        var len = 10;
+                        while (len--) {
+                            res.push(len + 1);
+                        }
+                        return res;
+                    })()
+                }],
+                yAxis: [{
+                    type: 'value',
+                    scale: true,
+                    name: '价格',
+                    boundaryGap: [0.2, 0.2]
+                }, {
+                    type: 'value',
+                    scale: true,
+                    name: '预购量',
+                    boundaryGap: [0.2, 0.2]
+                }],
+                series: [{
+                    name: '预购队列',
+                    type: 'bar',
+                    xAxisIndex: 1,
+                    yAxisIndex: 1,
+                    data: (function() {
+                        var res = [];
+                        var len = 10;
+                        while (len--) {
+                            res.push(Math.round(Math.random() * 1000));
+                        }
+                        return res;
+                    })()
+                }, {
+                    name: '最新成交价',
+                    type: 'line',
+                    data: (function() {
+                        var res = [];
+                        var len = 10;
+                        while (len--) {
+                            res.push((Math.random() * 10 + 5).toFixed(1) - 0);
+                        }
+                        return res;
+                    })()
+                }]
+            };
+            var lastData = 11;
+            var axisData;
+            clearInterval(timeTicket);
+            timeTicket = setInterval(function() {
+                lastData += Math.random() * ((Math.round(Math.random() * 10) % 2) == 0 ? 1 : -1);
+                lastData = lastData.toFixed(1) - 0;
+                axisData = (new Date()).toLocaleTimeString().replace(/^\D*/, '');
 
-        // 动态数据接口 addData
-        realtime_total.addData([
-            [
-                0, // 系列索引
-                Math.round(Math.random() * 1000), // 新增数据
-                true, // 新增数据是否从队列头部插入
-                false // 是否增加队列长度，false则自定删除原有数据，队头插入删队尾，队尾插入删队头
-            ],
-            [
-                1, // 系列索引
-                lastData, // 新增数据
-                false, // 新增数据是否从队列头部插入
-                false, // 是否增加队列长度，false则自定删除原有数据，队头插入删队尾，队尾插入删队头
-                axisData // 坐标轴标签
-            ]
-        ]);
-    }, 2100);
+                // 动态数据接口 addData
+                realtime_total.addData([
+                    [
+                        0, // 系列索引
+                        Math.round(Math.random() * 1000), // 新增数据
+                        true, // 新增数据是否从队列头部插入
+                        false // 是否增加队列长度，false则自定删除原有数据，队头插入删队尾，队尾插入删队头
+                    ],
+                    [
+                        1, // 系列索引
+                        lastData, // 新增数据
+                        false, // 新增数据是否从队列头部插入
+                        false, // 是否增加队列长度，false则自定删除原有数据，队头插入删队尾，队尾插入删队头
+                        axisData // 坐标轴标签
+                    ]
+                ]);
+            }, 2100);
 
-    realtime_total.setOption(option);
+            realtime_total.setOption(option);
+        });
 
-    // 历史每日就餐总额
-    var history_daily = echarts.init(document.getElementById('history-daily'), theme);
-    option = {
-        title: {
-            text: '历史日均总额',
-            backgroundColor: '#5a5',
-            x: 'left',
-            padding: [5, 10, 5, 10]
-        },
-        tooltip: {
-            trigger: 'axis'
-        },
-        legend: {
-            show: false,
-            data: ['最高气温', '最低气温']
-        },
-        calculable: true,
-        xAxis: [{
-            type: 'category',
-            boundaryGap: false,
-            data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
-        }],
-        yAxis: [{
-            type: 'value',
-            axisLabel: {
-                formatter: '{value} °C'
-            }
-        }],
-        series: [{
-            name: '最高气温',
-            type: 'line',
-            data: [11, 11, 15, 13, 12, 13, 10],
-        }, {
-            name: '最低气温',
-            type: 'line',
-            data: [1, -2, 2, 5, 3, 2, 0],
-        }]
-    };
-    history_daily.setOption(option);
+    require(
+        [
+            'echarts',
+            'echarts/chart/line',
+        ],
+        function(ec) {
+            // 历史每日就餐总额
+            var history_daily = ec.init(document.getElementById('history-daily'), theme);
+            option = {
+                title: {
+                    text: '历史日均总额',
+                    x: 'left',
+                    backgroundColor: '#5a5',
+                    textStyle: {
+                        fontSize: 15
+                    },
+                    padding: [5, 10, 5, 10]
+                },
+                tooltip: {
+                    trigger: 'axis'
+                },
+                legend: {
+                    show: false,
+                    data: ['最高气温', '最低气温']
+                },
+                calculable: true,
+                xAxis: [{
+                    type: 'category',
+                    boundaryGap: false,
+                    data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
+                }],
+                yAxis: [{
+                    type: 'value',
+                    axisLabel: {
+                        formatter: '{value} °C'
+                    }
+                }],
+                series: [{
+                    name: '最高气温',
+                    type: 'line',
+                    data: [11, 11, 15, 13, 12, 13, 10],
+                }, {
+                    name: '最低气温',
+                    type: 'line',
+                    data: [1, -2, 2, 5, 3, 2, 0],
+                }]
+            };
+            history_daily.setOption(option);
+        });
 
-    // 当日就餐总额人群组成
-    var humans = echarts.init(document.getElementById('humans'), theme);
-    option = {
-        title: {
-            text: '餐饮人群组成',
-            backgroundColor: '#5a5',
-            x: 'left',
-            padding: [5, 10, 5, 10]
-        },
-        tooltip: {
-            trigger: 'item',
-            formatter: "{a} <br/>{b} : {c} ({d}%)"
-        },
-        legend: {
-            x: 'center',
-            y: 'bottom',
-            data: ['直接访问', '邮件营销', '联盟广告', '视频广告', '搜索引擎'],
-            textStyle: {
-                color: 'auto'
-            }
-        },
-        calculable: true,
-        series: [{
-            name: '访问来源',
-            type: 'pie',
-            radius: '48%',
-            center: ['50%', '52%'],
-            data: [{
-                value: 335,
-                name: '直接访问'
-            }, {
-                value: 310,
-                name: '邮件营销'
-            }, {
-                value: 234,
-                name: '联盟广告'
-            }, {
-                value: 135,
-                name: '视频广告'
-            }, {
-                value: 1548,
-                name: '搜索引擎'
-            }]
-        }]
-    };
-    humans.setOption(option);
+    require(
+        [
+            'echarts',
+            'echarts/chart/pie'
+        ],
+        function(ec) {
+            // 当日就餐总额人群组成
+            var humans = ec.init(document.getElementById('humans'), theme);
+            option = {
+                title: {
+                    text: '餐饮人群组成',
+                    x: 'left',
+                    backgroundColor: '#5a5',
+                    textStyle: {
+                        fontSize: 15
+                    },
+                    padding: [5, 10, 5, 10]
+                },
+                tooltip: {
+                    trigger: 'item',
+                    formatter: "{a} <br/>{b} : {c} ({d}%)"
+                },
+                legend: {
+                    x: 'center',
+                    y: 'bottom',
+                    data: ['直接访问', '邮件营销', '联盟广告', '视频广告', '搜索引擎'],
+                    textStyle: {
+                        color: 'auto'
+                    }
+                },
+                calculable: true,
+                series: [{
+                    name: '访问来源',
+                    type: 'pie',
+                    radius: '48%',
+                    center: ['50%', '52%'],
+                    data: [{
+                        value: 335,
+                        name: '直接访问'
+                    }, {
+                        value: 310,
+                        name: '邮件营销'
+                    }, {
+                        value: 234,
+                        name: '联盟广告'
+                    }, {
+                        value: 135,
+                        name: '视频广告'
+                    }, {
+                        value: 1548,
+                        name: '搜索引擎'
+                    }]
+                }]
+            };
+            humans.setOption(option);
+        });
 
-    // 当日就餐各大食堂占比
-    var carteens = echarts.init(document.getElementById('carteens'), theme);
-    option = {
-        title: {
-            text: '各大食堂占比',
-            backgroundColor: '#5a5',
-            x: 'left',
-            padding: [5, 10, 5, 10]
-        },
-        tooltip: {
-            trigger: 'item',
-            formatter: "{a} <br/>{b} : {c} ({d}%)"
-        },
-        legend: {
-            x: 'center',
-            y: 'bottom',
-            data: ['直接访问', '邮件营销', '联盟广告', '视频广告', '搜索引擎'],
-            textStyle: {
-                color: 'auto'
-            }
-        },
-        calculable: true,
-        series: [{
-            name: '访问来源',
-            type: 'pie',
-            radius: '48%',
-            center: ['50%', '52%'],
-            data: [{
-                value: 335,
-                name: '直接访问'
-            }, {
-                value: 310,
-                name: '邮件营销'
-            }, {
-                value: 234,
-                name: '联盟广告'
-            }, {
-                value: 135,
-                name: '视频广告'
-            }, {
-                value: 1548,
-                name: '搜索引擎'
-            }]
-        }]
-    };
-    carteens.setOption(option);
+    require(
+        [
+            'echarts',
+            'echarts/chart/pie'
+        ],
+        function(ec) {
+            // 当日就餐各大食堂占比
+            var carteens = ec.init(document.getElementById('carteens'), theme);
+            option = {
+                title: {
+                    text: '各大食堂占比',
+                    x: 'left',
+                    backgroundColor: '#5a5',
+                    textStyle: {
+                        fontSize: 15
+                    },
+                    padding: [5, 10, 5, 10]
+                },
+                tooltip: {
+                    trigger: 'item',
+                    formatter: "{a} <br/>{b} : {c} ({d}%)"
+                },
+                legend: {
+                    x: 'center',
+                    y: 'bottom',
+                    data: ['直接访问', '邮件营销', '联盟广告', '视频广告', '搜索引擎'],
+                    textStyle: {
+                        color: 'auto'
+                    }
+                },
+                calculable: true,
+                series: [{
+                    name: '访问来源',
+                    type: 'pie',
+                    radius: '48%',
+                    center: ['50%', '52%'],
+                    data: [{
+                        value: 335,
+                        name: '直接访问'
+                    }, {
+                        value: 310,
+                        name: '邮件营销'
+                    }, {
+                        value: 234,
+                        name: '联盟广告'
+                    }, {
+                        value: 135,
+                        name: '视频广告'
+                    }, {
+                        value: 1548,
+                        name: '搜索引擎'
+                    }]
+                }]
+            };
+            carteens.setOption(option);
+        });
 });
 </script>
