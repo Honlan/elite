@@ -36,6 +36,7 @@ $(document).ready(function() {
 
 #affair #tags #tags-plot {
     height: 250px;
+    background-color: #222 !important;
 }
 
 #affair #undergraduate,
@@ -51,7 +52,7 @@ $(document).ready(function() {
 }
 </style>
 <div id="affair">
-    <div class="row">
+    <div class="row" style="margin-bottom:50px;">
         <div class="col-xs-6 col-sm-3 col-md-3 col-lg-3">
             <img src="__PUBLIC__/img/girl.png" id="girl-tag">
         </div>
@@ -72,6 +73,7 @@ $(document).ready(function() {
                 <p>微信</p>
                 <p>微信</p>
             </div>
+            <p class="plot-title">热点关注走势</p>
             <div id="tags-plot"></div>
         </div>
     </div>
@@ -93,14 +95,7 @@ $(document).ready(function() {
             var tags_plot = ec.init(document.getElementById('tags-plot'), theme);
             option = {
                 title: {
-                    text: '热点关注走势',
-                    x: 'left',
-                    backgroundColor: '#5a5',
-                    textStyle: {
-                        fontSize: 15,
-                        fontFamily: 'Microsoft Yahei'
-                    },
-                    padding: [3, 10, 8, 10]
+                   show: false
                 },
                 tooltip: {
                     trigger: 'axis'

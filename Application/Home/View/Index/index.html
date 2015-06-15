@@ -9,14 +9,16 @@ $(document).ready(function() {
 #mobility #indicators {
     position: fixed;
     right: 0;
-    top: 110px;
+    top: 115px;
     z-index: 999;
 }
 
 #mobility #indicators span {
+    position: relative;
+    right: -60px;
     display: block;
+    margin-bottom: 3px;
     padding: 10px 10px 10px 15px;
-    margin-bottom: 10px;
     border-left: 1px solid rgba(240, 240, 240, 0.6);
     border-top: 1px solid rgba(240, 240, 240, 0.6);
     border-bottom: 1px solid rgba(240, 240, 240, 0.6);
@@ -29,36 +31,31 @@ $(document).ready(function() {
     -o-transition: background-color .3s;
     -moz-transition: background-color .3s;
     -webkit-transition: background-color .3s;
+    transition: right .3s;
+    -o-transition: right .3s;
+    -moz-transition: right .3s;
+    -webkit-transition: right .3s;
+}
+
+#mobility #indicators:hover span {
+    right: 0;
 }
 
 #mobility #indicators span:hover {
     color: #222;
-    background-color: #f2f2f2;
+    background-color: rgba(240, 240, 240, 0.8);
     cursor: pointer;
 }
 
 #mobility #indicators span.active {
     color: #222;
-    background-color: #f2f2f2;
+    background-color: rgba(240, 240, 240, 0.8);
 }
 
-#mobility .map-title {
-    padding: 5px 10px;
-    font-size: 15px;
-    position: absolute;
-    left: 15px;
-    top: 0;
-    background-color: #5a5;
-    z-index: 999;
-    color: #fff;
-}
-
-#mobility #realtime-mobility {
-    position: relative;
-}
+#mobility #realtime-mobility {}
 
 #mobility #realtime-mobility #allmap {
-    height: 400px;
+    height: 373px;
     padding: 0 20px;
 }
 
@@ -68,21 +65,21 @@ $(document).ready(function() {
 
 #mobility #realtime-mobility #mobility-stat #top5,
 #mobility #realtime-mobility #mobility-stat #bottom5 {
-    height: 185px;
+    height: 163px;
+    background-color: #222 !important;
 }
 
 #mobility #realtime-mobility #mobility-stat #top5 {
-    margin-bottom: 30px;
+    margin-bottom: 20px;
 }
 
 #mobility #realtime-mobility #distribution {
     width: 100%;
-    height: 300px;
-    margin-top: 40px;
+    height: 273px;
+    background-color: #222 !important;
 }
 
 #mobility #mobility-trend {
-    position: relative;
     width: 100%;
     margin-top: 40px;
     margin-right: 0;
@@ -90,24 +87,22 @@ $(document).ready(function() {
 }
 
 #mobility #mobility-trend #mobilitymap {
-    height: 350px;
+    height: 323px;
 }
 
 #mobility #mobility-trend #mobility-chord {
-    height: 350px;
+    height: 323px;
     padding-left: 0;
+    background-color: #222 !important;
 }
 
 #mobility #cater-predict {
-    position: relative;
-    margin-top: 70px;
-    margin-right: 15px;
+    margin-top: 40px;
 }
 
 #mobility #cater-predict #catermap {
     height: 450px;
     padding-left: 15px;
-    margin-bottom: 20px;
 }
 </style>
 <div id="mobility">
@@ -119,28 +114,36 @@ $(document).ready(function() {
     <div id="realtime-mobility">
         <div class="row">
             <div class="col-xs-12 col-sm-8 col-md-8 col-lg-8">
-                <p class="map-title">实时人群监测</p>
+                <p class="plot-title">实时人群监测</p>
                 <div id="allmap"></div>
             </div>
             <div id="mobility-stat" class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
+                <p class="plot-title">TOP 5</p>
                 <div id="top5">
                 </div>
+                <p class="plot-title">LAST 5</p>
                 <div id="bottom5">
                 </div>
             </div>
         </div>
+        <p class="plot-title" style="margin-top: 40px;">人流分布</p>
         <div id="distribution">
         </div>
     </div>
-    <div id="mobility-trend" class="row">
-        <div id="mobility-chord" class="col-xs-12 col-sm-4 col-md-4 col-lg-4"></div>
-        <div class="col-xs-12 col-sm-8 col-md-8 col-lg-8">
-            <p class="map-title">人群迁移趋势</p>
-            <div id="mobilitymap"></div>
+    <div id="mobility-trend">
+        <div class="row">
+            <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
+                <p class="plot-title">人流和弦图</p>
+                <div id="mobility-chord"></div>
+            </div>
+            <div class="col-xs-12 col-sm-8 col-md-8 col-lg-8">
+                <p class="plot-title">人群迁移趋势</p>
+                <div id="mobilitymap"></div>
+            </div>
         </div>
     </div>
     <div id="cater-predict">
-        <p class="map-title" style="left:0;">就餐人数预测</p>
+        <p class="plot-title" style="left:0;">就餐人数预测</p>
         <div id="catermap"></div>
     </div>
 </div>
@@ -185,14 +188,7 @@ $(document).ready(function() {
             var top5 = ec.init(document.getElementById('top5'), theme);
             option = {
                 title: {
-                    text: 'TOP 5',
-                    x: 'left',
-                    backgroundColor: '#5a5',
-                    textStyle: {
-                        fontSize: 15,
-                        fontFamily: 'Microsoft Yahei'
-                    },
-                    padding: [3, 10, 8, 10]
+                    show: false
                 },
                 tooltip: {
                     trigger: 'item',
@@ -207,7 +203,7 @@ $(document).ready(function() {
                     name: '人流量',
                     type: 'pie',
                     radius: '55%',
-                    center: ['50%', '60%'],
+                    center: ['50%', '50%'],
                     data: [{
                         value: 315,
                         name: '图书馆'
@@ -239,14 +235,7 @@ $(document).ready(function() {
             var bottom5 = ec.init(document.getElementById('bottom5'), theme);
             option = {
                 title: {
-                    text: 'LAST 5',
-                    x: 'left',
-                    backgroundColor: '#5a5',
-                    textStyle: {
-                        fontSize: 15,
-                        fontFamily: 'Microsoft Yahei'
-                    },
-                    padding: [3, 10, 8, 10]
+                    show: false
                 },
                 tooltip: {
                     trigger: 'item',
@@ -261,7 +250,7 @@ $(document).ready(function() {
                     name: '人流量',
                     type: 'pie',
                     radius: '55%',
-                    center: ['50%', '60%'],
+                    center: ['50%', '50%'],
                     data: [{
                         value: 35,
                         name: '学生活动中心'
@@ -296,14 +285,7 @@ $(document).ready(function() {
             var distribution = ec.init(document.getElementById('distribution'), theme);
             option = {
                 title: {
-                    text: '人流分布',
-                    x: 'left',
-                    backgroundColor: '#5a5',
-                    textStyle: {
-                        fontSize: 15,
-                        fontFamily: 'Microsoft Yahei'
-                    },
-                    padding: [3, 10, 8, 10]
+                    show: false
                 },
                 tooltip: {
                     trigger: 'shadow'
@@ -1706,14 +1688,7 @@ $(document).ready(function() {
             var mobility_chord = ec.init(document.getElementById('mobility-chord'), theme);
             option = {
                 title: {
-                    text: '人流和弦图',
-                    x: 'left',
-                    backgroundColor: '#5a5',
-                    textStyle: {
-                        fontSize: 15,
-                        fontFamily: 'Microsoft Yahei'
-                    },
-                    padding: [3, 10, 8, 10]
+                    show: false
                 },
                 tooltip: {
                     trigger: 'item',

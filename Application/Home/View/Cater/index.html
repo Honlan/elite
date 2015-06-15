@@ -7,48 +7,69 @@ $(document).ready(function() {
 </script>
 <style>
 #cater #sale5 {
-    height: 250px;
+    height: 223px;
+    background-color: #222 !important;
+    margin-bottom: 30px;
 }
 
 #cater #count5 {
-    height: 250px;
-}
-
-#cater #cater-stat {
-    background-color: rgba(240, 240, 240, 0.5);
-    width: 220px;
+    height: 223px;
+    background-color: #222 !important;
     margin-bottom: 30px;
-    border-radius: 5px;
 }
 
 #cater #realtime-total {
-    height: 300px;
+    height: 273px;
+    background-color: #222 !important;
+    margin-bottom: 30px;
 }
 
 #cater #history-daily {
-    height: 300px;
+    height: 273px;
+    background-color: #222 !important;
+    margin-bottom: 30px;
 }
 
 #cater #humans {
     height: 250px;
+    background-color: #222 !important;
 }
 
 #cater #carteens {
     height: 250px;
+    background-color: #222 !important;
 }
 </style>
 <div id="cater">
     <div class="row">
-        <div id="sale5" class="col-xs-12 col-sm-6 col-md-6 col-lg-6"></div>
-        <div id="count5" class="col-xs-12 col-sm-6 col-md-6 col-lg-6"></div>
+        <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+            <p class="plot-title">今日总额TOP5</p>
+            <div id="sale5"></div>
+        </div>
+        <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+            <p class="plot-title">今日频次TOP5</p>
+            <div id="count5"></div>
+        </div>
     </div>
     <div class="row">
-        <div id="realtime-total" class="col-xs-12 col-sm-6 col-md-6 col-lg-6"></div>
-        <div id="history-daily" class="col-xs-12 col-sm-6 col-md-6 col-lg-6"></div>
+        <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+            <p class="plot-title">实时餐饮总额</p>
+            <div id="realtime-total"></div>
+        </div>
+        <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+            <p class="plot-title">历史日均总额</p>
+            <div id="history-daily"></div>
+        </div>
     </div>
     <div class="row">
-        <div id="humans" class="col-xs-12 col-sm-6 col-md-6 col-lg-6"></div>
-        <div id="carteens" class="col-xs-12 col-sm-6 col-md-6 col-lg-6"></div>
+        <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+            <p class="plot-title">餐饮人群组成</p>
+            <div id="humans"></div>
+        </div>
+        <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+            <p class="plot-title">各大食堂占比</p>
+            <div id="carteens"></div>
+        </div>
     </div>
 </div>
 <script>
@@ -63,14 +84,7 @@ $(document).ready(function() {
             var sale5 = ec.init(document.getElementById('sale5'), theme);
             option = {
                 title: {
-                    text: '今日总额TOP5',
-                    x: 'left',
-                    backgroundColor: '#5a5',
-                    textStyle: {
-                        fontSize: 15,
-                        fontFamily: 'Microsoft Yahei'
-                    },
-                    padding: [3, 10, 8, 10]
+                    show: false
                 },
                 tooltip: {
                     trigger: 'axis',
@@ -92,6 +106,12 @@ $(document).ready(function() {
                 yAxis: [{
                     type: 'value'
                 }],
+                grid: {
+                    y: 30,
+                    y2: 50,
+                    x: 70,
+                    x2: 30
+                },
                 series: [{
                     name: '辅助',
                     type: 'bar',
@@ -136,14 +156,7 @@ $(document).ready(function() {
             var count5 = ec.init(document.getElementById('count5'), theme);
             option = {
                 title: {
-                    text: '今日频次TOP5',
-                    x: 'left',
-                    backgroundColor: '#5a5',
-                    textStyle: {
-                        fontSize: 15,
-                        fontFamily: 'Microsoft Yahei'
-                    },
-                    padding: [3, 10, 8, 10]
+                    show: false
                 },
                 tooltip: {
                     trigger: 'axis',
@@ -165,6 +178,12 @@ $(document).ready(function() {
                 yAxis: [{
                     type: 'value'
                 }],
+                grid: {
+                    y: 30,
+                    y2: 50,
+                    x: 70,
+                    x2: 30
+                },
                 series: [{
                     name: '辅助',
                     type: 'bar',
@@ -211,14 +230,7 @@ $(document).ready(function() {
             var timeTicket;
             option = {
                 title: {
-                    text: '实时餐饮总额',
-                    x: 'left',
-                    backgroundColor: '#5a5',
-                    textStyle: {
-                        fontSize: 15,
-                        fontFamily: 'Microsoft Yahei'
-                    },
-                    padding: [3, 10, 8, 10]
+                    show: false
                 },
                 tooltip: {
                     trigger: 'axis'
@@ -231,6 +243,12 @@ $(document).ready(function() {
                     show: false,
                     start: 0,
                     end: 100
+                },
+                grid: {
+                    y: 30,
+                    y2: 50,
+                    x: 70,
+                    x2: 30
                 },
                 xAxis: [{
                     type: 'category',
@@ -333,14 +351,7 @@ $(document).ready(function() {
             var history_daily = ec.init(document.getElementById('history-daily'), theme);
             option = {
                 title: {
-                    text: '历史日均总额',
-                    x: 'left',
-                    backgroundColor: '#5a5',
-                    textStyle: {
-                        fontSize: 15,
-                        fontFamily: 'Microsoft Yahei'
-                    },
-                    padding: [3, 10, 8, 10]
+                    show: false
                 },
                 tooltip: {
                     trigger: 'axis'
@@ -361,6 +372,12 @@ $(document).ready(function() {
                         formatter: '{value} °C'
                     }
                 }],
+                grid: {
+                    y: 30,
+                    y2: 50,
+                    x: 70,
+                    x2: 30
+                },
                 series: [{
                     name: '最高气温',
                     type: 'line',
@@ -384,14 +401,7 @@ $(document).ready(function() {
             var humans = ec.init(document.getElementById('humans'), theme);
             option = {
                 title: {
-                    text: '餐饮人群组成',
-                    x: 'left',
-                    backgroundColor: '#5a5',
-                    textStyle: {
-                        fontSize: 15,
-                        fontFamily: 'Microsoft Yahei'
-                    },
-                    padding: [3, 10, 8, 10]
+                    show: false
                 },
                 tooltip: {
                     trigger: 'item',
@@ -410,7 +420,7 @@ $(document).ready(function() {
                     name: '访问来源',
                     type: 'pie',
                     radius: '48%',
-                    center: ['50%', '52%'],
+                    center: ['50%', '46%'],
                     data: [{
                         value: 335,
                         name: '直接访问'
@@ -442,14 +452,7 @@ $(document).ready(function() {
             var carteens = ec.init(document.getElementById('carteens'), theme);
             option = {
                 title: {
-                    text: '各大食堂占比',
-                    x: 'left',
-                    backgroundColor: '#5a5',
-                    textStyle: {
-                        fontSize: 15,
-                        fontFamily: 'Microsoft Yahei'
-                    },
-                    padding: [3, 10, 8, 10]
+                    show: false
                 },
                 tooltip: {
                     trigger: 'item',
@@ -468,7 +471,7 @@ $(document).ready(function() {
                     name: '访问来源',
                     type: 'pie',
                     radius: '48%',
-                    center: ['50%', '52%'],
+                    center: ['50%', '46%'],
                     data: [{
                         value: 335,
                         name: '直接访问'

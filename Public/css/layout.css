@@ -103,9 +103,15 @@ footer h3 {
 	font-size: 16px;
 }
 
-h4.plot-title {
-	margin: 0;
-	padding: 5px 0;
-	font-size: 14px;
-	background-color: green;
+.plot-title {
+    padding: 5px 10px;
+    font-size: 12px;
+    left: 15px;
+    top: 0;
+    background-color: #3C833C;
+    z-index: 999;
+    color: #f2f2f2;
+    width: 100%;
+    text-align: left;
+    margin-bottom: 0;
 }
