@@ -6,14 +6,60 @@ $(document).ready(function() {
 });
 </script>
 <style>
-#mobility ul[role="tablist"] {
-    margin-bottom: 30px;
+#mobility #indicators {
+    position: fixed;
+    right: 0;
+    top: 110px;
+    z-index: 999;
+}
+
+#mobility #indicators span {
+    display: block;
+    padding: 10px 10px 10px 15px;
+    margin-bottom: 10px;
+    border-left: 1px solid rgba(240, 240, 240, 0.6);
+    border-top: 1px solid rgba(240, 240, 240, 0.6);
+    border-bottom: 1px solid rgba(240, 240, 240, 0.6);
+    border-bottom-left-radius: 6px;
+    transition: color .3s;
+    -o-transition: color .3s;
+    -moz-transition: color .3s;
+    -webkit-transition: color .3s;
+    transition: background-color .3s;
+    -o-transition: background-color .3s;
+    -moz-transition: background-color .3s;
+    -webkit-transition: background-color .3s;
+}
+
+#mobility #indicators span:hover {
+    color: #222;
+    background-color: #f2f2f2;
+    cursor: pointer;
+}
+
+#mobility #indicators span.active {
+    color: #222;
+    background-color: #f2f2f2;
+}
+
+#mobility .map-title {
+    padding: 5px 10px;
+    font-size: 15px;
+    position: absolute;
+    left: 15px;
+    top: 0;
+    background-color: #5a5;
+    z-index: 999;
+    color: #fff;
+}
+
+#mobility #realtime-mobility {
+    position: relative;
 }
 
 #mobility #realtime-mobility #allmap {
     height: 400px;
     padding: 0 20px;
-    margin-left: 30px;
 }
 
 #mobility #realtime-mobility #mobility-stat {
@@ -35,55 +81,97 @@ $(document).ready(function() {
     margin-top: 40px;
 }
 
+#mobility #mobility-trend {
+    position: relative;
+    width: 100%;
+    margin-top: 40px;
+    margin-right: 0;
+    margin-left: 0;
+}
+
 #mobility #mobility-trend #mobilitymap {
-    height: 400px;
-    width: 800px;
+    height: 350px;
+}
+
+#mobility #mobility-trend #mobility-chord {
+    height: 350px;
+    padding-left: 0;
+}
+
+#mobility #cater-predict {
+    position: relative;
+    margin-top: 70px;
+    margin-right: 15px;
+}
+
+#mobility #cater-predict #catermap {
+    height: 450px;
+    padding-left: 15px;
+    margin-bottom: 20px;
 }
 </style>
 <div id="mobility">
-    <div role="tabpanel">
-        <!-- Nav tabs -->
-        <ul class="nav nav-tabs" role="tablist">
-            <li role="presentation" class="active"><a href="#realtime-mobility" aria-controls="realtime-mobility" role="tab" data-toggle="tab">实时人群监测</a></li>
-            <li role="presentation"><a href="#mobility-trend" aria-controls="mobility-trend" role="tab" data-toggle="tab">人群迁移趋势</a></li>
-            <li role="presentation"><a href="#cater-predict" aria-controls="cater-predict" role="tab" data-toggle="tab">就餐人数预测</a></li>
-        </ul>
-        <!-- Tab panes -->
-        <div class="tab-content">
-            <div role="tabpanel" class="tab-pane fade in active" id="realtime-mobility">
-                <div class="row">
-                    <div class="col-xs-12 col-sm-8 col-md-8 col-lg-8">
-                        <div id="allmap"></div>
-                    </div>
-                    <div id="mobility-stat" class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
-                        <div id="top5">
-                        </div>
-                        <div id="bottom5">
-                        </div>
-                    </div>
-                </div>
-                <div id="distribution">
-                </div>
+    <div id="indicators">
+        <span name="realtime-mobility" class="active">实时人群监测</span>
+        <span name="mobility-trend">人群迁移趋势</span>
+        <span name="cater-predict">就餐人数预测</span>
+    </div>
+    <div id="realtime-mobility">
+        <div class="row">
+            <div class="col-xs-12 col-sm-8 col-md-8 col-lg-8">
+                <p class="map-title">实时人群监测</p>
+                <div id="allmap"></div>
             </div>
-            <div role="tabpanel" class="tab-pane fade" id="mobility-trend">
-                <div id="mobilitymap"></div>
-            </div>
-            <div role="tabpanel" class="tab-pane fade" id="cater-predict">
-                <div id="catermap"></div>
+            <div id="mobility-stat" class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
+                <div id="top5">
+                </div>
+                <div id="bottom5">
+                </div>
             </div>
         </div>
+        <div id="distribution">
+        </div>
     </div>
+    <div id="mobility-trend" class="row">
+        <div id="mobility-chord" class="col-xs-12 col-sm-4 col-md-4 col-lg-4"></div>
+        <div class="col-xs-12 col-sm-8 col-md-8 col-lg-8">
+            <p class="map-title">人群迁移趋势</p>
+            <div id="mobilitymap"></div>
+        </div>
+    </div>
+    <div id="cater-predict">
+        <p class="map-title" style="left:0;">就餐人数预测</p>
+        <div id="catermap"></div>
+    </div>
+</div>
 </div>
 <script>
 $(document).ready(function() {
-    var map = new BMap.Map("allmap"); // 创建地图实例
-    map.centerAndZoom(new BMap.Point(121.44821, 31.033276), 15); // 初始化地图，设置中心点坐标和地图级别
-    map.enableScrollWheelZoom(); // 允许滚轮缩放 
-    map.addControl(new BMap.NavigationControl());
-    map.addControl(new BMap.ScaleControl({
-        anchor: BMAP_ANCHOR_BOTTOM_RIGHT
-    }));
-    map.setMapStyle({
+    $('#indicators span').click(function(event) {
+        $('body,html').animate({
+            scrollTop: $('#' + $(this).attr('name')).offset().top - 60
+        }, 600);
+        $('#indicators span').removeClass('active');
+        $(this).addClass('active');
+    });
+
+    $('body,html').bind('mousewheel', function() {
+        if ($('body').scrollTop() < $('#mobility-trend').offset().top - 60) {
+            $('#indicators span').removeClass('active');
+            $('#indicators span[name="realtime-mobility"]').addClass('active');
+        } else if ($('body').scrollTop() < $('#cater-predict').offset().top - 60) {
+            $('#indicators span').removeClass('active');
+            $('#indicators span[name="mobility-trend"]').addClass('active');
+        } else {
+            $('#indicators span').removeClass('active');
+            $('#indicators span[name="cater-predict"]').addClass('active');
+        }
+    });
+
+    var map1 = new BMap.Map("allmap"); // 创建地图实例
+    map1.centerAndZoom(new BMap.Point(121.44821, 31.033276), 15); // 初始化地图，设置中心点坐标和地图级别
+    map1.disableScrollWheelZoom();
+    map1.setMapStyle({
         style: "hardedge"
     });
 
@@ -101,9 +189,10 @@ $(document).ready(function() {
                     x: 'left',
                     backgroundColor: '#5a5',
                     textStyle: {
-                        fontSize: 15
+                        fontSize: 15,
+                        fontFamily: 'Microsoft Yahei'
                     },
-                    padding: [5, 10, 5, 10]
+                    padding: [3, 10, 8, 10]
                 },
                 tooltip: {
                     trigger: 'item',
@@ -154,9 +243,10 @@ $(document).ready(function() {
                     x: 'left',
                     backgroundColor: '#5a5',
                     textStyle: {
-                        fontSize: 15
+                        fontSize: 15,
+                        fontFamily: 'Microsoft Yahei'
                     },
-                    padding: [5, 10, 5, 10]
+                    padding: [3, 10, 8, 10]
                 },
                 tooltip: {
                     trigger: 'item',
@@ -210,9 +300,10 @@ $(document).ready(function() {
                     x: 'left',
                     backgroundColor: '#5a5',
                     textStyle: {
-                        fontSize: 15
+                        fontSize: 15,
+                        fontFamily: 'Microsoft Yahei'
                     },
-                    padding: [5, 10, 5, 10]
+                    padding: [3, 10, 8, 10]
                 },
                 tooltip: {
                     trigger: 'shadow'
@@ -264,6 +355,7 @@ $(document).ready(function() {
             distribution.setOption(option);
         });
 
+    // 人流迁徙图
     require(
         [
             'echarts',
@@ -273,23 +365,18 @@ $(document).ready(function() {
         function(echarts, BMapExtension) {
             // 初始化地图
             var BMapExt = new BMapExtension($('#mobilitymap')[0], BMap, echarts);
-            var map = BMapExt.getMap();
+            var map2 = BMapExt.getMap();
             var container = BMapExt.getEchartsContainer();
             var point = new BMap.Point(121.442869, 31.032031); //SJTU经纬度
-            map.centerAndZoom(point, 17); // 初始化地图，设置中心点坐标和地图级别
-            map.enableScrollWheelZoom(true);
-            map.addControl(new BMap.NavigationControl());
-            map.addControl(new BMap.ScaleControl({
-                anchor: BMAP_ANCHOR_BOTTOM_RIGHT
-            }));
+            map2.centerAndZoom(point, 5); // 初始化地图，设置中心点坐标和地图级别
+            map2.disableScrollWheelZoom(false);
+            map2.setMapStyle({
+                style: "hardedge"
+            });
 
             option = {
                 color: ['gold', 'aqua', 'lime'],
-                title: {
-                    text: '模拟迁徙',
-                    subtext: '数据纯属虚构',
-                    x: 'right'
-                },
+                title: {},
                 tooltip: {
                     trigger: 'item',
                     formatter: function(v) {
@@ -304,27 +391,6 @@ $(document).ready(function() {
                     selected: {
                         '上海': false,
                         '广州': false
-                    }
-                },
-                toolbox: {
-                    show: true,
-                    orient: 'vertical',
-                    x: 'right',
-                    y: 'center',
-                    feature: {
-                        mark: {
-                            show: true
-                        },
-                        dataView: {
-                            show: true,
-                            readOnly: false
-                        },
-                        restore: {
-                            show: true
-                        },
-                        saveAsImage: {
-                            show: true
-                        }
                     }
                 },
                 dataRange: {
@@ -1626,9 +1692,236 @@ $(document).ready(function() {
                 }]
             };
 
-            var mobility_trend = BMapExt.initECharts(container, theme);
-
-            // BMapExt.setOption(option);
+            var mobility_map = BMapExt.initECharts(container);
+            BMapExt.setOption(option);
         });
+
+    // 人流迁徙和弦图
+    require(
+        [
+            'echarts',
+            'echarts/chart/chord'
+        ],
+        function(ec) {
+            var mobility_chord = ec.init(document.getElementById('mobility-chord'), theme);
+            option = {
+                title: {
+                    text: '人流和弦图',
+                    x: 'left',
+                    backgroundColor: '#5a5',
+                    textStyle: {
+                        fontSize: 15,
+                        fontFamily: 'Microsoft Yahei'
+                    },
+                    padding: [3, 10, 8, 10]
+                },
+                tooltip: {
+                    trigger: 'item',
+                    formatter: function(params) {
+                        if (params.indicator2) { // is edge
+                            return params.indicator2 + ' ' + params.name + ' ' + params.indicator;
+                        } else { // is node
+                            return params.name
+                        }
+                    }
+                },
+                legend: {
+                    show: false,
+                    x: 'left',
+                    data: []
+                },
+                series: [{
+                    type: 'chord',
+                    sort: 'ascending',
+                    sortSub: 'descending',
+                    showScale: false,
+                    radius: ['45%', '55%'],
+                    center: ['50%', '53%'],
+                    itemStyle: {
+                        normal: {
+                            label: {
+                                rotate: true,
+                                color: '#999'
+                            }
+                        }
+                    },
+                    // 使用 nodes links 表达和弦图
+                    nodes: [{
+                        name: '默特萨克'
+                    }, {
+                        name: '厄齐尔'
+                    }, {
+                        name: '波多尔斯基'
+                    }, {
+                        name: '诺伊尔'
+                    }, {
+                        name: '博阿滕'
+                    }, {
+                        name: '施魏因施泰格'
+                    }, {
+                        name: '拉姆'
+                    }, {
+                        name: '克罗斯'
+                    }, {
+                        name: '穆勒'
+                    }, {
+                        name: '格策'
+                    }, {
+                        name: '胡梅尔斯'
+                    }, {
+                        name: '魏登费勒'
+                    }, {
+                        name: '杜尔姆'
+                    }, {
+                        name: '格罗斯克罗伊茨'
+                    }, {
+                        name: '阿森纳'
+                    }, {
+                        name: '拜仁慕尼黑'
+                    }, {
+                        name: '多特蒙德'
+                    }],
+                    links: [{
+                            source: '阿森纳',
+                            target: '默特萨克',
+                            weight: 0.9,
+                            name: '效力'
+                        }, {
+                            source: '阿森纳',
+                            target: '厄齐尔',
+                            weight: 0.9,
+                            name: '效力'
+                        }, {
+                            source: '阿森纳',
+                            target: '波多尔斯基',
+                            weight: 0.9,
+                            name: '效力'
+                        }, {
+                            source: '拜仁慕尼黑',
+                            target: '诺伊尔',
+                            weight: 0.9,
+                            name: '效力'
+                        }, {
+                            source: '拜仁慕尼黑',
+                            target: '博阿滕',
+                            weight: 0.9,
+                            name: '效力'
+                        }, {
+                            source: '拜仁慕尼黑',
+                            target: '施魏因施泰格',
+                            weight: 0.9,
+                            name: '效力'
+                        }, {
+                            source: '拜仁慕尼黑',
+                            target: '拉姆',
+                            weight: 0.9,
+                            name: '效力'
+                        }, {
+                            source: '拜仁慕尼黑',
+                            target: '克罗斯',
+                            weight: 0.9,
+                            name: '效力'
+                        }, {
+                            source: '拜仁慕尼黑',
+                            target: '穆勒',
+                            weight: 0.9,
+                            name: '效力'
+                        }, {
+                            source: '拜仁慕尼黑',
+                            target: '格策',
+                            weight: 0.9,
+                            name: '效力'
+                        }, {
+                            source: '多特蒙德',
+                            target: '胡梅尔斯',
+                            weight: 0.9,
+                            name: '效力'
+                        }, {
+                            source: '多特蒙德',
+                            target: '魏登费勒',
+                            weight: 0.9,
+                            name: '效力'
+                        }, {
+                            source: '多特蒙德',
+                            target: '杜尔姆',
+                            weight: 0.9,
+                            name: '效力'
+                        }, {
+                            source: '多特蒙德',
+                            target: '格罗斯克罗伊茨',
+                            weight: 0.9,
+                            name: '效力'
+                        },
+
+                        // Ribbon Type 的和弦图每一对节点之间必须是双向边
+                        {
+                            target: '阿森纳',
+                            source: '默特萨克',
+                            weight: 1
+                        }, {
+                            target: '阿森纳',
+                            source: '厄齐尔',
+                            weight: 1
+                        }, {
+                            target: '阿森纳',
+                            source: '波多尔斯基',
+                            weight: 1
+                        }, {
+                            target: '拜仁慕尼黑',
+                            source: '诺伊尔',
+                            weight: 1
+                        }, {
+                            target: '拜仁慕尼黑',
+                            source: '博阿滕',
+                            weight: 1
+                        }, {
+                            target: '拜仁慕尼黑',
+                            source: '施魏因施泰格',
+                            weight: 1
+                        }, {
+                            target: '拜仁慕尼黑',
+                            source: '拉姆',
+                            weight: 1
+                        }, {
+                            target: '拜仁慕尼黑',
+                            source: '克罗斯',
+                            weight: 1
+                        }, {
+                            target: '拜仁慕尼黑',
+                            source: '穆勒',
+                            weight: 1
+                        }, {
+                            target: '拜仁慕尼黑',
+                            source: '格策',
+                            weight: 1
+                        }, {
+                            target: '多特蒙德',
+                            source: '胡梅尔斯',
+                            weight: 1
+                        }, {
+                            target: '多特蒙德',
+                            source: '魏登费勒',
+                            weight: 1
+                        }, {
+                            target: '多特蒙德',
+                            source: '杜尔姆',
+                            weight: 1
+                        }, {
+                            target: '多特蒙德',
+                            source: '格罗斯克罗伊茨',
+                            weight: 1
+                        }
+                    ]
+                }]
+            };
+            mobility_chord.setOption(option);
+        });
+
+    var map3 = new BMap.Map("catermap"); // 创建地图实例
+    map3.centerAndZoom(new BMap.Point(121.44821, 31.033276), 15); // 初始化地图，设置中心点坐标和地图级别
+    map3.disableScrollWheelZoom();
+    map3.setMapStyle({
+        style: "hardedge"
+    });
 });
 </script>
