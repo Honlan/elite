@@ -2,6 +2,7 @@ body {
 	color: #eee;
 	font-family: Microsoft Yahei;
 	background-color: #1b1b1b;
+	overflow-y: hidden;
 }
 
 .container {
@@ -14,6 +15,7 @@ body {
 	padding: 50px 70px;
 	background: transparent;
 	text-align: center;
+	overflow-y: hidden;
 }
 .content:before {
 	position: fixed;
