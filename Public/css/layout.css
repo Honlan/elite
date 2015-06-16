@@ -2,23 +2,23 @@ body {
 	color: #eee;
 	font-family: Microsoft Yahei;
 	background-color: #1b1b1b;
-	overflow-y: hidden;
 }
 
 .container {
 	background: transparent;
 	margin: 0;
 	padding: 0;
-	overflow-y: hidden;
 }
 .content {
 	padding: 50px 70px;
 	background: transparent;
 	text-align: center;
-	overflow-y: hidden;
 }
 .content:before {
 	position: fixed;
+}
+.content-wrap {
+	overflow-y: hidden;	
 }
 
 .menu-wrap {
