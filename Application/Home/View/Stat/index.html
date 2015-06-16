@@ -5,3 +5,330 @@ $(document).ready(function() {
     $('#header-right span').text('个人顾问');
 });
 </script>
+<script src="__PUBLIC__/js/d3.v3.min.js"></script>
+<style>
+#stat #personal-info {
+    height: 243px;
+    background-color: #222;
+    text-align: left;
+    padding: 20px 30px;
+}
+
+#stat #personal-info .fa-male {
+    position: absolute;
+    font-size: 90px;
+    color: rgb(54, 114, 205);
+    right: 30px;
+    top: 51px;
+}
+
+#stat #personal-info .male {
+    color: rgb(54, 114, 205);
+    margin-right: 10px;
+}
+
+#stat #personal-info .female {
+    color: rgb(205, 54, 77);
+    margin-right: 10px;
+}
+
+#stat #personal-info .fa-female {
+    position: absolute;
+    font-size: 90px;
+    color: rgb(205, 54, 77);
+    right: 30px;
+    top: 51px;
+}
+
+#stat #summary-data {
+    margin-top: 15px;
+}
+
+#stat #summary-data #SJTU {
+    color: rgb(57, 168, 63);
+    margin-left: 10px;
+}
+
+#stat #summary-data ul {
+    list-style-type: none;
+}
+
+#stat #summary-data ul li {
+    position: relative;
+    margin-bottom: 5px;
+    left: -30px;
+    color: #999;
+}
+
+#stat #summary-data ul li .fa {
+    margin-right: 5px;
+}
+
+#stat #summary-data ul li .number {
+    margin-left: 5px;
+    margin-right: 5px;
+    font-size: 16px;
+}
+
+#stat #summary-data p:first-child {
+    font-size: 16px;
+}
+
+#stat #summary-data #since {
+    position: absolute;
+    right: 40px;
+    bottom: 10px;
+    font-size: 13px;
+}
+
+#stat #diligent-index {
+    height: 243px;
+    background-color: #222;
+}
+
+#stat #friends {
+    height: 243px;
+    background-color: #222;
+}
+
+#stat #friends .node {
+    stroke: #fff;
+    stroke-width: 1.5px;
+}
+
+#stat #friends .link {
+    stroke: #999;
+    stroke-opacity: .6;
+}
+
+#stat #friends #legend {
+    position: absolute;
+    right: 40px;
+    top: 50px;
+}
+
+#stat #friends #legend p {
+    color: #bbb;
+}
+
+#stat #friends #legend span {
+    margin-left: 10px;
+    border-radius: 5px;
+}
+
+#stat #friends #points {
+    position: absolute;
+    left: 0;
+}
+
+#stat #health-index {
+    height: 300px;
+    background-color: #222;
+}
+
+#stat #scores {
+    height: 300px;
+}
+
+#stat #sleep-index {
+    height: 300px;
+    background-color: #222;
+}
+
+#stat #bath-index {
+    height: 200px;
+    background-color: #222;
+}
+
+#stat #gini-index {
+    height: 200px;
+    background-color: #222;
+}
+</style>
+<div id="stat">
+    <div class="row" style="margin-bottom:30px;">
+        <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3">
+            <p class="plot-title">个人信息</p>
+            <div id="personal-info">
+                <p><span>学号：</span>1234567890</p>
+                <p><span>类别：</span>博士生</p>
+                <i class="fa fa-fw fa-male"></i>
+                <div id="summary-data">
+                    <p><span class="male">我</span>一共在<span id="SJTU">交大</span></p>
+                    <ul>
+                        <li><span class="fa fa-fw fa-heart-o"></span>吃了<span class="number" style="color:rgb(62, 203, 176);">699</span>顿饭</li>
+                        <li><span class="fa fa-fw fa-smile-o"></span>洗了<span class="number" style="color:rgb(203, 62, 185);">132</span>个澡</li>
+                        <li><span class="fa fa-fw fa-wifi"></span>连了<span class="number" style="color:rgb(203, 126, 62)">3221</span>次网</li>
+                    </ul>
+                    <p id="since"><i>Since <span id="entry-date">2014-09-01</span></i></p>
+                </div>
+            </div>
+        </div>
+        <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+            <p class="plot-title">勤奋系数</p>
+            <div id="diligent-index"></div>
+        </div>
+        <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3">
+            <p class="plot-title">我的朋友</p>
+            <div id="friends">
+                <div id="legend">
+                    <p>男本科<span style="background-color:#74e3ea">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p>
+                    <p>男硕士<span style="background-color:#abbcf2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p>
+                    <p>男博士<span style="background-color:#0011f2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p>
+                    <p>女本科<span style="background-color:#f97aef">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p>
+                    <p>女硕士<span style="background-color:#feb7a1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p>
+                    <p>女博士<span style="background-color:#f20000">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p>
+                </div>
+                <div id="points"></div>
+            </div>
+        </div>
+    </div>
+    <div class="row" style="margin-bottom:30px;">
+        <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
+            <p class="plot-title">餐饮系数</p>
+            <div id="health-index"></div>
+        </div>
+        <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
+            <div id="scores"></div>
+        </div>
+        <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
+            <p class="plot-title">睡眠系数</p>
+            <div id="sleep-index"></div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+            <p class="plot-title">清洁系数</p>
+            <div id="bath-index"></div>
+        </div>
+        <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+            <p class="plot-title">基尼系数</p>
+            <div id="gini-index"></div>
+        </div>
+    </div>
+</div>
+<script>
+$(document).ready(function() {
+    var width = 243,
+        height = 243;
+
+    // var color = d3.scale.category20();
+    var color = ['#74e3ea', '#abbcf2', '#0011f2', '#f97aef', '#feb7a1', '#f20000'];
+
+    var force = d3.layout.force()
+        .charge(-120)
+        .linkDistance(30)
+        .size([width, height]);
+
+    var svg = d3.select("#points").append("svg")
+        .attr("width", width)
+        .attr("height", height);
+
+    // d3.json("miserables.json", function(error, graph) {
+    d3.json(PUBLIC + "/link.json", function(error, graph) {
+        force
+            .nodes(graph.nodes)
+            .links(graph.links)
+            .start();
+
+        var link = svg.selectAll(".link")
+            .data(graph.links)
+            .enter().append("line")
+            .attr("class", "link")
+            .style("stroke-width", function(d) {
+                return Math.sqrt(d.value);
+            });
+
+        var node = svg.selectAll(".node")
+            .data(graph.nodes)
+            .enter().append("circle")
+            .attr("class", "node")
+            .attr("r", 6)
+            // .style("fill", function(d) { return color(d.group); })
+            .style("fill", function(d) {
+                return color[d.group - 1];
+            })
+            .call(force.drag);
+
+        node.append("title")
+            .text(function(d) {
+                return d.name;
+            });
+
+        force.on("tick", function() {
+            link.attr("x1", function(d) {
+                    return d.source.x;
+                })
+                .attr("y1", function(d) {
+                    return d.source.y;
+                })
+                .attr("x2", function(d) {
+                    return d.target.x;
+                })
+                .attr("y2", function(d) {
+                    return d.target.y;
+                });
+
+            node.attr("cx", function(d) {
+                    return d.x;
+                })
+                .attr("cy", function(d) {
+                    return d.y;
+                });
+        });
+    });
+
+    // 个人统计得分雷达图
+    require(
+        [
+            'echarts',
+            'echarts/chart/radar'
+        ],
+        function(ec) {
+            var scores = ec.init(document.getElementById('scores'), theme);
+            option = {
+                title: {
+                    show: false
+                },
+                tooltip: {
+                    trigger: 'axis'
+                },
+                legend: {
+                    show: false,
+                    data: ['个人得分']
+                },
+                polar: [{
+                    indicator: [{
+                        max: 100,
+                        text: '勤奋系数',
+                    }, {
+                        max: 100,
+                        text: '睡眠系数',
+                    }, {
+                        max: 100,
+                        text: '清洁系数',
+                    }, {
+                        max: 100,
+                        text: '基尼系数',
+                    }, {
+                        max: 100,
+                        text: '饮食系数',
+                    }],
+                    splitNumber: 5,
+                    // type: 'circle',
+                    scale: true,
+                }],
+                calculable: true,
+                series: [{
+                    name: '个人得分',
+                    type: 'radar',
+                    data: [{
+                        value: [68, 85, 73, 91, 88],
+                        name: '个人得分'
+                    }]
+                }]
+            };
+            scores.setOption(option);
+        });
+});
+</script>

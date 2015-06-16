@@ -8,7 +8,7 @@ $(document).ready(function() {
 <style>
 #affair #girl-tag {
     height: 300px;
-    width: 100%;
+    /*width: 100%;*/
     margin-top: 30px;
     margin-bottom: 50px;
 }
@@ -17,12 +17,13 @@ $(document).ready(function() {
     margin-top: 30px;
     margin-bottom: 50px;
     height: 300px;
-    width: 100%;
+    /*width: 100%;*/
 }
 
 #affair #tags #hot-tags {
     text-align: left;
     margin-bottom: 20px;
+    text-align: center;
 }
 
 #affair #tags #hot-tags p {
@@ -42,6 +43,9 @@ $(document).ready(function() {
 
 #affair #tags #tags-plot {
     height: 250px;
+    width: 90%;
+    margin-left: 5%;
+    margin-right: 5%;
     background-color: #222 !important;
 }
 
@@ -63,9 +67,6 @@ $(document).ready(function() {
         <div class="col-xs-6 col-sm-3 col-md-3 col-lg-3">
             <img src="__PUBLIC__/img/girl.png" id="girl-tag">
         </div>
-        <div class="col-xs-6 col-sm-3 col-md-3 col-lg-3">
-            <img src="__PUBLIC__/img/boy.png" id="boy-tag">
-        </div>
         <div id="tags" class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
             <div id="hot-tags">
                 <h4>热门标签</h4>
@@ -80,8 +81,11 @@ $(document).ready(function() {
                 <p>微信</p>
                 <p>微信</p>
             </div>
-            <p class="plot-title">热点关注走势</p>
+            <p class="plot-title" style="width:90%;margin-right:5%;margin-left:5%;">热点关注走势</p>
             <div id="tags-plot"></div>
+        </div>
+        <div class="col-xs-6 col-sm-3 col-md-3 col-lg-3">
+            <img src="__PUBLIC__/img/boy.png" id="boy-tag">
         </div>
     </div>
     <div class="row">
@@ -155,7 +159,7 @@ $(document).ready(function() {
             var undergraduate = ec.init(document.getElementById('undergraduate'), theme);
             option = {
                 title: {
-                   show: false
+                    show: false
                 },
                 tooltip: {
                     trigger: 'axis'
@@ -387,7 +391,7 @@ $(document).ready(function() {
             var master = ec.init(document.getElementById('master'), theme);
             option = {
                 title: {
-                   show: false
+                    show: false
                 },
                 tooltip: {
                     trigger: 'axis'
@@ -504,7 +508,7 @@ $(document).ready(function() {
             var scatter_plot = ec.init(document.getElementById('scatter-plot'), theme);
             option = {
                 title: {
-                   show: false
+                    show: false
                 },
                 tooltip: {
                     trigger: 'axis',
