@@ -8,6 +8,7 @@ body {
 	background: transparent;
 	margin: 0;
 	padding: 0;
+	overflow-y: hidden;
 }
 .content {
 	padding: 50px 70px;
