@@ -16,7 +16,7 @@ $(document).ready(function() {
 
 #stat #personal-info .fa-male {
     position: absolute;
-    font-size: 90px;
+    font-size: 100px;
     color: rgb(54, 114, 205);
     right: 30px;
     top: 51px;
@@ -83,7 +83,7 @@ $(document).ready(function() {
 
 #stat #diligent-index {
     height: 243px;
-    background-color: #222;
+    background-color: #222 !important;
 }
 
 #stat #friends {
@@ -121,9 +121,23 @@ $(document).ready(function() {
     left: 0;
 }
 
-#stat #health-index {
+#stat #cater-index {
     height: 300px;
-    background-color: #222;
+    background-color: #222 !important;
+}
+
+#stat #cater-stat {
+    position: absolute;
+    bottom: 10px;
+    right: 50px;
+}
+
+#stat #cater-stat p {
+    color: #ddd;
+}
+
+#stat #cater-stat span {
+    color: rgb(231, 58, 58);
 }
 
 #stat #scores {
@@ -136,18 +150,18 @@ $(document).ready(function() {
 }
 
 #stat #bath-index {
-    height: 200px;
+    height: 250px;
     background-color: #222;
 }
 
 #stat #gini-index {
-    height: 200px;
-    background-color: #222;
+    height: 250px;
+    background-color: #222 !important;
 }
 </style>
 <div id="stat">
     <div class="row" style="margin-bottom:30px;">
-        <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3">
+        <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
             <p class="plot-title">个人信息</p>
             <div id="personal-info">
                 <p><span>学号：</span>1234567890</p>
@@ -164,11 +178,12 @@ $(document).ready(function() {
                 </div>
             </div>
         </div>
-        <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+        <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
             <p class="plot-title">勤奋系数</p>
-            <div id="diligent-index"></div>
+            <div id="diligent-index">
+            </div>
         </div>
-        <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3">
+        <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
             <p class="plot-title">我的朋友</p>
             <div id="friends">
                 <div id="legend">
@@ -186,7 +201,11 @@ $(document).ready(function() {
     <div class="row" style="margin-bottom:30px;">
         <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
             <p class="plot-title">餐饮系数</p>
-            <div id="health-index"></div>
+            <div id="cater-index"></div>
+            <div id="cater-stat">
+                <p>食堂就餐次数：<span id="cater-stat1">678</span></p>
+                <p>外卖就餐次数：<span id="cater-stat2">235</span></p>
+            </div>
         </div>
         <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
             <div id="scores"></div>
@@ -211,20 +230,14 @@ $(document).ready(function() {
 $(document).ready(function() {
     var width = 243,
         height = 243;
-
-    // var color = d3.scale.category20();
     var color = ['#74e3ea', '#abbcf2', '#0011f2', '#f97aef', '#feb7a1', '#f20000'];
-
     var force = d3.layout.force()
         .charge(-120)
         .linkDistance(30)
         .size([width, height]);
-
     var svg = d3.select("#points").append("svg")
         .attr("width", width)
         .attr("height", height);
-
-    // d3.json("miserables.json", function(error, graph) {
     d3.json(PUBLIC + "/link.json", function(error, graph) {
         force
             .nodes(graph.nodes)
@@ -303,7 +316,7 @@ $(document).ready(function() {
                         text: '勤奋系数',
                     }, {
                         max: 100,
-                        text: '睡眠系数',
+                        text: '餐饮系数',
                     }, {
                         max: 100,
                         text: '清洁系数',
@@ -312,11 +325,12 @@ $(document).ready(function() {
                         text: '基尼系数',
                     }, {
                         max: 100,
-                        text: '饮食系数',
+                        text: '睡眠系数',
                     }],
                     splitNumber: 5,
                     // type: 'circle',
                     scale: true,
+                    radius: 80
                 }],
                 calculable: true,
                 series: [{
@@ -329,6 +343,260 @@ $(document).ready(function() {
                 }]
             };
             scores.setOption(option);
+        });
+
+    // 勤奋系数
+    require(
+        [
+            'echarts',
+            'echarts/chart/pie'
+        ],
+        function(ec) {
+            var diligent_index = ec.init(document.getElementById('diligent-index'), theme);
+            option = {
+                tooltip: {
+                    trigger: 'item',
+                    formatter: "{a} <br/>{b} : {c} ({d}%)"
+                },
+                legend: {
+                    data: ['网络信息中心', '东上院', '学生寝室', '图书馆', '其他'],
+                    x: 'center',
+                    y: 'bottom'
+                },
+                calculable: true,
+                series: [{
+                    name: '我在哪里',
+                    type: 'pie',
+                    radius: ['40%', '50%'],
+                    center: ['50%', '42%'],
+                    itemStyle: {
+                        normal: {
+                            label: {
+                                show: false
+                            },
+                            labelLine: {
+                                show: false
+                            }
+                        },
+                        emphasis: {
+                            label: {
+                                show: true,
+                                position: 'center',
+                                textStyle: {
+                                    fontSize: '14',
+                                    fontWeight: 'bold'
+                                }
+                            }
+                        }
+                    },
+                    data: [{
+                        value: 0.5,
+                        name: '网络信息中心'
+                    }, {
+                        value: 0.1,
+                        name: '东上院'
+                    }, {
+                        value: 0.1,
+                        name: '学生寝室'
+                    }, {
+                        value: 0.1,
+                        name: '图书馆'
+                    }, {
+                        value: 0.2,
+                        name: '其他'
+                    }]
+                }]
+            };
+            diligent_index.setOption(option);
+        });
+
+    // 餐饮系数
+    require(
+        [
+            'echarts',
+            'echarts/chart/gauge'
+        ],
+        function(ec) {
+            var cater_index = ec.init(document.getElementById('cater-index'));
+            option = {
+                tooltip: {
+                    formatter: "{a} <br/>{b} : {c}%"
+                },
+                series: [{
+                    name: '食堂就餐比',
+                    type: 'gauge',
+                    center: ['50%', '45%'],
+                    splitNumber: 10, // 分割段数，默认为5
+                    axisLine: { // 坐标轴线
+                        lineStyle: { // 属性lineStyle控制线条样式
+                            color: [
+                                [0.2, '#228b22'],
+                                [0.8, '#48b'],
+                                [1, '#ff4500']
+                            ],
+                            width: 8
+                        }
+                    },
+                    axisTick: { // 坐标轴小标记
+                        splitNumber: 10, // 每份split细分多少段
+                        length: 10, // 属性length控制线长
+                        lineStyle: { // 属性lineStyle控制线条样式
+                            color: 'auto'
+                        }
+                    },
+                    axisLabel: { // 坐标轴文本标签，详见axis.axisLabel
+                        textStyle: { // 其余属性默认使用全局文本样式，详见TEXTSTYLE
+                            color: 'auto'
+                        }
+                    },
+                    splitLine: { // 分隔线
+                        show: true, // 默认显示，属性show控制显示与否
+                        length: 20, // 属性length控制线长
+                        lineStyle: { // 属性lineStyle（详见lineStyle）控制线条样式
+                            color: 'auto'
+                        }
+                    },
+                    pointer: {
+                        width: 5
+                    },
+                    title: {
+                        show: true,
+                        x: 'center',
+                        y: 'bottom',
+                        textStyle: { // 其余属性默认使用全局文本样式，详见TEXTSTYLE
+                            fontWeight: 'bolder',
+                            fontSize: 16,
+                            color: '#eee'
+                        },
+                        offsetCenter: [0, '-10%'],
+                    },
+                    detail: {
+                        formatter: '{value}%',
+                        textStyle: { // 其余属性默认使用全局文本样式，详见TEXTSTYLE
+                            color: 'auto',
+                            fontWeight: 'bolder'
+                        },
+                    },
+                    data: [{
+                        value: 74.3,
+                        name: '食堂比例'
+                    }]
+                }]
+            };
+            cater_index.setOption(option);
+        });
+
+    // 清洁系数
+    require(
+        [
+            'echarts',
+            'echarts/chart/line'
+        ],
+        function(ec) {
+            var bath_index = ec.init(document.getElementById('bath-index'));
+            option = {
+                title: {
+                	show: false
+                },
+                tooltip: {
+                    trigger: 'item',
+                    formatter: function(params) {
+                        var date = new Date(params.value[0]);
+                        data = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate() + ' ' + date.getHours() + ':' + date.getMinutes();
+                        return data + '<br/>' + params.value[1] + ', ' + params.value[2];
+                    }
+                },
+               
+                dataZoom: {
+                    show: true,
+                    start: 70
+                },
+                legend: {
+                	show: false,
+                    data: []
+                },
+                xAxis: [{
+                    type: 'time',
+                    splitNumber: 10
+                }],
+                yAxis: [{
+                    type: 'value',
+                    // data: ['一餐', '二餐', '三餐']
+                }],
+                series: [{
+                    name: '洗浴记录',
+                    type: 'line',
+                    data: (function() {
+                        var d = [];
+                        var len = 0;
+                        var now = new Date();
+                        var value;
+                        while (len++ < 200) {
+                            d.push([
+                                new Date(2014, 9, 1, 0, len * 10000), (Math.random() * 30).toFixed(2) - 0
+                            ]);
+                        }
+                        console.log(d);
+                        return d;
+                    })()
+                }]
+            };
+
+            bath_index.setOption(option);
+        });
+
+    // 基尼系数
+    require(
+        [
+            'echarts',
+            'echarts/chart/pie'
+        ],
+        function(ec) {
+            var gini_index = ec.init(document.getElementById('gini-index'), theme);
+            option = {
+                title: {
+                    show: false
+                },
+                tooltip: {
+                    trigger: 'item',
+                    formatter: "{a} <br/>{b} : {c} ({d}%)"
+                },
+                legend: {
+                    orient: 'vertical',
+                    x: 'left',
+                    y: 'center',
+                    padding: [5, 5, 5, 30],
+                    data: ['餐饮', '水果', '咖啡', '活动', '超市']
+                },
+                calculable: true,
+                series: [{
+                    name: '消费分布',
+                    type: 'pie',
+                    radius: [10, 70],
+                    center: ['55%', '50%'],
+                    roseType: 'area',
+                    // width: '20%', // for funnel
+                    // max: 40, // for funnel
+
+                    data: [{
+                        value: 3281,
+                        name: '餐饮'
+                    }, {
+                        value: 239,
+                        name: '水果'
+                    }, {
+                        value: 89,
+                        name: '咖啡'
+                    }, {
+                        value: 39,
+                        name: '活动'
+                    }, {
+                        value: 490,
+                        name: '超市'
+                    }]
+                }]
+            };
+            gini_index.setOption(option);
         });
 });
 </script>
