@@ -149,22 +149,41 @@ $(document).ready(function() {
     height: 300px;
 }
 
+#stat #grade-predict {
+    position: absolute;
+    bottom: 0px;
+    width: 160px;
+    left: 50%;
+    margin-left: -80px;
+    font-size: 15px;
+}
+
+#stat #grade-predict span {
+    font-size: 30px;
+    color: red;
+    margin-left: 5px;
+    position: relative;
+    top: 2px;
+}
+
 #stat #sleep-index {
     height: 250px;
     background-color: #222 !important;
 }
+
 #stat #sleep-stat {
-	position: absolute;
-	right: 35px;
-	top: 110px;
-	text-align: left;
+    position: absolute;
+    right: 35px;
+    top: 110px;
+    text-align: left;
 }
+
 #stat #sleep-stat span {
-	color: rgb(90, 213, 111);
-	font-size: 15px;
-	margin-right: 3px;
-	position: relative;
-	top: 2px;
+    color: rgb(90, 213, 111);
+    font-size: 15px;
+    margin-right: 3px;
+    position: relative;
+    top: 2px;
 }
 
 #stat #bath-index {
@@ -188,6 +207,21 @@ $(document).ready(function() {
 }
 
 #stat #gini-index {
+    height: 250px;
+    background-color: #222 !important;
+}
+
+#stat #my-focus {
+    height: 250px;
+    background-color: #222 !important;
+}
+
+#stat #my-evaluation {
+    height: 250px;
+    background-color: #222 !important;
+}
+
+#stat #my-recommendation {
     height: 250px;
     background-color: #222 !important;
 }
@@ -242,6 +276,7 @@ $(document).ready(function() {
         </div>
         <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
             <div id="scores"></div>
+            <p id="grade-predict">成绩预测：<span>89</span></p>
         </div>
         <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
             <p class="plot-title">清洁系数</p>
@@ -255,14 +290,28 @@ $(document).ready(function() {
             <p class="plot-title">睡眠系数</p>
             <div id="sleep-index"></div>
             <div id="sleep-stat">
-            	<p>熬夜次数：<span id="sleep-stat1">124</span>次</p>
-            	<p>懒觉次数：<span id="sleep-stat2">67</span>次</p>
-            	<p>平均睡眠：<span id="sleep-stat3">7.4</span>小时</p>
+                <p>熬夜次数：<span id="sleep-stat1">124</span>次</p>
+                <p>懒觉次数：<span id="sleep-stat2">67</span>次</p>
+                <p>平均睡眠：<span id="sleep-stat3">7.4</span>小时</p>
             </div>
         </div>
         <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
             <p class="plot-title">基尼系数</p>
             <div id="gini-index"></div>
+        </div>
+    </div>
+    <div class="row" style="margin-top:30px;">
+        <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
+            <p class="plot-title">我的关注</p>
+            <div id="my-focus"></div>
+        </div>
+        <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
+            <p class="plot-title">个人评价</p>
+            <div id="my-evaluation"></div>
+        </div>
+        <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
+            <p class="plot-title">兴趣推荐</p>
+            <div id="my-recommendation"></div>
         </div>
     </div>
 </div>
@@ -598,10 +647,10 @@ $(document).ready(function() {
                     }
                 }],
                 grid: {
-                	y: 30,
-                	y2: 70,
-                	x: 60,
-                	x2: 150
+                    y: 30,
+                    y2: 70,
+                    x: 60,
+                    x2: 150
                 },
                 series: [{
                     name: '今日活跃',
@@ -669,6 +718,127 @@ $(document).ready(function() {
                 }]
             };
             gini_index.setOption(option);
+        });
+
+    // 我的关注
+    require(
+        [
+            'echarts',
+            'echarts/chart/wordCloud'
+        ],
+        function(ec) {
+            var my_focus = ec.init(document.getElementById('my-focus'));
+
+            function createRandomItemStyle() {
+                return {
+                    normal: {
+                        color: color[Math.floor(Math.random() * 6)]
+                    }
+                };
+            }
+
+            option = {
+                title: {
+                    show: false
+                },
+                tooltip: {
+                    show: true
+                },
+                series: [{
+                    name: '我的关注',
+                    type: 'wordCloud',
+                    size: ['80%', '80%'],
+                    textRotation: [0, 45, 90, -45],
+                    textPadding: 0,
+                    autoSize: {
+                        enable: true,
+                        minSize: 14
+                    },
+                    data: [{
+                        name: "Sam S Club",
+                        value: 10000,
+                        itemStyle: createRandomItemStyle()
+                    }, {
+                        name: "Macys",
+                        value: 6181,
+                        itemStyle: createRandomItemStyle()
+                    }, {
+                        name: "Amy Schumer",
+                        value: 4386,
+                        itemStyle: createRandomItemStyle()
+                    }, {
+                        name: "Jurassic World",
+                        value: 4055,
+                        itemStyle: createRandomItemStyle()
+                    }, {
+                        name: "Charter Communications",
+                        value: 2467,
+                        itemStyle: createRandomItemStyle()
+                    }, {
+                        name: "Chick Fil A",
+                        value: 2244,
+                        itemStyle: createRandomItemStyle()
+                    }, {
+                        name: "Planet Fitness",
+                        value: 1898,
+                        itemStyle: createRandomItemStyle()
+                    }, {
+                        name: "Pitch Perfect",
+                        value: 1484,
+                        itemStyle: createRandomItemStyle()
+                    }, {
+                        name: "Express",
+                        value: 1112,
+                        itemStyle: createRandomItemStyle()
+                    }, {
+                        name: "Home",
+                        value: 965,
+                        itemStyle: createRandomItemStyle()
+                    }, {
+                        name: "Johnny Depp",
+                        value: 847,
+                        itemStyle: createRandomItemStyle()
+                    }, {
+                        name: "Lena Dunham",
+                        value: 582,
+                        itemStyle: createRandomItemStyle()
+                    }, {
+                        name: "Lewis Hamilton",
+                        value: 555,
+                        itemStyle: createRandomItemStyle()
+                    }, {
+                        name: "KXAN",
+                        value: 550,
+                        itemStyle: createRandomItemStyle()
+                    }, {
+                        name: "Mary Ellen Mark",
+                        value: 462,
+                        itemStyle: createRandomItemStyle()
+                    }, {
+                        name: "Farrah Abraham",
+                        value: 366,
+                        itemStyle: createRandomItemStyle()
+                    }, {
+                        name: "Rita Ora",
+                        value: 360,
+                        itemStyle: createRandomItemStyle()
+                    }, {
+                        name: "Serena Williams",
+                        value: 282,
+                        itemStyle: createRandomItemStyle()
+                    }, {
+                        name: "NCAA baseball tournament",
+                        value: 273,
+                        itemStyle: createRandomItemStyle()
+                    }, {
+                        name: "Point Break",
+                        value: 265,
+                        itemStyle: createRandomItemStyle()
+                    }]
+                }]
+            };
+
+            my_focus.setOption(option);
         });
 });
 </script>
