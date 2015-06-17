@@ -9,6 +9,7 @@ $(document).ready(function() {
 #affair #girl-tag {
     height: 300px;
     /*width: 100%;*/
+    
     margin-top: 30px;
     margin-bottom: 50px;
 }
@@ -57,7 +58,11 @@ $(document).ready(function() {
 }
 
 #scatter-plot {
-    width: 100%;
+    height: 273px;
+    background-color: #222 !important;
+}
+
+#bath-distribution {
     height: 273px;
     background-color: #222 !important;
 }
@@ -102,8 +107,16 @@ $(document).ready(function() {
             <div id="doctor"></div>
         </div>
     </div>
-    <p class="plot-title" style="margin-top: 30px;">上课和就餐积极性分布</p>
-    <div id="scatter-plot"></div>
+    <div class="row" style="margin-top: 30px;">
+        <div class='col-xs-12 col-sm-6 col-md-6 col-lg-6'>
+            <p class="plot-title">生活积极性分布</p>
+            <div id="scatter-plot"></div>
+        </div>
+        <div class='col-xs-12 col-sm-6 col-md-6 col-lg-6'>
+            <p class="plot-title">浴室实时流量</p>
+            <div id="bath-distribution"></div>
+        </div>
+    </div>
 </div>
 <script>
 $(document).ready(function() {
@@ -812,15 +825,6 @@ $(document).ready(function() {
                         [174.0, 66.4],
                         [163.8, 67.3]
                     ],
-                    markPoint: {
-                        data: [{
-                            type: 'max',
-                            name: '最大值'
-                        }, {
-                            type: 'min',
-                            name: '最小值'
-                        }]
-                    },
                     markLine: {
                         data: [{
                             type: 'average',
@@ -1079,15 +1083,6 @@ $(document).ready(function() {
                         [180.3, 83.2],
                         [180.3, 83.2]
                     ],
-                    markPoint: {
-                        data: [{
-                            type: 'max',
-                            name: '最大值'
-                        }, {
-                            type: 'min',
-                            name: '最小值'
-                        }]
-                    },
                     markLine: {
                         data: [{
                             type: 'average',
@@ -1097,6 +1092,67 @@ $(document).ready(function() {
                 }]
             };
             scatter_plot.setOption(option);
+        });
+
+    // 澡堂实时流量
+    require(
+        [
+            'echarts',
+            'echarts/chart/line'
+        ],
+        function(ec) {
+            var bath_distribution = ec.init(document.getElementById('bath-distribution'), theme);
+            option = {
+                title: {
+                    show: false
+                },
+                tooltip: {
+                    trigger: 'axis'
+                },
+                legend: {
+                    data: ['东区学生浴室', '西区学生浴室', '北区学生浴室', '水控系统'],
+                    x: 'center',
+                    y: 'bottom',
+                    padding: [5, 5, 15, 5]
+                },
+                calculable: true,
+                xAxis: [{
+                    type: 'category',
+                    boundaryGap: false,
+                    data: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23']
+                }],
+                yAxis: [{
+                    type: 'value',
+                    axisLabel: {
+                        formatter: '{value}'
+                    }
+                }],
+                grid: {
+                    y: 30,
+                    y2: 70,
+                    x: 60,
+                    x2: 60
+                },
+                series: [{
+                    name: '西区学生浴室',
+                    type: 'line',
+                    data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 12, 23, 21, 14, 12, 0, 0, 7, 34, 45, 87, 123, 86, 0],
+                }, {
+                    name: '东区学生浴室',
+                    type: 'line',
+                    data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 15, 27, 17, 12, 19, 0, 0, 0, 24, 51, 86, 127, 110, 15],
+                }, {
+                    name: '北区学生浴室',
+                    type: 'line',
+                    data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 12, 23, 21, 14, 12, 0, 0, 7, 34, 45, 87, 123, 86, 0],
+                }, {
+                    name: '水控系统',
+                    type: 'line',
+                    data: [0, 0, 0, 0, 0, 0, 6, 23, 12, 56, 19, 23, 21, 14, 22, 0, 0, 5, 64, 89, 127, 178, 252, 145],
+                }]
+            };
+
+            bath_distribution.setOption(option);
         });
 
 });
