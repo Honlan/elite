@@ -57,17 +57,17 @@ $(document).ready(function() {
     padding: 0 20px;
 }
 
-#mobility #realtime-mobility #mobility-stat #top5,
-#mobility #realtime-mobility #mobility-stat #bottom5 {
+#mobility #realtime-mobility #mobility-stat #crowd_top5,
+#mobility #realtime-mobility #mobility-stat #consum_top5 {
     height: 173px;
     background-color: #222 !important;
 }
 
-#mobility #realtime-mobility #mobility-stat #top5 {
+#mobility #realtime-mobility #mobility-stat #crowd_top5 {
     margin-bottom: 27px;
 }
 
-#mobility #realtime-mobility #distribution {
+#mobility #realtime-mobility #sum_amount {
     width: 100%;
     height: 300px;
     background-color: #222 !important;
@@ -112,16 +112,16 @@ $(document).ready(function() {
                 <div id="allmap"></div>
             </div>
             <div id="mobility-stat" class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
-                <p class="plot-title">TOP 5</p>
-                <div id="top5">
+                <p class="plot-title">人群分布 TOP 5</p>
+                <div id="crowd_top5">
                 </div>
-                <p class="plot-title">LAST 5</p>
-                <div id="bottom5">
+                <p class="plot-title">人群消费 TOP 5</p>
+                <div id="consum_top5">
                 </div>
             </div>
         </div>
-        <p class="plot-title" style="margin-top: 40px;">人流分布</p>
-        <div id="distribution">
+        <p class="plot-title" style="margin-top: 40px;">实时消费总额</p>
+        <div id="sum_amount">
         </div>
     </div>
     <div id="mobility-trend">
@@ -165,21 +165,624 @@ $(document).ready(function() {
         }
     });
 
-    var map1 = new BMap.Map("allmap"); // 创建地图实例
-    map1.centerAndZoom(new BMap.Point(121.44821, 31.033276), 15); // 初始化地图，设置中心点坐标和地图级别
-    map1.disableScrollWheelZoom();
-    map1.setMapStyle({
-        style: "hardedge"
+    // 实时状态监测
+    require.config({
+        paths: {
+            echarts: PUBLIC + '/js/ECharts'
+        },
+        packages: [
+            {
+                name: 'BMap',
+                location: PUBLIC + '/js/BMap',
+                main: 'main'
+            }
+        ]
     });
+    require(
+        [
+            'echarts',
+            'BMap',
+            'echarts/chart/map'
+        ],
+        function (echarts, BMapExtension) {
 
-    // 人流密集top5
+            // 初始化地图
+            var BMapExt = new BMapExtension($('#allmap')[0], BMap, echarts);
+            var map = BMapExt.getMap();
+            // 上交
+            var container = BMapExt.getEchartsContainer();
+            var point = new BMap.Point(121.442869,31.032031); //SJTU经纬度
+            map.centerAndZoom(point, 17);             // 初始化地图，设置中心点坐标和地图级别
+            map.enableScrollWheelZoom(true);
+            // 显示交通流量的图层
+            // map.centerAndZoom(new BMap.Point(116.404, 39.915), 12); 
+            // var map = new BMap.Map("container");
+            // var ctrl = new BMapLib.TrafficControl({
+            //    showPanel: true //是否显示路况提示面板
+            // });      
+            // map.addControl(ctrl);
+            // ctrl.setAnchor(BMAP_ANCHOR_BOTTOM_RIGHT);
+
+            // 构造指定日期字符串,用于展示指定日期的当前时刻
+            function CurentTime()
+            { 
+                var now = new Date();
+               
+                var year = 2014;            //年
+                var month = 11;              //月
+                var day = 03;               //日
+               
+                var hh = now.getHours();            //时
+                var mm = now.getMinutes();          //分
+               
+                // IE兼容，要将"-"替换为"/""
+                // var clock = year + "-";
+                var clock = year + "/";
+               
+                if(month < 10)
+                    clock += "0";
+               
+                //clock += month + "-";
+                clock += month + "/";
+               
+                if(day < 10)
+                    clock += "0";
+                   
+                clock += day + " ";
+               
+                if(hh < 10)
+                    clock += "0";
+                   
+                clock += hh + ":";
+                if (mm < 10) clock += '0'; 
+                clock += mm; 
+                return(clock); 
+            }                
+            // 将获取的时间转化为距00:00:00起始时间的分钟数
+            function DeltaMinutes(){
+                // 指定日期的记录开始时刻，默认为 20130725 00:00:00
+                // IE浏览器支持的格式，要将"-"替换为"/""
+                var starttime = new Date("2014/11/03 05:00:00");
+                // 指定日期的当前时刻
+                var showtime = new Date(CurentTime());
+                // 计算分钟差
+                var delta = showtime.getTime() - starttime.getTime();
+                deltam = delta/(1000*60);
+                // return deltam;
+                return 750;
+            }        
+            // 非常重要的查询函数，返回两个值，df用于绘制MarkPoint图，df_heatmap用于绘制heatmap
+            function MySqlQuery(query,types){
+                //绘制MarkPoint
+                df = {};
+                //绘制MarkPoint
+                df_heatmap = [];
+                //请求数据
+                var xhr = new XMLHttpRequest();
+                //url = "http://localhost:1972/Service1.asmx/RealTimeMensaStatus?query="+query+"&types="+types;
+                //url = {:U('Index/mensa_status', array('query'=>query, 'type'=>types))};
+                url = "http://localhost:8088/elite/index.php/Home/Index/mensa_status/query/"+query+"/type/"+types;
+                xhr.open("GET", url, false);
+                xhr.send(null);
+                result = xhr.responseText;
+                result = JSON.parse(result);
+                //提取用于绘制MarkPoints的数据
+                for(var i in Object.keys(result))
+                {   
+                    //rlon = result.Table[i].lon + 0.001*Math.random()-0.0005;
+                    //rlat = result.Table[i].lat + 0.001*Math.random()-0.0005;
+                    rlon = parseFloat(result[i].lon) + 0.001*Math.random()-0.0005;
+                    rlat = parseFloat(result[i].lat) + 0.001*Math.random()-0.0005; 
+                    df[result[i].studentcode] = [rlon, rlat];
+                }
+                //提取用于绘制云图的数据
+                for(var i in Object.keys(result))
+                {
+                    temppoints = new Object();
+                    temppoints.lng = parseFloat(result[i].lon) + 0.001*Math.random()-0.0005;
+                    temppoints.lat = parseFloat(result[i].lat) + 0.001*Math.random()-0.0005;
+                    temppoints.count = 1;
+                    df_heatmap[i] = temppoints;
+                }
+
+                return {
+                    markpoint: df,
+                    heatmap: df_heatmap
+                };
+            }
+            // low speed, [0,15]
+            query1 = MySqlQuery(DeltaMinutes(),"undergraduat"); //DeltaMinutes()自动计算和05:00:00时刻的分钟差
+            var taxiCoord_1 = query1.markpoint;
+            var heatmap1 = query1.heatmap;
+            // midel speed, [15,30]
+            query2 = MySqlQuery(DeltaMinutes(),"master"); //DeltaMinutes()自动计算和00:00:00时刻的分钟差
+            var taxiCoord_2 = query2.markpoint;
+            var heatmap2 = query2.heatmap;
+            // high speed, [30,60]
+            query3 = MySqlQuery(DeltaMinutes(),"phd"); //DeltaMinutes()自动计算和00:00:00时刻的分钟差
+            var taxiCoord_3 = query3.markpoint;
+            var heatmap3 = query3.heatmap;
+            // 整理heatmap data
+            heatpoints_now = heatmap1.concat(heatmap2).concat(heatmap3);
+
+            // 显示heatmap
+            // 计算高峰热力图
+            function randomHeatPoint_high(num){
+                idx = 0;
+                heatpoints = [];
+                for (idx=0;idx<num;idx++){
+                    //console.log(idx);
+                    temppoints = new Object();
+                    //temppoints.lng = 121.564813 + (0.15*2)*(Math.random()-0.5); //随机数其实是在-0.15~+0.15区间的
+                    temppoints.lng = 121.564813 + (0.15*2)*(Math.random()-0.7); //随机数其实是在-0.15~+0.15区间的
+                    temppoints.lat = 29.866791 + (0.10*2)*(Math.random()-0.1);
+                    temppoints.count = Math.ceil(100*Math.random());
+                    heatpoints[idx] = temppoints;
+                }
+                return heatpoints;
+            }   
+            // 计算高峰热力图
+            function randomHeatPoint_smooth(num){
+                idx = 0;
+                heatpoints = [];
+                for (idx=0;idx<num;idx++){
+                    //console.log(idx);
+                    temppoints = new Object();
+                    //temppoints.lng = 121.564813 + (0.15*2)*(Math.random()-0.5); //随机数其实是在-0.15~+0.15区间的
+                    temppoints.lng = 121.564813 + (0.12*2)*(Math.random()-0.3); //随机数其实是在-0.15~+0.15区间的
+                    temppoints.lat = 29.866791 + (0.10*2)*(Math.random()-0.7);
+                    temppoints.count = Math.ceil(100*Math.random());
+                    heatpoints[idx] = temppoints;
+                }
+                return heatpoints;
+            }
+            // 获得高峰、平峰点数据
+            var points_now = heatpoints_now;
+            var points_high = randomHeatPoint_high(100);    
+            var points_smooth = randomHeatPoint_smooth(100);  
+
+            if(!isSupportCanvas()){
+                alert('热力图目前只支持有canvas支持的浏览器,您所使用的浏览器不能使用热力图功能~')
+            }
+            //详细的参数,可以查看heatmap.js的文档 https://github.com/pa7/heatmap.js/blob/master/README.md
+            //参数说明如下:
+            /* visible 热力图是否显示,默认为true
+             * opacity 热力的透明度,1-100
+             * radius 势力图的每个点的半径大小   
+             * gradient  {JSON} 热力图的渐变区间 . gradient如下所示
+             *  {
+                    .2:'rgb(0, 255, 255)',
+                    .5:'rgb(0, 110, 255)',
+                    .8:'rgb(100, 0, 255)'
+                }
+                其中 key 表示插值的位置, 0~1. 
+                    value 为颜色值. 
+             */
+
+            // 当前时刻heatmap参数调节
+            heatmapOverlay_now = new BMapLib.HeatmapOverlay({"radius":20});
+            map.addOverlay(heatmapOverlay_now);
+            heatmapOverlay_now.setDataSet({data:points_now,max:3});
+            // 高峰参数调节
+            heatmapOverlay_high = new BMapLib.HeatmapOverlay({"radius":10});
+            map.addOverlay(heatmapOverlay_high);
+            heatmapOverlay_high.setDataSet({data:points_high,max:3});
+            // 平峰参数调节
+            heatmapOverlay_smooth = new BMapLib.HeatmapOverlay({"radius":10});
+            map.addOverlay(heatmapOverlay_smooth);
+            heatmapOverlay_smooth.setDataSet({data:points_smooth,max:3});
+
+            //是否显示热力图
+            function openHeatmapNow(){
+                heatmapOverlay_now.show();
+            }        
+            function openHeatmapHigh(){
+                heatmapOverlay_high.show();
+            }
+            function openHeatmapSmooth(){
+                heatmapOverlay_smooth.show();
+            }
+            function closeHeatmap(){
+                heatmapOverlay_now.hide();
+                heatmapOverlay_high.hide();
+                heatmapOverlay_smooth.hide();
+            }
+            closeHeatmap();
+            function setGradient(){
+                /*格式如下所示:
+                {
+                    0:'rgb(102, 255, 0)',
+                    .5:'rgb(255, 170, 0)',
+                    1:'rgb(255, 0, 0)'
+                }*/
+                var gradient = {};
+                var colors = document.querySelectorAll("input[type='color']");
+                colors = [].slice.call(colors,0);
+                colors.forEach(function(ele){
+                    gradient[ele.getAttribute("data-key")] = ele.value; 
+                });
+                heatmapOverlay_now.setOptions({"gradient":gradient});
+                heatmapOverlay_high.setOptions({"gradient":gradient});
+                heatmapOverlay_smooth.setOptions({"gradient":gradient});
+            }
+            //判断浏览区是否支持canvas
+            function isSupportCanvas(){
+                var elem = document.createElement('canvas');
+                return !!(elem.getContext && elem.getContext('2d'));
+            }
+
+            // Set option
+            option = {
+                title : {
+                    text: '实时消费数据监测',
+                    x:'center',
+                    textStyle : {
+                        color: 'black'
+                    }
+                },
+                legend: {
+                    show:true,
+                    orient: 'vertical',
+                    x:'left',
+                    data:['本科生','研究生','博士生'],
+                    textStyle : {
+                        color: '#black'
+                    }
+                },
+                //series、legend的颜色根据这一设定取值
+                color:['red','blue','green'],
+                tooltip : {
+                    trigger: 'item'
+                },
+                toolbox: {
+                    show : false,
+                    orient : 'vertical',
+                    x: 'right',
+                    y: 'center',
+                    feature : {
+                        mark : {show: true},
+                        dataView : {show: true, readOnly: false},
+                        restore : {show: true},
+                        saveAsImage : {show: true}
+                    }
+                },
+                // dataRange: {
+                //     min : 0,
+                //     max : 100,
+                //     y: '60%',
+                //     calculable : true,
+                //     color: ['#ff3333', 'orange', 'yellow','lime','aqua']
+                // },
+                series : [
+                    {
+                        name:'本科生',
+                        type:'map',
+                        mapType: 'none',
+                        data:[],
+                        // 出租车OD数据
+                        geoCoord: taxiCoord_1,                    
+                        markPoint : {
+                            symbolSize: 4,
+                            // effect : {
+                            //     show: true,
+                            //     shadowBlur : 1
+                            // },
+                            itemStyle:{
+                                normal:{
+                                    label:{show:false}
+                                }
+                            },
+                            // data形式
+                            // data : [
+                                //     {name:'福州',value:95},
+                                //     {name:'太原',value:90},
+                                //     {name:'长春',value:80},
+                                //     {name:'重庆',value:70},
+                                //     {name:'西安',value:60},
+                                //     {name:'成都',value:50},
+                                //     {name:'常州',value:40},
+                                //     {name:'北京',value:30},
+                                //     {name:'北海',value:20},
+                                //     {name:'海口',value:10}
+                                // ]
+                            data : (function(){
+                                //console.log(taxiCoord_1);
+                                var data = [];
+                                var df = Object.keys(taxiCoord_1);
+                                //console.log(Object.keys(taxiCoord_1));
+                                var len = df.length;
+                                while(len--) {
+                                    data.push({
+                                        // name : placeList[len].name
+                                        name : df[len]
+                                        //geoCoord : placeList[len].geoCoord
+                                    })
+                                }
+                                return data;
+                            })()
+                        }
+                    },
+                    {
+                        name:'研究生',
+                        type:'map',
+                        mapType: 'none',
+                        data:[],
+                        // 出租车OD数据
+                        geoCoord: taxiCoord_2,
+                        markPoint : {
+                            symbolSize: 4,
+                            // effect : {
+                            //     show: true,
+                            //     shadowBlur : 1
+                            // },
+                            itemStyle:{
+                                normal:{
+                                    label:{show:false}
+                                }
+                            },
+                            data : (function(){
+                                var data = [];
+                                var df = Object.keys(taxiCoord_2);
+                                var len = df.length;
+                                while(len--) {
+                                    data.push({
+                                        // name : placeList[len].name
+                                        name : df[len]
+                                        //geoCoord : placeList[len].geoCoord
+                                    })
+                                }
+                                return data;
+                            })()
+                        }
+                    },
+                    {
+                        name:'博士生',
+                        type:'map',
+                        mapType: 'none',
+                        data:[],
+                        // 出租车OD数据
+                        geoCoord: taxiCoord_3,
+                        markPoint : {
+                            symbolSize: 4,
+                            // effect : {
+                            //     show: true,
+                            //     shadowBlur : 1
+                            // },
+                            itemStyle:{
+                                normal:{
+                                    label:{show:false}
+                                }
+                            },
+                            data : (function(){
+                                var data = [];
+                                var df = Object.keys(taxiCoord_3);
+                                var len = df.length;
+                                while(len--) {
+                                    data.push({
+                                        // name : placeList[len].name
+                                        name : df[len]
+                                        //geoCoord : placeList[len].geoCoord
+                                    })
+                                }
+                                return data;
+                            })()
+                        }
+                    }
+                ]
+            };//var option
+            
+            var myChart = BMapExt.initECharts(container);
+            //window.onresize = myChart.resize;
+            //BMapExt.setOption(option, true)
+            BMapExt.setOption(option)
+            
+            var timeIndex = DeltaMinutes()+1;
+            timeTicket = setInterval(function() {  
+                //每一次更新都要载入数据
+                // low speed, [0,15]
+                query_dynamic1 = MySqlQuery(timeIndex,"undergraduat"); //DeltaMinutes()自动计算和00:00:00时刻的分钟差
+                var taxiCoord_dynamic1 = query_dynamic1.markpoint;
+                heatmap_dynamic1 = query_dynamic1.heatmap;
+                // midel speed, [15,30]
+                query_dynamic2 = MySqlQuery(timeIndex,"master"); //DeltaMinutes()自动计算和00:00:00时刻的分钟差
+                var taxiCoord_dynamic2 = query_dynamic2.markpoint;
+                heatmap_dynamic2 = query_dynamic2.heatmap;
+                // high speed, [30,60]
+                query_dynamic3 = MySqlQuery(timeIndex,"phd"); //DeltaMinutes()自动计算和00:00:00时刻的分钟差
+                var taxiCoord_dynamic3 = query_dynamic3.markpoint;
+                heatmap_dynamic3 = query_dynamic3.heatmap;
+                heatmap_dynamic_now = heatmap_dynamic1.concat(heatmap_dynamic2).concat(heatmap_dynamic3);
+
+                //option_dynamic
+                option_dynamic = {
+                            title : {
+                                text: '实时消费监测',
+                                x:'center',
+                                textStyle : {
+                                    color: 'black'
+                                }
+                            },
+                            legend: {
+                                show:true,
+                                orient: 'vertical',
+                                x:'left',
+                                data:['本科生','研究生','博士生'],
+                                textStyle : {
+                                    color: '#black'
+                                }
+                            },
+                            //series、legend的颜色根据这一设定取值
+                            color:['red','blue','green'],
+                            tooltip : {
+                                trigger: 'item'
+                            },
+                            toolbox: {
+                                show : false,
+                                orient : 'vertical',
+                                x: 'right',
+                                y: 'center',
+                                feature : {
+                                    mark : {show: true},
+                                    dataView : {show: true, readOnly: false},
+                                    restore : {show: true},
+                                    saveAsImage : {show: true}
+                                }
+                            },
+                            // dataRange: {
+                            //     min : 0,
+                            //     max : 100,
+                            //     y: '60%',
+                            //     calculable : true,
+                            //     color: ['#ff3333', 'orange', 'yellow','lime','aqua']
+                            // },
+                            series : [
+                                {
+                                    name:'本科生',
+                                    type:'map',
+                                    mapType: 'none',
+                                    data:[],
+                                    // 出租车OD数据
+                                    geoCoord: taxiCoord_dynamic1,                    
+                                    markPoint : {
+                                        symbolSize: 4,
+                                        // effect : {
+                                        //     show: true,
+                                        //     shadowBlur : 1
+                                        // },
+                                        itemStyle:{
+                                            normal:{
+                                                label:{show:false}
+                                            }
+                                        },
+                                        // data形式
+                                        // data : [
+                                            //     {name:'福州',value:95},
+                                            //     {name:'太原',value:90},
+                                            //     {name:'长春',value:80},
+                                            //     {name:'重庆',value:70},
+                                            //     {name:'西安',value:60},
+                                            //     {name:'成都',value:50},
+                                            //     {name:'常州',value:40},
+                                            //     {name:'北京',value:30},
+                                            //     {name:'北海',value:20},
+                                            //     {name:'海口',value:10}
+                                            // ]
+                                        data : (function(){
+                                            //console.log(taxiCoord_1);
+                                            var data = [];
+                                            var df = Object.keys(taxiCoord_dynamic1);
+                                            //console.log(Object.keys(taxiCoord_1));
+                                            var len = df.length;
+                                            while(len--) {
+                                                data.push({
+                                                    // name : placeList[len].name
+                                                    name : df[len]
+                                                    //geoCoord : placeList[len].geoCoord
+                                                })
+                                            }
+                                            return data;
+                                        })()
+                                    }
+                                },
+                                {
+                                    name:'研究生',
+                                    type:'map',
+                                    mapType: 'none',
+                                    data:[],
+                                    // 出租车OD数据
+                                    geoCoord: taxiCoord_dynamic2,
+                                    markPoint : {
+                                        symbolSize: 4,
+                                        // effect : {
+                                        //     show: true,
+                                        //     shadowBlur : 1
+                                        // },
+                                        itemStyle:{
+                                            normal:{
+                                                label:{show:false}
+                                            }
+                                        },
+                                        data : (function(){
+                                            var data = [];
+                                            var df = Object.keys(taxiCoord_dynamic2);
+                                            var len = df.length;
+                                            while(len--) {
+                                                data.push({
+                                                    // name : placeList[len].name
+                                                    name : df[len]
+                                                    //geoCoord : placeList[len].geoCoord
+                                                })
+                                            }
+                                            return data;
+                                        })()
+                                    }
+                                },
+                                {
+                                    name:'博士生',
+                                    type:'map',
+                                    mapType: 'none',
+                                    data:[],
+                                    // 出租车OD数据
+                                    geoCoord: taxiCoord_dynamic3,
+                                    markPoint : {
+                                        symbolSize: 4,
+                                        // effect : {
+                                        //     show: true,
+                                        //     shadowBlur : 1
+                                        // },
+                                        itemStyle:{
+                                            normal:{
+                                                label:{show:false}
+                                            }
+                                        },
+                                        data : (function(){
+                                            var data = [];
+                                            var df = Object.keys(taxiCoord_dynamic3);
+                                            var len = df.length;
+                                            while(len--) {
+                                                data.push({
+                                                    // name : placeList[len].name
+                                                    name : df[len]
+                                                    //geoCoord : placeList[len].geoCoord
+                                                })
+                                            }
+                                            return data;
+                                        })()
+                                    }
+                                }
+                            ]
+                };//var option_dynamic 
+
+                // 设定loading界面
+                var myChart = BMapExt.initECharts(container);            
+                myChart.showLoading({
+                  text : 'loading...',
+                  effect : 'whirling',
+                  textStyle : {
+                      fontSize : 20
+                  }
+                });
+                loadingTicket = setTimeout(function (){
+                  myChart.hideLoading();
+                  myChart.setOption(option_dynamic);
+                },2000);              
+                // 更新地图
+                BMapExt.setOption(option_dynamic);
+                // 更新时间索引
+                timeIndex = timeIndex+1
+                console.log(timeIndex);
+            }, 60000);
+        }//function (echarts, BMapExtension) 
+    );//require
+
+    // 人群密集top5
     require(
         [
             'echarts',
             'echarts/chart/pie' // 使用柱状图就加载bar模块，按需加载
         ],
         function(ec) {
-            var top5 = ec.init(document.getElementById('top5'), theme);
+            var top5 = ec.init(document.getElementById('crowd_top5'), theme);
             option = {
                 title: {
                     show: false
@@ -217,1674 +820,934 @@ $(document).ready(function() {
                 }]
             };
             top5.setOption(option);
-        });
+        }
+    );//require
 
-    // 人流密集bottom5
+    // 人群消费top5
     require(
         [
             'echarts',
-            'echarts/chart/pie' // 使用柱状图就加载bar模块，按需加载
+            'echarts/chart/bar',
+            'echarts/chart/line'
         ],
-        function(ec) {
-            var bottom5 = ec.init(document.getElementById('bottom5'), theme);
-            option = {
-                title: {
-                    show: false
-                },
-                tooltip: {
-                    trigger: 'item',
-                    formatter: "{a} <br/>{b} : {c} ({d}%)"
-                },
-                legend: {
-                    show: false,
-                    data: ['学生活动中心', '第三餐饮', '铁生馆', '光彪楼', '西区寝室'],
-                },
-                calculable: true,
-                series: [{
-                    name: '人流量',
-                    type: 'pie',
-                    radius: '55%',
-                    center: ['50%', '50%'],
-                    data: [{
-                        value: 35,
-                        name: '学生活动中心'
-                    }, {
-                        value: 89,
-                        name: '第三餐饮'
-                    }, {
-                        value: 25,
-                        name: '铁生馆'
-                    }, {
-                        value: 12,
-                        name: '光彪楼'
-                    }, {
-                        value: 154,
-                        name: '西区寝室'
-                    }]
-                }],
-                textStyle: {
-                    color: "#fff"
+        function (echarts) {
+            // 基于准备好的dom，初始化echarts图表
+            var myChart = echarts.init(document.getElementById('consum_top5'), theme);
+            
+            // 构造指定日期字符串,用于展示指定日期的当前时刻
+            function CurentTime()
+            { 
+                var now = new Date();
+               
+                var year = 2014;            //年
+                var month = 11;              //月
+                var day = 03;               //日
+               
+                var hh = now.getHours();            //时
+                var mm = now.getMinutes();          //分
+               
+                // IE兼容，要将"-"替换为"/""
+                // var clock = year + "-";
+                var clock = year + "/";
+               
+                if(month < 10)
+                    clock += "0";
+               
+                //clock += month + "-";
+                clock += month + "/";
+               
+                if(day < 10)
+                    clock += "0";
+                   
+                clock += day + " ";
+               
+                if(hh < 10)
+                    clock += "0";
+                   
+                clock += hh + ":";
+                if (mm < 10) clock += '0'; 
+                clock += mm; 
+                return(clock); 
+            }                
+            // 将获取的时间转化为距00:00:00起始时间的分钟数
+            function DeltaMinutes(){
+                // 指定日期的记录开始时刻，默认为 20130725 00:00:00
+                // IE浏览器支持的格式，要将"-"替换为"/""
+                var starttime = new Date("2014/11/03 05:00:00");
+                // 指定日期的当前时刻
+                var showtime = new Date(CurentTime());
+                // 计算分钟差
+                var delta = showtime.getTime() - starttime.getTime();
+                deltam = delta/(1000*60);
+                // return deltam;
+                return 750;
+            }        
+            // 非常重要的查询函数，返回两个值，df用于绘制MarkPoint图，df_heatmap用于绘制heatmap
+            function MensaAmount(query, topn){
+                //绘制MarkPoint
+                df = {};
+                df_name = [];
+                //请求数据
+                var xhr = new XMLHttpRequest();
+                //url = "http://localhost:1972/Service1.asmx/MensaAmount?query="+query;
+                url = "http://localhost:8088/elite/index.php/Home/Index/mensa_amount/query/"+query;
+                xhr.open("GET", url, false);
+                xhr.send(null);
+                result = xhr.responseText;
+                result = JSON.parse(result);
+                //提取用于绘制Amount的数据
+                i=0;
+                while(i < topn){
+                    df[result[i].toacount] = result[i].sales/100;
+                    df_name.push(result[i].mname);
+                    i = i+1;
                 }
-            };
-            bottom5.setOption(option);
-        });
 
-    // 人流分布
-    require(
-        [
-            'echarts',
-            'echarts/chart/bar' // 使用柱状图就加载bar模块，按需加载
-        ],
-        function(ec) {
-            var distribution = ec.init(document.getElementById('distribution'), theme);
+                return {
+                    mensa_amount: df,
+                    mensa_name: df_name
+                };
+            }
+            // data topn 5
+            mensa_amount = MensaAmount(DeltaMinutes(), 5).mensa_amount;
+            mensa_name = MensaAmount(DeltaMinutes(), 5).mensa_name;
+            // Echart Option
             option = {
-                title: {
-                    show: false
+                title : {
+                    show : false,
+                    text: '人群累积消费 top 5',
+                    subtext: '一日数据',
+                    x: 'center'
                 },
-                tooltip: {
-                    trigger: 'shadow'
+                tooltip : {
+                    trigger: 'axis'
                 },
                 legend: {
-                    show: false,
-                    data: ['人流量']
+                    x: 'left',
+                    orient: 'vertical',         
+                    selectedMode:true,
+                    data:['总价']
                 },
-                calculable: true,
-                xAxis: [{
-                    type: 'category',
-                    data: ['学生活动中心', '第三餐饮', '铁生馆', '光彪楼', '西区寝室', '东上院', '图书馆', '东中院', '东下院', '陈瑞球楼'],
-                    axisLabel: {
-                        margin: 12,
+                toolbox: {
+                    x: 'right',
+                    orient: 'vertical',                         
+                    show : true,
+                    feature : {
+                        mark : {show: true},
+                        dataView : {show: true, readOnly: false},
+                        restore : {show: true},
+                        saveAsImage : {show: true}
                     }
-                }],
-                yAxis: [{
-                    type: 'value',
-                    axisLabel: {
-                        margin: 12,
+                },
+                calculable : true,
+                xAxis : [
+                    {
+                        type : 'category',
+                        data : mensa_name
                     }
-                }],
-                series: [{
-                    name: '人流量',
-                    type: 'bar',
-                    data: [35, 89, 25, 12, 154, 225, 315, 410, 204, 125],
-                    itemStyle: {
-                        normal: {
-                            color: '#4ea5ff'
+                ],
+                yAxis : [
+                    {
+                        type : 'value',
+                        name : '消费总量（单位：元）',
+                        boundaryGap: [0, 0.1]
+                    }
+                ],
+                series : [
+                    {
+                        name:'总价',
+                        type:'bar',
+                        stack: 'sum',
+                        barCategoryGap: '50%',
+                        itemStyle: {
+                            normal: {
+                                color: 'tomato',
+                                barBorderColor: 'tomato',
+                                barBorderWidth: 6,
+                                barBorderRadius:0,
+                                label : {
+                                    show: true, position: 'insideTop'
+                                }
+                            }
+                        },
+                       data:[mensa_amount[Object.keys(mensa_amount)[0]], mensa_amount[Object.keys(mensa_amount)[1]], mensa_amount[Object.keys(mensa_amount)[2]], mensa_amount[Object.keys(mensa_amount)[3]], mensa_amount[Object.keys(mensa_amount)[4]]]
+                    }
+                ]
+            };
+                        
+            // 为echarts对象加载数据 
+            myChart.setOption(option); 
+            // 动态数据
+            var timeIndex = DeltaMinutes()+1;
+            timeTicket = setInterval(function() {  
+                //每一次更新都要载入数据
+                // data topn 5
+                mensa_amount_dynamic = MensaAmount(timeIndex, 5).mensa_amount;
+                mensa_name_dynamic = MensaAmount(timeIndex, 5).mensa_name;
+                // Echart Option
+                option_mensa_dynamic = {
+                    title : {
+                        show : false,
+                        text: '人群累积消费 top 5',
+                        subtext: '一日数据',
+                        x: 'center'
+                    },
+                    tooltip : {
+                        trigger: 'axis'
+                    },
+                    legend: {
+                        x: 'left',
+                        orient: 'vertical',         
+                        selectedMode:true,
+                        data:['总价']
+                    },
+                    toolbox: {
+                        x: 'right',
+                        orient: 'vertical',                         
+                        show : true,
+                        feature : {
+                            mark : {show: true},
+                            dataView : {show: true, readOnly: false},
+                            restore : {show: true},
+                            saveAsImage : {show: true}
                         }
                     },
-                    markPoint: {
-                        data: [{
-                            type: 'max',
-                            name: '最大值'
-                        }, {
-                            type: 'min',
-                            name: '最小值'
-                        }]
-                    },
-                    markLine: {
-                        data: [{
-                            type: 'average',
-                            name: '平均值'
-                        }]
-                    }
-                }]
-            };
-            distribution.setOption(option);
-        });
+                    calculable : true,
+                    xAxis : [
+                        {
+                            type : 'category',
+                            data : mensa_name_dynamic
+                        }
+                    ],
+                    yAxis : [
+                        {
+                            type : 'value',
+                            name : '消费总量（单位：元）',
+                            boundaryGap: [0, 0.1]
+                        }
+                    ],
+                    series : [
+                        {
+                            name:'总价',
+                            type:'bar',
+                            stack: 'sum',
+                            barCategoryGap: '50%',
+                            itemStyle: {
+                                normal: {
+                                    color: 'tomato',
+                                    barBorderColor: 'tomato',
+                                    barBorderWidth: 6,
+                                    barBorderRadius:0,
+                                    label : {
+                                        show: true, position: 'insideTop'
+                                    }
+                                }
+                            },
+                            data:[mensa_amount_dynamic[Object.keys(mensa_amount_dynamic)[0]], mensa_amount_dynamic[Object.keys(mensa_amount_dynamic)[1]], mensa_amount_dynamic[Object.keys(mensa_amount_dynamic)[2]], mensa_amount_dynamic[Object.keys(mensa_amount_dynamic)[3]], mensa_amount_dynamic[Object.keys(mensa_amount_dynamic)[4]]]
+                        }
+                    ]
+                };//var option_mensa_dynamic 
 
-    // 人流迁徙图
+                // 设定loading界面
+                myChart.showLoading({
+                  text : 'loading...',
+                  effect : 'whirling',
+                  textStyle : {
+                      fontSize : 20
+                  }
+                });
+                loadingTicket = setTimeout(function (){
+                  myChart.hideLoading();
+                  myChart.setOption(option_mensa_dynamic);
+                },1000);              
+                // 更新地图
+                myChart.setOption(option_mensa_dynamic); 
+                // 更新时间索引
+                timeIndex = timeIndex+1
+            }, 60000);               
+        }//function (echarts) 
+    );//require
+
+    // 消费总额
+    require(
+        [
+            'echarts',
+            'echarts/chart/bar',
+            'echarts/chart/line'
+        ],
+        function (echarts) {
+            // 基于准备好的dom，初始化echarts图表
+            var myChart = echarts.init(document.getElementById('sum_amount'), theme);
+            
+            // 构造指定日期字符串,用于展示指定日期的当前时刻
+            function CurentTime()
+            { 
+                var now = new Date();
+               
+                var year = 2014;            //年
+                var month = 11;              //月
+                var day = 03;               //日
+               
+                var hh = now.getHours();            //时
+                var mm = now.getMinutes();          //分
+               
+                // IE兼容，要将"-"替换为"/""
+                // var clock = year + "-";
+                var clock = year + "/";
+               
+                if(month < 10)
+                    clock += "0";
+               
+                //clock += month + "-";
+                clock += month + "/";
+               
+                if(day < 10)
+                    clock += "0";
+                   
+                clock += day + " ";
+               
+                if(hh < 10)
+                    clock += "0";
+                   
+                clock += hh + ":";
+                if (mm < 10) clock += '0'; 
+                clock += mm; 
+                return(clock); 
+            }                
+            // 将获取的时间转化为距00:00:00起始时间的分钟数
+            function DeltaMinutes(){
+                // 指定日期的记录开始时刻，默认为 20130725 00:00:00
+                // IE浏览器支持的格式，要将"-"替换为"/""
+                var starttime = new Date("2014/11/03 05:00:00");
+                // 指定日期的当前时刻
+                var showtime = new Date(CurentTime());
+                // 计算分钟差
+                var delta = showtime.getTime() - starttime.getTime();
+                deltam = delta/(1000*60);
+                // return deltam;
+                return 750;
+            }        
+            // 非常重要的查询函数，返回当前时刻的累积消费金额(单位:元)
+            function SumAmount(query){
+                //绘制MarkPoint
+                df = {};
+                //请求数据
+                var xhr = new XMLHttpRequest();
+                url = "http://localhost:8088/elite/index.php/Home/Index/sum_amount/query/"+query;
+                xhr.open("GET", url, false);
+                xhr.send(null);
+                result = xhr.responseText;
+                result = JSON.parse(result);
+                //提取用于绘制Amount的数据
+                var sum = 0;
+                for(var i in Object.keys(result))
+                {   
+                    var temp = parseInt(result[i].amount);
+                    sum = sum + temp;
+                }
+                return {
+                    amount: sum/100,
+                };
+            }
+            // Init
+            data_10min = SumAmount(DeltaMinutes()-10).amount;
+            data_9min = SumAmount(DeltaMinutes()-9).amount;
+            data_8min = SumAmount(DeltaMinutes()-8).amount;
+            data_7min = SumAmount(DeltaMinutes()-7).amount;
+            data_6min = SumAmount(DeltaMinutes()-6).amount;
+            data_5min = SumAmount(DeltaMinutes()-5).amount;
+            data_4min = SumAmount(DeltaMinutes()-4).amount;
+            data_3min = SumAmount(DeltaMinutes()-3).amount;
+            data_2min = SumAmount(DeltaMinutes()-2).amount;
+            data_1min = SumAmount(DeltaMinutes()-1).amount;
+            // Echart Option
+            option = {
+                title : {
+                    show: true,
+                    x:'center',
+                    text: '校园卡消费交易总量'
+                },
+                tooltip : {
+                    trigger: 'axis'
+                },
+                toolbox: {
+                    x: 'right',
+                    orient: 'vertical',                    
+                    show : true,
+                    feature : {
+                        mark : {show: true},
+                        dataView : {show: true, readOnly: false},
+                        magicType : {show: true, type: ['line', 'bar']},
+                        restore : {show: true},
+                        saveAsImage : {show: true}
+                    }
+                },
+                dataZoom : {
+                    show : true,
+                    start : 20,
+                    end : 80
+                },
+                xAxis : [
+                    {
+                        type : 'category',
+                        boundaryGap : true,
+                        data : (function (){
+                            var now = new Date();
+                            var res = [];
+                            var len = 10;
+                            while (len--) {
+                                res.unshift(now.toLocaleTimeString().replace(/^\D*/,''));
+                                now = new Date(now - 30000);
+                            }
+                            return res;
+                        })()
+                    }
+                ],
+                yAxis : [
+                    {
+                        type : 'value',
+                        scale: true,
+                        name : '消费总量（单位：元）',
+                        boundaryGap: [0.1, 0.1]
+                    }
+                ],
+                series : [
+                    {
+                        name:'消费总量',
+                        type:'line',
+                        data:[data_10min,data_9min,data_8min,data_7min,data_6min,data_5min,data_4min,data_3min,data_2min,data_1min]
+                    }
+                ]
+            };
+            // 为echarts对象加载数据 
+            myChart.setOption(option); 
+            var axisData;
+            timeTicket = setInterval(function (){
+                axisData = (new Date()).toLocaleTimeString().replace(/^\D*/,'');
+                // 动态数据接口 addData
+                myChart.addData([
+                    [
+                        0,        // 系列索引
+                        SumAmount(DeltaMinutes()).amount, // 新增数据
+                        false,    // 新增数据是否从队列头部插入
+                        false,    // 是否增加队列长度，false则自定删除原有数据，队头插入删队尾，队尾插入删队头
+                        axisData  // 坐标轴标签
+                    ]
+                ]);
+            }, 60000);
+        }//function (echarts) 
+    );//require
+    
     require(
         [
             'echarts',
             'BMap',
-            'echarts/chart/map'
+            'echarts/chart/map',
+            'echarts/chart/chord'
         ],
-        function(echarts, BMapExtension) {
+        function (echarts, BMapExtension) {
+            // $('#main').css({
+            //     height:$('body').height(),
+            //     width: $('body').width()
+            // });
+
             // 初始化地图
             var BMapExt = new BMapExtension($('#mobilitymap')[0], BMap, echarts);
-            var map2 = BMapExt.getMap();
+            var map = BMapExt.getMap();
             var container = BMapExt.getEchartsContainer();
-            var point = new BMap.Point(121.442869, 31.032031); //SJTU经纬度
-            map2.centerAndZoom(point, 5); // 初始化地图，设置中心点坐标和地图级别
-            map2.disableScrollWheelZoom(false);
-            map2.setMapStyle({
-                style: "hardedge"
-            });
-
+            var point = new BMap.Point(121.442869,31.032031); //SJTU经纬度
+            map.centerAndZoom(point, 17);             // 初始化地图，设置中心点坐标和地图级别
+            map.enableScrollWheelZoom(true);
+            // 百度地图自定义样式范例
+            // map.setMapStyle({
+            //     styleJson: [
+            //           {
+            //                "featureType": "water",
+            //                "elementType": "all",
+            //                "stylers": {
+            //                     "color": "#044161"
+            //                }
+            //           },
+            //           {
+            //                "featureType": "land",
+            //                "elementType": "all",
+            //                "stylers": {
+            //                     "color": "#004981"
+            //                }
+            //           },
+            //           {
+            //                "featureType": "boundary",
+            //                "elementType": "geometry",
+            //                "stylers": {
+            //                     "color": "#064f85"
+            //                }
+            //           },
+            //           {
+            //                "featureType": "railway",
+            //                "elementType": "all",
+            //                "stylers": {
+            //                     "visibility": "off"
+            //                }
+            //           },
+            //           {
+            //                "featureType": "highway",
+            //                "elementType": "geometry",
+            //                "stylers": {
+            //                     "color": "#004981"
+            //                }
+            //           },
+            //           {
+            //                "featureType": "highway",
+            //                "elementType": "geometry.fill",
+            //                "stylers": {
+            //                     "color": "#005b96",
+            //                     "lightness": 1
+            //                }
+            //           },
+            //           {
+            //                "featureType": "highway",
+            //                "elementType": "labels",
+            //                "stylers": {
+            //                     "visibility": "off"
+            //                }
+            //           },
+            //           {
+            //                "featureType": "arterial",
+            //                "elementType": "geometry",
+            //                "stylers": {
+            //                     "color": "#004981"
+            //                }
+            //           },
+            //           {
+            //                "featureType": "arterial",
+            //                "elementType": "geometry.fill",
+            //                "stylers": {
+            //                     "color": "#00508b"
+            //                }
+            //           },
+            //           {
+            //                "featureType": "poi",
+            //                "elementType": "all",
+            //                "stylers": {
+            //                     "visibility": "off"
+            //                }
+            //           },
+            //           {
+            //                "featureType": "green",
+            //                "elementType": "all",
+            //                "stylers": {
+            //                     "color": "#056197",
+            //                     "visibility": "off"
+            //                }
+            //           },
+            //           {
+            //                "featureType": "subway",
+            //                "elementType": "all",
+            //                "stylers": {
+            //                     "visibility": "off"
+            //                }
+            //           },
+            //           {
+            //                "featureType": "manmade",
+            //                "elementType": "all",
+            //                "stylers": {
+            //                     "visibility": "off"
+            //                }
+            //           },
+            //           {
+            //                "featureType": "local",
+            //                "elementType": "all",
+            //                "stylers": {
+            //                     "visibility": "off"
+            //                }
+            //           },
+            //           {
+            //                "featureType": "arterial",
+            //                "elementType": "labels",
+            //                "stylers": {
+            //                     "visibility": "off"
+            //                }
+            //           },
+            //           {
+            //                "featureType": "boundary",
+            //                "elementType": "geometry.fill",
+            //                "stylers": {
+            //                     "color": "#029fd4"
+            //                }
+            //           },
+            //           {
+            //                "featureType": "building",
+            //                "elementType": "all",
+            //                "stylers": {
+            //                     "color": "#1a5787"
+            //                }
+            //           },
+            //           {
+            //                "featureType": "label",
+            //                "elementType": "all",
+            //                "stylers": {
+            //                     "visibility": "off"
+            //                }
+            //           }
+            //     ]
+            // });
+            
+            // Taxi GPS数据
+            var taxiCoord_1 = {
+                '主图书馆': [121.444019,31.032317],
+                '三期学生公寓': [121.441927,31.030549],
+                '四期学生公寓': [121.441082,31.033303]
+            };
+            var taxiCoord_2 = {
+                '陈瑞球楼': [121.444617,31.031064],
+                '五期学生公寓': [121.441082,31.033303],
+                '六期学生公寓': [121.436788,31.032746]
+            };
+            var taxiCoord_3 = {
+                '东中院': [121.443996,31.029663],
+                '七期学生公寓': [121.435854,31.034246],
+                '八期学生公寓': [121.433932,31.033519],
+                '西南区学生公寓': [121.438926,31.02716],
+                '行政A楼': [121.447586,31.034038]
+            };
+            
+            // Set option
             option = {
-                color: ['gold', 'aqua', 'lime'],
-                title: {},
-                tooltip: {
-                    trigger: 'item',
-                    formatter: function(v) {
-                        return v[1].replace(':', ' > ');
+                title : {
+                    show: false, 
+                    text: '上海交通大学学生OD信息',
+                    x:'center',
+                    textStyle : {
+                        color: 'black'
                     }
                 },
                 legend: {
                     orient: 'vertical',
-                    x: 'left',
-                    data: ['北京', '上海', '广州'],
-                    selectedMode: 'single',
-                    selected: {
-                        '上海': false,
-                        '广州': false
-                    }
+                    x:'left',
+                    data:['主图书馆','陈瑞球楼','东中院'],
+                    // textStyle : {
+                    //     color: '#fff'
+                    // }
                 },
-                dataRange: {
-                    min: 0,
-                    max: 100,
-                    y: '60%',
-                    calculable: true,
-                    color: ['#ff3333', 'orange', 'yellow', 'lime', 'aqua']
-                },
-                series: [{
-                    name: '北京',
-                    type: 'map',
-                    mapType: 'none',
-                    data: [],
-                    geoCoord: {
-                        '上海': [121.4648, 31.2891],
-                        '东莞': [113.8953, 22.901],
-                        '东营': [118.7073, 37.5513],
-                        '中山': [113.4229, 22.478],
-                        '临汾': [111.4783, 36.1615],
-                        '临沂': [118.3118, 35.2936],
-                        '丹东': [124.541, 40.4242],
-                        '丽水': [119.5642, 28.1854],
-                        '乌鲁木齐': [87.9236, 43.5883],
-                        '佛山': [112.8955, 23.1097],
-                        '保定': [115.0488, 39.0948],
-                        '兰州': [103.5901, 36.3043],
-                        '包头': [110.3467, 41.4899],
-                        '北京': [116.4551, 40.2539],
-                        '北海': [109.314, 21.6211],
-                        '南京': [118.8062, 31.9208],
-                        '南宁': [108.479, 23.1152],
-                        '南昌': [116.0046, 28.6633],
-                        '南通': [121.1023, 32.1625],
-                        '厦门': [118.1689, 24.6478],
-                        '台州': [121.1353, 28.6688],
-                        '合肥': [117.29, 32.0581],
-                        '呼和浩特': [111.4124, 40.4901],
-                        '咸阳': [108.4131, 34.8706],
-                        '哈尔滨': [127.9688, 45.368],
-                        '唐山': [118.4766, 39.6826],
-                        '嘉兴': [120.9155, 30.6354],
-                        '大同': [113.7854, 39.8035],
-                        '大连': [122.2229, 39.4409],
-                        '天津': [117.4219, 39.4189],
-                        '太原': [112.3352, 37.9413],
-                        '威海': [121.9482, 37.1393],
-                        '宁波': [121.5967, 29.6466],
-                        '宝鸡': [107.1826, 34.3433],
-                        '宿迁': [118.5535, 33.7775],
-                        '常州': [119.4543, 31.5582],
-                        '广州': [113.5107, 23.2196],
-                        '廊坊': [116.521, 39.0509],
-                        '延安': [109.1052, 36.4252],
-                        '张家口': [115.1477, 40.8527],
-                        '徐州': [117.5208, 34.3268],
-                        '德州': [116.6858, 37.2107],
-                        '惠州': [114.6204, 23.1647],
-                        '成都': [103.9526, 30.7617],
-                        '扬州': [119.4653, 32.8162],
-                        '承德': [117.5757, 41.4075],
-                        '拉萨': [91.1865, 30.1465],
-                        '无锡': [120.3442, 31.5527],
-                        '日照': [119.2786, 35.5023],
-                        '昆明': [102.9199, 25.4663],
-                        '杭州': [119.5313, 29.8773],
-                        '枣庄': [117.323, 34.8926],
-                        '柳州': [109.3799, 24.9774],
-                        '株洲': [113.5327, 27.0319],
-                        '武汉': [114.3896, 30.6628],
-                        '汕头': [117.1692, 23.3405],
-                        '江门': [112.6318, 22.1484],
-                        '沈阳': [123.1238, 42.1216],
-                        '沧州': [116.8286, 38.2104],
-                        '河源': [114.917, 23.9722],
-                        '泉州': [118.3228, 25.1147],
-                        '泰安': [117.0264, 36.0516],
-                        '泰州': [120.0586, 32.5525],
-                        '济南': [117.1582, 36.8701],
-                        '济宁': [116.8286, 35.3375],
-                        '海口': [110.3893, 19.8516],
-                        '淄博': [118.0371, 36.6064],
-                        '淮安': [118.927, 33.4039],
-                        '深圳': [114.5435, 22.5439],
-                        '清远': [112.9175, 24.3292],
-                        '温州': [120.498, 27.8119],
-                        '渭南': [109.7864, 35.0299],
-                        '湖州': [119.8608, 30.7782],
-                        '湘潭': [112.5439, 27.7075],
-                        '滨州': [117.8174, 37.4963],
-                        '潍坊': [119.0918, 36.524],
-                        '烟台': [120.7397, 37.5128],
-                        '玉溪': [101.9312, 23.8898],
-                        '珠海': [113.7305, 22.1155],
-                        '盐城': [120.2234, 33.5577],
-                        '盘锦': [121.9482, 41.0449],
-                        '石家庄': [114.4995, 38.1006],
-                        '福州': [119.4543, 25.9222],
-                        '秦皇岛': [119.2126, 40.0232],
-                        '绍兴': [120.564, 29.7565],
-                        '聊城': [115.9167, 36.4032],
-                        '肇庆': [112.1265, 23.5822],
-                        '舟山': [122.2559, 30.2234],
-                        '苏州': [120.6519, 31.3989],
-                        '莱芜': [117.6526, 36.2714],
-                        '菏泽': [115.6201, 35.2057],
-                        '营口': [122.4316, 40.4297],
-                        '葫芦岛': [120.1575, 40.578],
-                        '衡水': [115.8838, 37.7161],
-                        '衢州': [118.6853, 28.8666],
-                        '西宁': [101.4038, 36.8207],
-                        '西安': [109.1162, 34.2004],
-                        '贵阳': [106.6992, 26.7682],
-                        '连云港': [119.1248, 34.552],
-                        '邢台': [114.8071, 37.2821],
-                        '邯郸': [114.4775, 36.535],
-                        '郑州': [113.4668, 34.6234],
-                        '鄂尔多斯': [108.9734, 39.2487],
-                        '重庆': [107.7539, 30.1904],
-                        '金华': [120.0037, 29.1028],
-                        '铜川': [109.0393, 35.1947],
-                        '银川': [106.3586, 38.1775],
-                        '镇江': [119.4763, 31.9702],
-                        '长春': [125.8154, 44.2584],
-                        '长沙': [113.0823, 28.2568],
-                        '长治': [112.8625, 36.4746],
-                        '阳泉': [113.4778, 38.0951],
-                        '青岛': [120.4651, 36.3373],
-                        '韶关': [113.7964, 24.7028]
-                    },
-
-                    markLine: {
-                        smooth: true,
-                        effect: {
-                            show: true,
-                            scaleSize: 1,
-                            period: 30,
-                            color: '#fff',
-                            shadowBlur: 10
-                        },
-                        itemStyle: {
-                            normal: {
-                                borderWidth: 1,
-                                lineStyle: {
-                                    type: 'solid',
-                                    shadowBlur: 10
-                                }
-                            }
-                        },
-                        data: [
-                            [{
-                                name: '北京'
-                            }, {
-                                name: '上海',
-                                value: 95
-                            }],
-                            [{
-                                name: '北京'
-                            }, {
-                                name: '广州',
-                                value: 90
-                            }],
-                            [{
-                                name: '北京'
-                            }, {
-                                name: '大连',
-                                value: 80
-                            }],
-                            [{
-                                name: '北京'
-                            }, {
-                                name: '南宁',
-                                value: 70
-                            }],
-                            [{
-                                name: '北京'
-                            }, {
-                                name: '南昌',
-                                value: 60
-                            }],
-                            [{
-                                name: '北京'
-                            }, {
-                                name: '拉萨',
-                                value: 50
-                            }],
-                            [{
-                                name: '北京'
-                            }, {
-                                name: '长春',
-                                value: 40
-                            }],
-                            [{
-                                name: '北京'
-                            }, {
-                                name: '包头',
-                                value: 30
-                            }],
-                            [{
-                                name: '北京'
-                            }, {
-                                name: '重庆',
-                                value: 20
-                            }],
-                            [{
-                                name: '北京'
-                            }, {
-                                name: '常州',
-                                value: 10
-                            }]
-                        ]
-                    },
-                    markPoint: {
-                        symbol: 'emptyCircle',
-                        symbolSize: function(v) {
-                            return 10 + v / 10
-                        },
-                        effect: {
-                            show: true,
-                            shadowBlur: 0
-                        },
-                        itemStyle: {
-                            normal: {
-                                label: {
-                                    show: false
-                                }
-                            }
-                        },
-                        data: [{
-                            name: '上海',
-                            value: 95
-                        }, {
-                            name: '广州',
-                            value: 90
-                        }, {
-                            name: '大连',
-                            value: 80
-                        }, {
-                            name: '南宁',
-                            value: 70
-                        }, {
-                            name: '南昌',
-                            value: 60
-                        }, {
-                            name: '拉萨',
-                            value: 50
-                        }, {
-                            name: '长春',
-                            value: 40
-                        }, {
-                            name: '包头',
-                            value: 30
-                        }, {
-                            name: '重庆',
-                            value: 20
-                        }, {
-                            name: '常州',
-                            value: 10
-                        }]
-                    }
-
-                }, {
-                    name: '上海',
-                    type: 'map',
-                    mapType: 'none',
-                    data: [],
-                    markLine: {
-                        smooth: true,
-                        effect: {
-                            show: true,
-                            scaleSize: 1,
-                            period: 30,
-                            color: '#fff',
-                            shadowBlur: 10
-                        },
-                        itemStyle: {
-                            normal: {
-                                borderWidth: 1,
-                                lineStyle: {
-                                    type: 'solid',
-                                    shadowBlur: 10
-                                }
-                            }
-                        },
-                        data: [
-                            [{
-                                name: '上海'
-                            }, {
-                                name: '包头',
-                                value: 95
-                            }],
-                            [{
-                                name: '上海'
-                            }, {
-                                name: '昆明',
-                                value: 90
-                            }],
-                            [{
-                                name: '上海'
-                            }, {
-                                name: '广州',
-                                value: 80
-                            }],
-                            [{
-                                name: '上海'
-                            }, {
-                                name: '郑州',
-                                value: 70
-                            }],
-                            [{
-                                name: '上海'
-                            }, {
-                                name: '长春',
-                                value: 60
-                            }],
-                            [{
-                                name: '上海'
-                            }, {
-                                name: '重庆',
-                                value: 50
-                            }],
-                            [{
-                                name: '上海'
-                            }, {
-                                name: '长沙',
-                                value: 40
-                            }],
-                            [{
-                                name: '上海'
-                            }, {
-                                name: '北京',
-                                value: 30
-                            }],
-                            [{
-                                name: '上海'
-                            }, {
-                                name: '丹东',
-                                value: 20
-                            }],
-                            [{
-                                name: '上海'
-                            }, {
-                                name: '大连',
-                                value: 10
-                            }]
-                        ]
-                    },
-                    markPoint: {
-                        symbol: 'emptyCircle',
-                        symbolSize: function(v) {
-                            return 10 + v / 10
-                        },
-                        effect: {
-                            show: true,
-                            shadowBlur: 0
-                        },
-                        itemStyle: {
-                            normal: {
-                                label: {
-                                    show: false
-                                }
-                            }
-                        },
-                        data: [{
-                            name: '包头',
-                            value: 95
-                        }, {
-                            name: '昆明',
-                            value: 90
-                        }, {
-                            name: '广州',
-                            value: 80
-                        }, {
-                            name: '郑州',
-                            value: 70
-                        }, {
-                            name: '长春',
-                            value: 60
-                        }, {
-                            name: '重庆',
-                            value: 50
-                        }, {
-                            name: '长沙',
-                            value: 40
-                        }, {
-                            name: '北京',
-                            value: 30
-                        }, {
-                            name: '丹东',
-                            value: 20
-                        }, {
-                            name: '大连',
-                            value: 10
-                        }]
-                    }
-                }, {
-                    name: '广州',
-                    type: 'map',
-                    mapType: 'none',
-                    data: [],
-                    markLine: {
-                        smooth: true,
-                        effect: {
-                            show: true,
-                            scaleSize: 1,
-                            period: 30,
-                            color: '#fff',
-                            shadowBlur: 10
-                        },
-                        itemStyle: {
-                            normal: {
-                                borderWidth: 1,
-                                lineStyle: {
-                                    type: 'solid',
-                                    shadowBlur: 10
-                                }
-                            }
-                        },
-                        data: [
-                            [{
-                                name: '广州'
-                            }, {
-                                name: '福州',
-                                value: 95
-                            }],
-                            [{
-                                name: '广州'
-                            }, {
-                                name: '太原',
-                                value: 90
-                            }],
-                            [{
-                                name: '广州'
-                            }, {
-                                name: '长春',
-                                value: 80
-                            }],
-                            [{
-                                name: '广州'
-                            }, {
-                                name: '重庆',
-                                value: 70
-                            }],
-                            [{
-                                name: '广州'
-                            }, {
-                                name: '西安',
-                                value: 60
-                            }],
-                            [{
-                                name: '广州'
-                            }, {
-                                name: '成都',
-                                value: 50
-                            }],
-                            [{
-                                name: '广州'
-                            }, {
-                                name: '常州',
-                                value: 40
-                            }],
-                            [{
-                                name: '广州'
-                            }, {
-                                name: '北京',
-                                value: 30
-                            }],
-                            [{
-                                name: '广州'
-                            }, {
-                                name: '北海',
-                                value: 20
-                            }],
-                            [{
-                                name: '广州'
-                            }, {
-                                name: '海口',
-                                value: 10
-                            }]
-                        ]
-                    },
-                    markPoint: {
-                        symbol: 'emptyCircle',
-                        symbolSize: function(v) {
-                            return 10 + v / 10
-                        },
-                        effect: {
-                            show: true,
-                            shadowBlur: 0
-                        },
-                        itemStyle: {
-                            normal: {
-                                label: {
-                                    show: false
-                                }
-                            }
-                        },
-                        data: [{
-                            name: '福州',
-                            value: 95
-                        }, {
-                            name: '太原',
-                            value: 90
-                        }, {
-                            name: '长春',
-                            value: 80
-                        }, {
-                            name: '重庆',
-                            value: 70
-                        }, {
-                            name: '西安',
-                            value: 60
-                        }, {
-                            name: '成都',
-                            value: 50
-                        }, {
-                            name: '常州',
-                            value: 40
-                        }, {
-                            name: '北京',
-                            value: 30
-                        }, {
-                            name: '北海',
-                            value: 20
-                        }, {
-                            name: '海口',
-                            value: 10
-                        }]
-                    }
-                }, {
-                    name: '全国',
-                    type: 'map',
-                    mapType: 'none',
-                    data: [],
-                    markLine: {
-                        smooth: true,
-                        symbol: ['none', 'circle'],
-                        symbolSize: 1,
-                        itemStyle: {
-                            normal: {
-                                color: '#fff',
-                                borderWidth: 1,
-                                borderColor: 'rgba(30,144,255,0.5)'
-                            }
-                        },
-                        data: [
-                            [{
-                                name: '北京'
-                            }, {
-                                name: '包头'
-                            }],
-                            [{
-                                name: '北京'
-                            }, {
-                                name: '北海'
-                            }],
-                            [{
-                                name: '北京'
-                            }, {
-                                name: '广州'
-                            }],
-                            [{
-                                name: '北京'
-                            }, {
-                                name: '郑州'
-                            }],
-                            [{
-                                name: '北京'
-                            }, {
-                                name: '长春'
-                            }],
-                            [{
-                                name: '北京'
-                            }, {
-                                name: '长治'
-                            }],
-                            [{
-                                name: '北京'
-                            }, {
-                                name: '重庆'
-                            }],
-                            [{
-                                name: '北京'
-                            }, {
-                                name: '长沙'
-                            }],
-                            [{
-                                name: '北京'
-                            }, {
-                                name: '成都'
-                            }],
-                            [{
-                                name: '北京'
-                            }, {
-                                name: '常州'
-                            }],
-                            [{
-                                name: '北京'
-                            }, {
-                                name: '丹东'
-                            }],
-                            [{
-                                name: '北京'
-                            }, {
-                                name: '大连'
-                            }],
-                            [{
-                                name: '北京'
-                            }, {
-                                name: '东营'
-                            }],
-                            [{
-                                name: '北京'
-                            }, {
-                                name: '延安'
-                            }],
-                            [{
-                                name: '北京'
-                            }, {
-                                name: '福州'
-                            }],
-                            [{
-                                name: '北京'
-                            }, {
-                                name: '海口'
-                            }],
-                            [{
-                                name: '北京'
-                            }, {
-                                name: '呼和浩特'
-                            }],
-                            [{
-                                name: '北京'
-                            }, {
-                                name: '合肥'
-                            }],
-                            [{
-                                name: '北京'
-                            }, {
-                                name: '杭州'
-                            }],
-                            [{
-                                name: '北京'
-                            }, {
-                                name: '哈尔滨'
-                            }],
-                            [{
-                                name: '北京'
-                            }, {
-                                name: '舟山'
-                            }],
-                            [{
-                                name: '北京'
-                            }, {
-                                name: '银川'
-                            }],
-                            [{
-                                name: '北京'
-                            }, {
-                                name: '衢州'
-                            }],
-                            [{
-                                name: '北京'
-                            }, {
-                                name: '南昌'
-                            }],
-                            [{
-                                name: '北京'
-                            }, {
-                                name: '昆明'
-                            }],
-                            [{
-                                name: '北京'
-                            }, {
-                                name: '贵阳'
-                            }],
-                            [{
-                                name: '北京'
-                            }, {
-                                name: '兰州'
-                            }],
-                            [{
-                                name: '北京'
-                            }, {
-                                name: '拉萨'
-                            }],
-                            [{
-                                name: '北京'
-                            }, {
-                                name: '连云港'
-                            }],
-                            [{
-                                name: '北京'
-                            }, {
-                                name: '临沂'
-                            }],
-                            [{
-                                name: '北京'
-                            }, {
-                                name: '柳州'
-                            }],
-                            [{
-                                name: '北京'
-                            }, {
-                                name: '宁波'
-                            }],
-                            [{
-                                name: '北京'
-                            }, {
-                                name: '南京'
-                            }],
-                            [{
-                                name: '北京'
-                            }, {
-                                name: '南宁'
-                            }],
-                            [{
-                                name: '北京'
-                            }, {
-                                name: '南通'
-                            }],
-                            [{
-                                name: '北京'
-                            }, {
-                                name: '上海'
-                            }],
-                            [{
-                                name: '北京'
-                            }, {
-                                name: '沈阳'
-                            }],
-                            [{
-                                name: '北京'
-                            }, {
-                                name: '西安'
-                            }],
-                            [{
-                                name: '北京'
-                            }, {
-                                name: '汕头'
-                            }],
-                            [{
-                                name: '北京'
-                            }, {
-                                name: '深圳'
-                            }],
-                            [{
-                                name: '北京'
-                            }, {
-                                name: '青岛'
-                            }],
-                            [{
-                                name: '北京'
-                            }, {
-                                name: '济南'
-                            }],
-                            [{
-                                name: '北京'
-                            }, {
-                                name: '太原'
-                            }],
-                            [{
-                                name: '北京'
-                            }, {
-                                name: '乌鲁木齐'
-                            }],
-                            [{
-                                name: '北京'
-                            }, {
-                                name: '潍坊'
-                            }],
-                            [{
-                                name: '北京'
-                            }, {
-                                name: '威海'
-                            }],
-                            [{
-                                name: '北京'
-                            }, {
-                                name: '温州'
-                            }],
-                            [{
-                                name: '北京'
-                            }, {
-                                name: '武汉'
-                            }],
-                            [{
-                                name: '北京'
-                            }, {
-                                name: '无锡'
-                            }],
-                            [{
-                                name: '北京'
-                            }, {
-                                name: '厦门'
-                            }],
-                            [{
-                                name: '北京'
-                            }, {
-                                name: '西宁'
-                            }],
-                            [{
-                                name: '北京'
-                            }, {
-                                name: '徐州'
-                            }],
-                            [{
-                                name: '北京'
-                            }, {
-                                name: '烟台'
-                            }],
-                            [{
-                                name: '北京'
-                            }, {
-                                name: '盐城'
-                            }],
-                            [{
-                                name: '北京'
-                            }, {
-                                name: '珠海'
-                            }],
-                            [{
-                                name: '上海'
-                            }, {
-                                name: '包头'
-                            }],
-                            [{
-                                name: '上海'
-                            }, {
-                                name: '北海'
-                            }],
-                            [{
-                                name: '上海'
-                            }, {
-                                name: '广州'
-                            }],
-                            [{
-                                name: '上海'
-                            }, {
-                                name: '郑州'
-                            }],
-                            [{
-                                name: '上海'
-                            }, {
-                                name: '长春'
-                            }],
-                            [{
-                                name: '上海'
-                            }, {
-                                name: '重庆'
-                            }],
-                            [{
-                                name: '上海'
-                            }, {
-                                name: '长沙'
-                            }],
-                            [{
-                                name: '上海'
-                            }, {
-                                name: '成都'
-                            }],
-                            [{
-                                name: '上海'
-                            }, {
-                                name: '丹东'
-                            }],
-                            [{
-                                name: '上海'
-                            }, {
-                                name: '大连'
-                            }],
-                            [{
-                                name: '上海'
-                            }, {
-                                name: '福州'
-                            }],
-                            [{
-                                name: '上海'
-                            }, {
-                                name: '海口'
-                            }],
-                            [{
-                                name: '上海'
-                            }, {
-                                name: '呼和浩特'
-                            }],
-                            [{
-                                name: '上海'
-                            }, {
-                                name: '合肥'
-                            }],
-                            [{
-                                name: '上海'
-                            }, {
-                                name: '哈尔滨'
-                            }],
-                            [{
-                                name: '上海'
-                            }, {
-                                name: '舟山'
-                            }],
-                            [{
-                                name: '上海'
-                            }, {
-                                name: '银川'
-                            }],
-                            [{
-                                name: '上海'
-                            }, {
-                                name: '南昌'
-                            }],
-                            [{
-                                name: '上海'
-                            }, {
-                                name: '昆明'
-                            }],
-                            [{
-                                name: '上海'
-                            }, {
-                                name: '贵阳'
-                            }],
-                            [{
-                                name: '上海'
-                            }, {
-                                name: '兰州'
-                            }],
-                            [{
-                                name: '上海'
-                            }, {
-                                name: '拉萨'
-                            }],
-                            [{
-                                name: '上海'
-                            }, {
-                                name: '连云港'
-                            }],
-                            [{
-                                name: '上海'
-                            }, {
-                                name: '临沂'
-                            }],
-                            [{
-                                name: '上海'
-                            }, {
-                                name: '柳州'
-                            }],
-                            [{
-                                name: '上海'
-                            }, {
-                                name: '宁波'
-                            }],
-                            [{
-                                name: '上海'
-                            }, {
-                                name: '南宁'
-                            }],
-                            [{
-                                name: '上海'
-                            }, {
-                                name: '北京'
-                            }],
-                            [{
-                                name: '上海'
-                            }, {
-                                name: '沈阳'
-                            }],
-                            [{
-                                name: '上海'
-                            }, {
-                                name: '秦皇岛'
-                            }],
-                            [{
-                                name: '上海'
-                            }, {
-                                name: '西安'
-                            }],
-                            [{
-                                name: '上海'
-                            }, {
-                                name: '石家庄'
-                            }],
-                            [{
-                                name: '上海'
-                            }, {
-                                name: '汕头'
-                            }],
-                            [{
-                                name: '上海'
-                            }, {
-                                name: '深圳'
-                            }],
-                            [{
-                                name: '上海'
-                            }, {
-                                name: '青岛'
-                            }],
-                            [{
-                                name: '上海'
-                            }, {
-                                name: '济南'
-                            }],
-                            [{
-                                name: '上海'
-                            }, {
-                                name: '天津'
-                            }],
-                            [{
-                                name: '上海'
-                            }, {
-                                name: '太原'
-                            }],
-                            [{
-                                name: '上海'
-                            }, {
-                                name: '乌鲁木齐'
-                            }],
-                            [{
-                                name: '上海'
-                            }, {
-                                name: '潍坊'
-                            }],
-                            [{
-                                name: '上海'
-                            }, {
-                                name: '威海'
-                            }],
-                            [{
-                                name: '上海'
-                            }, {
-                                name: '温州'
-                            }],
-                            [{
-                                name: '上海'
-                            }, {
-                                name: '武汉'
-                            }],
-                            [{
-                                name: '上海'
-                            }, {
-                                name: '厦门'
-                            }],
-                            [{
-                                name: '上海'
-                            }, {
-                                name: '西宁'
-                            }],
-                            [{
-                                name: '上海'
-                            }, {
-                                name: '徐州'
-                            }],
-                            [{
-                                name: '上海'
-                            }, {
-                                name: '烟台'
-                            }],
-                            [{
-                                name: '上海'
-                            }, {
-                                name: '珠海'
-                            }],
-                            [{
-                                name: '广州'
-                            }, {
-                                name: '北海'
-                            }],
-                            [{
-                                name: '广州'
-                            }, {
-                                name: '郑州'
-                            }],
-                            [{
-                                name: '广州'
-                            }, {
-                                name: '长春'
-                            }],
-                            [{
-                                name: '广州'
-                            }, {
-                                name: '重庆'
-                            }],
-                            [{
-                                name: '广州'
-                            }, {
-                                name: '长沙'
-                            }],
-                            [{
-                                name: '广州'
-                            }, {
-                                name: '成都'
-                            }],
-                            [{
-                                name: '广州'
-                            }, {
-                                name: '常州'
-                            }],
-                            [{
-                                name: '广州'
-                            }, {
-                                name: '大连'
-                            }],
-                            [{
-                                name: '广州'
-                            }, {
-                                name: '福州'
-                            }],
-                            [{
-                                name: '广州'
-                            }, {
-                                name: '海口'
-                            }],
-                            [{
-                                name: '广州'
-                            }, {
-                                name: '呼和浩特'
-                            }],
-                            [{
-                                name: '广州'
-                            }, {
-                                name: '合肥'
-                            }],
-                            [{
-                                name: '广州'
-                            }, {
-                                name: '杭州'
-                            }],
-                            [{
-                                name: '广州'
-                            }, {
-                                name: '哈尔滨'
-                            }],
-                            [{
-                                name: '广州'
-                            }, {
-                                name: '舟山'
-                            }],
-                            [{
-                                name: '广州'
-                            }, {
-                                name: '银川'
-                            }],
-                            [{
-                                name: '广州'
-                            }, {
-                                name: '南昌'
-                            }],
-                            [{
-                                name: '广州'
-                            }, {
-                                name: '昆明'
-                            }],
-                            [{
-                                name: '广州'
-                            }, {
-                                name: '贵阳'
-                            }],
-                            [{
-                                name: '广州'
-                            }, {
-                                name: '兰州'
-                            }],
-                            [{
-                                name: '广州'
-                            }, {
-                                name: '拉萨'
-                            }],
-                            [{
-                                name: '广州'
-                            }, {
-                                name: '连云港'
-                            }],
-                            [{
-                                name: '广州'
-                            }, {
-                                name: '临沂'
-                            }],
-                            [{
-                                name: '广州'
-                            }, {
-                                name: '柳州'
-                            }],
-                            [{
-                                name: '广州'
-                            }, {
-                                name: '宁波'
-                            }],
-                            [{
-                                name: '广州'
-                            }, {
-                                name: '南京'
-                            }],
-                            [{
-                                name: '广州'
-                            }, {
-                                name: '南宁'
-                            }],
-                            [{
-                                name: '广州'
-                            }, {
-                                name: '南通'
-                            }],
-                            [{
-                                name: '广州'
-                            }, {
-                                name: '北京'
-                            }],
-                            [{
-                                name: '广州'
-                            }, {
-                                name: '上海'
-                            }],
-                            [{
-                                name: '广州'
-                            }, {
-                                name: '沈阳'
-                            }],
-                            [{
-                                name: '广州'
-                            }, {
-                                name: '西安'
-                            }],
-                            [{
-                                name: '广州'
-                            }, {
-                                name: '石家庄'
-                            }],
-                            [{
-                                name: '广州'
-                            }, {
-                                name: '汕头'
-                            }],
-                            [{
-                                name: '广州'
-                            }, {
-                                name: '青岛'
-                            }],
-                            [{
-                                name: '广州'
-                            }, {
-                                name: '济南'
-                            }],
-                            [{
-                                name: '广州'
-                            }, {
-                                name: '天津'
-                            }],
-                            [{
-                                name: '广州'
-                            }, {
-                                name: '太原'
-                            }],
-                            [{
-                                name: '广州'
-                            }, {
-                                name: '乌鲁木齐'
-                            }],
-                            [{
-                                name: '广州'
-                            }, {
-                                name: '温州'
-                            }],
-                            [{
-                                name: '广州'
-                            }, {
-                                name: '武汉'
-                            }],
-                            [{
-                                name: '广州'
-                            }, {
-                                name: '无锡'
-                            }],
-                            [{
-                                name: '广州'
-                            }, {
-                                name: '厦门'
-                            }],
-                            [{
-                                name: '广州'
-                            }, {
-                                name: '西宁'
-                            }],
-                            [{
-                                name: '广州'
-                            }, {
-                                name: '徐州'
-                            }],
-                            [{
-                                name: '广州'
-                            }, {
-                                name: '烟台'
-                            }],
-                            [{
-                                name: '广州'
-                            }, {
-                                name: '盐城'
-                            }]
-                        ]
-                    }
-                }]
-            };
-
-            var mobility_map = BMapExt.initECharts(container);
-            BMapExt.setOption(option);
-        });
-
-    // 人流迁徙和弦图
-    require(
-        [
-            'echarts',
-            'echarts/chart/chord'
-        ],
-        function(ec) {
-            var mobility_chord = ec.init(document.getElementById('mobility-chord'), theme);
-            option = {
-                title: {
-                    show: false
-                },
-                tooltip: {
+                tooltip : {
                     trigger: 'item',
-                    formatter: function(params) {
-                        if (params.indicator2) { // is edge
+                    formatter: function (v) {
+                        return v[1].replace('>', ' &rarr; ');
+                    }
+                },
+                toolbox: {
+                    show : false,
+                    orient : 'vertical',
+                    x: 'right',
+                    y: 'center',
+                    feature : {
+                        mark : {show: true},
+                        dataView : {show: true, readOnly: false},
+                        restore : {show: true},
+                        saveAsImage : {show: true}
+                    }
+                },
+                // dataRange: {
+                //     min : 0,
+                //     max : 100,
+                //     y: '60%',
+                //     calculable : true,
+                //     color: ['#ff3333', 'orange', 'yellow','lime','aqua']
+                // },
+                series : [
+                    {
+                        name:'主图书馆',
+                        type:'map',
+                        mapType: 'none',
+                        data:[],
+                        // 出租车OD数据
+                        geoCoord: taxiCoord_1,
+                        markLine : {
+                            smooth:true,
+                            effect : {
+                                show: true,
+                                scaleSize: 1,
+                                period: 30,
+                                color: '#fff',
+                                shadowBlur: 10
+                            },
+                            itemStyle : {
+                                normal: {
+                                    borderWidth:1,
+                                    lineStyle: {
+                                        type: 'solid',
+                                        shadowBlur: 10
+                                    }
+                                }
+                            },
+                            data : [
+                                [{name:'主图书馆'},{name:'三期学生公寓',value:95}],
+                                [{name:'主图书馆'},{name:'四期学生公寓',value:90}]
+                            ]
+                        },
+                        markPoint : {
+                            symbolSize: 10,
+                            effect : {
+                                show: true,
+                                shadowBlur : 1
+                            },
+                            itemStyle:{
+                                normal:{
+                                    label:{show:false}
+                                }
+                            },
+                            // data形式
+                            // data : [
+                                //     {name:'福州',value:95},
+                                //     {name:'太原',value:90},
+                                //     {name:'长春',value:80},
+                                //     {name:'重庆',value:70},
+                                //     {name:'西安',value:60},
+                                //     {name:'成都',value:50},
+                                //     {name:'常州',value:40},
+                                //     {name:'北京',value:30},
+                                //     {name:'北海',value:20},
+                                //     {name:'海口',value:10}
+                                // ]
+                            data : (function(){
+                                var data = [];
+                                var df = Object.keys(taxiCoord_1);
+                                var len = df.length;
+                                while(len--) {
+                                    data.push({
+                                        // name : placeList[len].name
+                                        name : df[len]
+                                        //geoCoord : placeList[len].geoCoord
+                                    })
+                                }
+                                return data;
+                            })()
+                        }
+                    },
+                    {
+                        name:'陈瑞球楼',
+                        type:'map',
+                        mapType: 'none',
+                        data:[],
+                        // 出租车OD数据
+                        geoCoord: taxiCoord_2,
+                        markLine : {
+                            smooth:true,
+                            effect : {
+                                show: true,
+                                scaleSize: 1,
+                                period: 30,
+                                color: '#fff',
+                                shadowBlur: 10
+                            },
+                            itemStyle : {
+                                normal: {
+                                    borderWidth:1,
+                                    lineStyle: {
+                                        type: 'solid',
+                                        shadowBlur: 10
+                                    }
+                                }
+                            },
+                            data : [
+                                [{name:'陈瑞球楼'},{name:'五期学生公寓',value:95}],
+                                [{name:'陈瑞球楼'},{name:'六期学生公寓',value:90}]
+                            ]
+                        },
+                        markPoint : {
+                            symbolSize: 10,
+                            effect : {
+                                show: true,
+                                shadowBlur : 1
+                            },
+                            itemStyle:{
+                                normal:{
+                                    label:{show:false}
+                                }
+                            },
+                            data : (function(){
+                                var data = [];
+                                var df = Object.keys(taxiCoord_2);
+                                var len = df.length;
+                                while(len--) {
+                                    data.push({
+                                        // name : placeList[len].name
+                                        name : df[len]
+                                        //geoCoord : placeList[len].geoCoord
+                                    })
+                                }
+                                return data;
+                            })()
+                        }
+                    },
+                    {
+                        name:'东中院',
+                        type:'map',
+                        mapType: 'none',
+                        data:[],
+                        // 出租车OD数据
+                        geoCoord: taxiCoord_3,
+                        markLine : {
+                            smooth:true,
+                            effect : {
+                                show: true,
+                                scaleSize: 1,
+                                period: 30,
+                                color: '#fff',
+                                shadowBlur: 10
+                            },
+                            itemStyle : {
+                                normal: {
+                                    borderWidth:1,
+                                    lineStyle: {
+                                        type: 'solid',
+                                        shadowBlur: 10
+                                    }
+                                }
+                            },
+                            data : [
+                                [{name:'东中院'},{name:'七期学生公寓',value:95}],
+                                [{name:'东中院'},{name:'八期学生公寓',value:90}],
+                                [{name:'东中院'},{name:'西南区学生公寓',value:90}],
+                                [{name:'东中院'},{name:'行政A楼',value:90}]
+                            ]
+                        },
+                        markPoint : {
+                            symbolSize: 5,
+                            effect : {
+                                show: true,
+                                shadowBlur : 1
+                            },
+                            itemStyle:{
+                                normal:{
+                                    label:{show:false}
+                                }
+                            },
+                            data : (function(){
+                                var data = [];
+                                var df = Object.keys(taxiCoord_3);
+                                var len = df.length;
+                                while(len--) {
+                                    data.push({
+                                        // name : placeList[len].name
+                                        name : df[len]
+                                        //geoCoord : placeList[len].geoCoord
+                                    })
+                                }
+                                return data;
+                            })()
+                        }
+                    }
+                ]
+            };//var option
+            
+            option_co = {
+                title : {
+                    show: false,
+                    text: 'OD弦图',
+                    x:'right',
+                    y:'bottom'
+                },
+                tooltip : {
+                    trigger: 'item',
+                    formatter: function (params) {
+                        if (params.indicator2) {    // is edge
                             return params.indicator2 + ' ' + params.name + ' ' + params.indicator;
-                        } else { // is node
+                        } else {    // is node
                             return params.name
                         }
                     }
                 },
-                legend: {
-                    show: false,
-                    x: 'left',
-                    data: []
+                toolbox: {
+                    show : true,
+                    x: 'right',
+                    orient: 'vertical',                
+                    feature : {
+                        restore : {show: true},
+                        magicType: {show: true, type: ['force', 'chord']},
+                        saveAsImage : {show: true}
+                    }
                 },
-                series: [{
-                    type: 'chord',
-                    sort: 'ascending',
-                    sortSub: 'descending',
-                    showScale: false,
-                    radius: ['45%', '55%'],
-                    center: ['50%', '53%'],
-                    itemStyle: {
-                        normal: {
-                            label: {
-                                rotate: true,
-                                color: '#999'
+                legend: {
+                    x: 'left',
+                    data:['主图书馆', '陈瑞球楼', '东中院']
+                },
+                series : [
+                    {
+                        type:'chord',
+                        sort : 'ascending',
+                        sortSub : 'descending',
+                        showScale : false,
+                        itemStyle : {
+                            normal : {
+                                label : {
+                                    rotate : true
+                                }
                             }
-                        }
-                    },
-                    // 使用 nodes links 表达和弦图
-                    nodes: [{
-                        name: '默特萨克'
-                    }, {
-                        name: '厄齐尔'
-                    }, {
-                        name: '波多尔斯基'
-                    }, {
-                        name: '诺伊尔'
-                    }, {
-                        name: '博阿滕'
-                    }, {
-                        name: '施魏因施泰格'
-                    }, {
-                        name: '拉姆'
-                    }, {
-                        name: '克罗斯'
-                    }, {
-                        name: '穆勒'
-                    }, {
-                        name: '格策'
-                    }, {
-                        name: '胡梅尔斯'
-                    }, {
-                        name: '魏登费勒'
-                    }, {
-                        name: '杜尔姆'
-                    }, {
-                        name: '格罗斯克罗伊茨'
-                    }, {
-                        name: '阿森纳'
-                    }, {
-                        name: '拜仁慕尼黑'
-                    }, {
-                        name: '多特蒙德'
-                    }],
-                    links: [{
-                            source: '阿森纳',
-                            target: '默特萨克',
-                            weight: 0.9,
-                            name: '效力'
-                        }, {
-                            source: '阿森纳',
-                            target: '厄齐尔',
-                            weight: 0.9,
-                            name: '效力'
-                        }, {
-                            source: '阿森纳',
-                            target: '波多尔斯基',
-                            weight: 0.9,
-                            name: '效力'
-                        }, {
-                            source: '拜仁慕尼黑',
-                            target: '诺伊尔',
-                            weight: 0.9,
-                            name: '效力'
-                        }, {
-                            source: '拜仁慕尼黑',
-                            target: '博阿滕',
-                            weight: 0.9,
-                            name: '效力'
-                        }, {
-                            source: '拜仁慕尼黑',
-                            target: '施魏因施泰格',
-                            weight: 0.9,
-                            name: '效力'
-                        }, {
-                            source: '拜仁慕尼黑',
-                            target: '拉姆',
-                            weight: 0.9,
-                            name: '效力'
-                        }, {
-                            source: '拜仁慕尼黑',
-                            target: '克罗斯',
-                            weight: 0.9,
-                            name: '效力'
-                        }, {
-                            source: '拜仁慕尼黑',
-                            target: '穆勒',
-                            weight: 0.9,
-                            name: '效力'
-                        }, {
-                            source: '拜仁慕尼黑',
-                            target: '格策',
-                            weight: 0.9,
-                            name: '效力'
-                        }, {
-                            source: '多特蒙德',
-                            target: '胡梅尔斯',
-                            weight: 0.9,
-                            name: '效力'
-                        }, {
-                            source: '多特蒙德',
-                            target: '魏登费勒',
-                            weight: 0.9,
-                            name: '效力'
-                        }, {
-                            source: '多特蒙德',
-                            target: '杜尔姆',
-                            weight: 0.9,
-                            name: '效力'
-                        }, {
-                            source: '多特蒙德',
-                            target: '格罗斯克罗伊茨',
-                            weight: 0.9,
-                            name: '效力'
                         },
+                        // 使用 nodes links 表达和弦图
+                        nodes: [
+                            {name:'主图书馆'},
+                            {name:'三期学生公寓'},
+                            {name:'四期学生公寓'},
+                            {name:'陈瑞球楼'},
+                            {name:'五期学生公寓'},
+                            {name:'六期学生公寓'},
+                            {name:'东中院'},
+                            {name:'七期学生公寓'},
+                            {name:'八期学生公寓'},
+                            {name:'西南区学生公寓'},
+                            {name:'行政A楼'}
+                        ],
+                        links: [
+                            {source: '主图书馆', target: '三期学生公寓', weight: 0.9, name: '去往'},
+                            {source: '主图书馆', target: '四期学生公寓', weight: 0.9, name: '去往'},
+                            {source: '陈瑞球楼', target: '五期学生公寓', weight: 0.9, name: '去往'},
+                            {source: '陈瑞球楼', target: '六期学生公寓', weight: 0.9, name: '去往'},
+                            {source: '东中院', target: '七期学生公寓', weight: 0.9, name: '去往'},
+                            {source: '东中院', target: '八期学生公寓', weight: 0.9, name: '去往'},
+                            {source: '东中院', target: '西南区学生公寓', weight: 0.9, name: '去往'},
+                            {source: '东中院', target: '行政A楼', weight: 0.9, name: '去往'},
 
-                        // Ribbon Type 的和弦图每一对节点之间必须是双向边
-                        {
-                            target: '阿森纳',
-                            source: '默特萨克',
-                            weight: 1
-                        }, {
-                            target: '阿森纳',
-                            source: '厄齐尔',
-                            weight: 1
-                        }, {
-                            target: '阿森纳',
-                            source: '波多尔斯基',
-                            weight: 1
-                        }, {
-                            target: '拜仁慕尼黑',
-                            source: '诺伊尔',
-                            weight: 1
-                        }, {
-                            target: '拜仁慕尼黑',
-                            source: '博阿滕',
-                            weight: 1
-                        }, {
-                            target: '拜仁慕尼黑',
-                            source: '施魏因施泰格',
-                            weight: 1
-                        }, {
-                            target: '拜仁慕尼黑',
-                            source: '拉姆',
-                            weight: 1
-                        }, {
-                            target: '拜仁慕尼黑',
-                            source: '克罗斯',
-                            weight: 1
-                        }, {
-                            target: '拜仁慕尼黑',
-                            source: '穆勒',
-                            weight: 1
-                        }, {
-                            target: '拜仁慕尼黑',
-                            source: '格策',
-                            weight: 1
-                        }, {
-                            target: '多特蒙德',
-                            source: '胡梅尔斯',
-                            weight: 1
-                        }, {
-                            target: '多特蒙德',
-                            source: '魏登费勒',
-                            weight: 1
-                        }, {
-                            target: '多特蒙德',
-                            source: '杜尔姆',
-                            weight: 1
-                        }, {
-                            target: '多特蒙德',
-                            source: '格罗斯克罗伊茨',
-                            weight: 1
-                        }
-                    ]
-                }]
-            };
-            mobility_chord.setOption(option);
-        });
+                            // Ribbon Type 的和弦图每一对节点之间必须是双向边
+                            {target: '主图书馆', source: '三期学生公寓', weight: 1},
+                            {target: '主图书馆', source: '四期学生公寓', weight: 1},
+                            {target: '陈瑞球楼', source: '五期学生公寓', weight: 1},
+                            {target: '陈瑞球楼', source: '六期学生公寓', weight: 1},
+                            {target: '东中院', source: '七期学生公寓', weight: 1},
+                            {target: '东中院', source: '八期学生公寓', weight: 1},
+                            {target: '东中院', source: '西南区学生公寓', weight: 1},
+                            {target: '东中院', source: '行政A楼', weight: 1}
+                        ]
+                    }
+                ]
+            };//var option_co
+
+            if (myChart && myChart.dispose) {
+                myChart.dispose();
+            }
+            // myChart = BMapExt.initECharts(container, curTheme);
+            
+            var myChart = BMapExt.initECharts(container);
+            window.onresize = myChart.resize;
+            // BMapExt.setOption(option, true)
+            BMapExt.setOption(option)
+
+            myChart_co = echarts.init(document.getElementById('mobility-chord'), theme);
+            myChart_co.setOption(option_co);
+
+            myChart.connect(myChart_co);
+            myChart_co.connect(myChart);
+
+            // setTimeout(function (){
+            //     window.onresize = function () {
+            //         myChart.resize();
+            //         myChart2.resize();
+            //     }
+            // },200)
+        }//function (echarts, BMapExtension) 
+    );//require
+
 
     var map3 = new BMap.Map("catermap"); // 创建地图实例
     map3.centerAndZoom(new BMap.Point(121.44821, 31.033276), 15); // 初始化地图，设置中心点坐标和地图级别
