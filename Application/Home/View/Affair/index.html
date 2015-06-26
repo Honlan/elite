@@ -4,25 +4,54 @@ $(document).ready(function() {
     $('#header-right i').addClass('fa-graduation-cap');
     $('#header-right span').text('学务管理');
 });
+var tagTypeBoy = eval('{$tagTypeBoy}');
+var tagTypeGirl = eval('{$tagTypeGirl}');
+var tagIndex = 0;
+var tags = [];
+for (var i = 0; i <= tagTypeBoy.length - 1; i++) {
+    tags.push(tagTypeBoy[i]['tag']);
+}
+var tagType = tags[tagIndex];
+var tagTypeBoyRecord = '';
+var tagTypeGirlRecord = '';
+for (var i = 0; i <= tagTypeBoy.length - 1; i++) {
+    if (tagTypeBoy[i]['tag'] == tagType) {
+        tagTypeBoyRecord = tagTypeBoy[i];
+        break;
+    }
+}
+for (var i = 0; i <= tagTypeGirl.length - 1; i++) {
+    if (tagTypeGirl[i]['tag'] == tagType) {
+        tagTypeGirlRecord = tagTypeGirl[i];
+        break;
+    }
+}
 </script>
 <style>
 #affair #girl-tag {
     height: 300px;
-    
-    margin-top: 30px;
-    margin-bottom: 50px;
+    margin-top: 15px;
+    margin-bottom: 15px;
 }
 
 #affair #boy-tag {
-    margin-top: 30px;
-    margin-bottom: 50px;
+    margin-top: 15px;
+    margin-bottom: 15px;
     height: 300px;
 }
 
+#affair #tags {
+    position: relative;
+}
+
 #affair #tags #hot-tags {
+    margin-bottom: 10px;
     text-align: left;
-    margin-bottom: 20px;
-    text-align: center;
+    margin-left: 25px;
+}
+
+#affair #tags #hot-tags h4 {
+    display: inline-block;
 }
 
 #affair #tags #hot-tags p {
@@ -30,14 +59,46 @@ $(document).ready(function() {
     display: inline-block;
     padding: 4px 6px;
     background-color: rgba(226, 122, 84, 0.9);
-    color: #ddd;
+    color: #f5f5f5;
+    margin: 5px 3px;
+    border-radius: 2px;
+    float: right;
+    margin-right: 25px;
+}
+
+#affair #tags #hot-tags p:hover {
+    color: #050505;
+    background-color: #f5f5f5;
+}
+
+#affair #tags #all-tags {
+    position: absolute;
+    width: 90%;
+    left: 50%;
+    margin-left: -45%;
+    background-color: rgba(240, 240, 240, 0.8);
+    color: #111;
+    text-align: left;
+    padding: 10px;
+    z-index: 999;
+    text-align: center;
+    border-radius: 5px;
+    display: none;
+}
+
+#affair #tags #all-tags p {
+    cursor: pointer;
+    display: inline-block;
+    padding: 4px 6px;
+    background-color: rgba(226, 122, 84, 0.9);
+    color: #f5f5f5;
     margin: 5px 3px;
     border-radius: 2px;
 }
 
-#affair #tags #hot-tags p.active {
-    color: #eee;
-    background-color: #e55;
+#affair #tags #all-tags p:hover {
+    color: #050505;
+    background-color: #f5f5f5;
 }
 
 #affair #tags #tags-plot {
@@ -72,19 +133,15 @@ $(document).ready(function() {
         </div>
         <div id="tags" class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
             <div id="hot-tags">
-                <h4>热门标签</h4>
-                <p>微信</p>
-                <p>微信</p>
-                <p>微信</p>
-                <p>微信</p>
-                <p>微信</p>
-                <p>微信</p>
-                <p>微信</p>
-                <p>微信</p>
-                <p>微信</p>
-                <p>微信</p>
+                <h4>Wifi数据类型</h4>
+                <p>休闲娱乐</p>
             </div>
-            <p class="plot-title" style="width:90%;margin-right:5%;margin-left:5%;">热点关注走势</p>
+            <div id="all-tags">
+                <foreach name='tags' item='v'>
+                    <p>{$v.tag}</p>
+                </foreach>
+            </div>
+            <p class="plot-title" style="width:90%;margin-right:5%;margin-left:5%;">不同年级人均次数</p>
             <div id="tags-plot"></div>
         </div>
         <div class="col-xs-6 col-sm-3 col-md-3 col-lg-3">
@@ -118,6 +175,7 @@ $(document).ready(function() {
 </div>
 <script>
 $(document).ready(function() {
+    // 流量类别分布
     require(
         [
             'echarts',
@@ -133,12 +191,12 @@ $(document).ready(function() {
                     trigger: 'axis'
                 },
                 legend: {
-                    data: ['男', '女']
+                    data: ['男', '女'],
+                    padding: [10, 5, 10, 5]
                 },
                 calculable: true,
                 xAxis: [{
                     type: 'category',
-                    boundaryGap: false,
                     data: ['大一', '大二', '大三', '大四', '研一', '研二', '研三', '博一', '博二', '博三', '博四', '博五']
                 }],
                 yAxis: [{
@@ -147,18 +205,237 @@ $(document).ready(function() {
                         formatter: '{value}'
                     }
                 }],
+                grid: {
+                    x: 60,
+                    x2: 30,
+                    y: 40,
+                    y2: 40
+                },
                 series: [{
                     name: '男',
                     type: 'line',
-                    data: [44, 22, 34, 56, 110, 87, 54, 23, 55, 89, 67, 54],
+                    data: [(tagTypeBoyRecord['ug1'] / 2507.0).toFixed(3), (tagTypeBoyRecord['ug2'] / 2628.0).toFixed(3), (tagTypeBoyRecord['ug3'] / 2239.0).toFixed(3), (tagTypeBoyRecord['ug4'] / 2099.0).toFixed(3), (tagTypeBoyRecord['mt1'] / 2323.0).toFixed(3), (tagTypeBoyRecord['mt2'] / 2129.0).toFixed(3), (tagTypeBoyRecord['mt3'] / 1881.0).toFixed(3), (tagTypeBoyRecord['doc1'] / 729.0).toFixed(3), (tagTypeBoyRecord['doc2'] / 557.0).toFixed(3), (tagTypeBoyRecord['doc3'] / 644.0).toFixed(3), (tagTypeBoyRecord['doc4'] / 570.0).toFixed(3), (tagTypeBoyRecord['doc5'] / 491.0).toFixed(3)],
                 }, {
                     name: '女',
                     type: 'line',
-                    data: [11, 15, 36, 75, 42, 34, 54, 22, 89, 34, 54, 32],
+                    data: [(tagTypeGirlRecord['ug1'] / 1322.0).toFixed(3), (tagTypeGirlRecord['ug2'] / 1288.0).toFixed(3), (tagTypeGirlRecord['ug3'] / 1339.0).toFixed(3), (tagTypeGirlRecord['ug4'] / 999.0).toFixed(3), (tagTypeGirlRecord['mt1'] / 1617.0).toFixed(3), (tagTypeGirlRecord['mt2'] / 1212.0).toFixed(3), (tagTypeGirlRecord['mt3'] / 1065.0).toFixed(3), (tagTypeGirlRecord['doc1'] / 371.0).toFixed(3), (tagTypeGirlRecord['doc2'] / 249.0).toFixed(3), (tagTypeGirlRecord['doc3'] / 301.0).toFixed(3), (tagTypeGirlRecord['doc4'] / 210.0).toFixed(3), (tagTypeGirlRecord['doc5'] / 208.0).toFixed(3)],
                 }]
             };
             tags_plot.setOption(option);
         });
+
+    var tagHasInterval = true;
+    var tagTypeInterval = setInterval(function() {
+        tagIndex = (tagIndex + 1) % tags.length;
+        tagType = tags[tagIndex];
+        for (var i = 0; i <= tagTypeBoy.length - 1; i++) {
+            if (tagTypeBoy[i]['tag'] == tagType) {
+                tagTypeBoyRecord = tagTypeBoy[i];
+                break;
+            }
+        }
+        for (var i = 0; i <= tagTypeGirl.length - 1; i++) {
+            if (tagTypeGirl[i]['tag'] == tagType) {
+                tagTypeGirlRecord = tagTypeGirl[i];
+                break;
+            }
+        }
+
+        $('#affair #tags #hot-tags p').text(tagType);
+
+        require(
+            [
+                'echarts',
+                'echarts/chart/line',
+            ],
+            function(ec) {
+                var tags_plot = ec.init(document.getElementById('tags-plot'), theme);
+                option = {
+                    title: {
+                        show: false
+                    },
+                    tooltip: {
+                        trigger: 'axis'
+                    },
+                    legend: {
+                        data: ['男', '女'],
+                        padding: [10, 5, 10, 5]
+                    },
+                    calculable: true,
+                    xAxis: [{
+                        type: 'category',
+                        data: ['大一', '大二', '大三', '大四', '研一', '研二', '研三', '博一', '博二', '博三', '博四', '博五']
+                    }],
+                    yAxis: [{
+                        type: 'value',
+                        axisLabel: {
+                            formatter: '{value}'
+                        }
+                    }],
+                    grid: {
+                        x: 60,
+                        x2: 30,
+                        y: 40,
+                        y2: 40
+                    },
+                    series: [{
+                        name: '男',
+                        type: 'line',
+                        data: [(tagTypeBoyRecord['ug1'] / 2507.0).toFixed(3), (tagTypeBoyRecord['ug2'] / 2628.0).toFixed(3), (tagTypeBoyRecord['ug3'] / 2239.0).toFixed(3), (tagTypeBoyRecord['ug4'] / 2099.0).toFixed(3), (tagTypeBoyRecord['mt1'] / 2323.0).toFixed(3), (tagTypeBoyRecord['mt2'] / 2129.0).toFixed(3), (tagTypeBoyRecord['mt3'] / 1881.0).toFixed(3), (tagTypeBoyRecord['doc1'] / 729.0).toFixed(3), (tagTypeBoyRecord['doc2'] / 557.0).toFixed(3), (tagTypeBoyRecord['doc3'] / 644.0).toFixed(3), (tagTypeBoyRecord['doc4'] / 570.0).toFixed(3), (tagTypeBoyRecord['doc5'] / 491.0).toFixed(3)],
+                    }, {
+                        name: '女',
+                        type: 'line',
+                        data: [(tagTypeGirlRecord['ug1'] / 1322.0).toFixed(3), (tagTypeGirlRecord['ug2'] / 1288.0).toFixed(3), (tagTypeGirlRecord['ug3'] / 1339.0).toFixed(3), (tagTypeGirlRecord['ug4'] / 999.0).toFixed(3), (tagTypeGirlRecord['mt1'] / 1617.0).toFixed(3), (tagTypeGirlRecord['mt2'] / 1212.0).toFixed(3), (tagTypeGirlRecord['mt3'] / 1065.0).toFixed(3), (tagTypeGirlRecord['doc1'] / 371.0).toFixed(3), (tagTypeGirlRecord['doc2'] / 249.0).toFixed(3), (tagTypeGirlRecord['doc3'] / 301.0).toFixed(3), (tagTypeGirlRecord['doc4'] / 210.0).toFixed(3), (tagTypeGirlRecord['doc5'] / 208.0).toFixed(3)],
+                    }]
+                };
+                tags_plot.setOption(option);
+            });
+    }, 8000);
+
+    $('#affair #tags #hot-tags p').click(function() {
+        $('#affair #tags #all-tags').fadeIn(300);
+    });
+    $('#affair #tags #all-tags p').click(function() {
+        tagType = $(this).text();
+        $('#affair #tags #hot-tags p').text(tagType);
+        $('#affair #tags #all-tags').fadeOut(300);
+        clearInterval(tagTypeInterval);
+        tagHasInterval = false;
+
+        for (var i = 0; i <= tagTypeBoy.length - 1; i++) {
+            if (tagTypeBoy[i]['tag'] == tagType) {
+                tagTypeBoyRecord = tagTypeBoy[i];
+                break;
+            }
+        }
+        for (var i = 0; i <= tagTypeGirl.length - 1; i++) {
+            if (tagTypeGirl[i]['tag'] == tagType) {
+                tagTypeGirlRecord = tagTypeGirl[i];
+                break;
+            }
+        }
+
+        require(
+            [
+                'echarts',
+                'echarts/chart/line',
+            ],
+            function(ec) {
+                var tags_plot = ec.init(document.getElementById('tags-plot'), theme);
+                option = {
+                    title: {
+                        show: false
+                    },
+                    tooltip: {
+                        trigger: 'axis'
+                    },
+                    legend: {
+                        data: ['男', '女'],
+                        padding: [10, 5, 10, 5]
+                    },
+                    calculable: true,
+                    xAxis: [{
+                        type: 'category',
+                        data: ['大一', '大二', '大三', '大四', '研一', '研二', '研三', '博一', '博二', '博三', '博四', '博五']
+                    }],
+                    yAxis: [{
+                        type: 'value',
+                        axisLabel: {
+                            formatter: '{value}'
+                        }
+                    }],
+                    grid: {
+                        x: 60,
+                        x2: 30,
+                        y: 40,
+                        y2: 40
+                    },
+                    series: [{
+                        name: '男',
+                        type: 'line',
+                        data: [(tagTypeBoyRecord['ug1'] / 2507.0).toFixed(3), (tagTypeBoyRecord['ug2'] / 2628.0).toFixed(3), (tagTypeBoyRecord['ug3'] / 2239.0).toFixed(3), (tagTypeBoyRecord['ug4'] / 2099.0).toFixed(3), (tagTypeBoyRecord['mt1'] / 2323.0).toFixed(3), (tagTypeBoyRecord['mt2'] / 2129.0).toFixed(3), (tagTypeBoyRecord['mt3'] / 1881.0).toFixed(3), (tagTypeBoyRecord['doc1'] / 729.0).toFixed(3), (tagTypeBoyRecord['doc2'] / 557.0).toFixed(3), (tagTypeBoyRecord['doc3'] / 644.0).toFixed(3), (tagTypeBoyRecord['doc4'] / 570.0).toFixed(3), (tagTypeBoyRecord['doc5'] / 491.0).toFixed(3)],
+                    }, {
+                        name: '女',
+                        type: 'line',
+                        data: [(tagTypeGirlRecord['ug1'] / 1322.0).toFixed(3), (tagTypeGirlRecord['ug2'] / 1288.0).toFixed(3), (tagTypeGirlRecord['ug3'] / 1339.0).toFixed(3), (tagTypeGirlRecord['ug4'] / 999.0).toFixed(3), (tagTypeGirlRecord['mt1'] / 1617.0).toFixed(3), (tagTypeGirlRecord['mt2'] / 1212.0).toFixed(3), (tagTypeGirlRecord['mt3'] / 1065.0).toFixed(3), (tagTypeGirlRecord['doc1'] / 371.0).toFixed(3), (tagTypeGirlRecord['doc2'] / 249.0).toFixed(3), (tagTypeGirlRecord['doc3'] / 301.0).toFixed(3), (tagTypeGirlRecord['doc4'] / 210.0).toFixed(3), (tagTypeGirlRecord['doc5'] / 208.0).toFixed(3)],
+                    }]
+                };
+                tags_plot.setOption(option);
+            });
+
+        setTimeout(function() {
+            if (!tagHasInterval) {
+                tagHasInterval = true;
+
+                tagTypeInterval = setInterval(function() {
+                    tagIndex = (tagIndex + 1) % tags.length;
+                    tagType = tags[tagIndex];
+                    for (var i = 0; i <= tagTypeBoy.length - 1; i++) {
+                        if (tagTypeBoy[i]['tag'] == tagType) {
+                            tagTypeBoyRecord = tagTypeBoy[i];
+                            break;
+                        }
+                    }
+                    for (var i = 0; i <= tagTypeGirl.length - 1; i++) {
+                        if (tagTypeGirl[i]['tag'] == tagType) {
+                            tagTypeGirlRecord = tagTypeGirl[i];
+                            break;
+                        }
+                    }
+
+                    $('#affair #tags #hot-tags p').text(tagType);
+
+                    require(
+                        [
+                            'echarts',
+                            'echarts/chart/line',
+                        ],
+                        function(ec) {
+                            var tags_plot = ec.init(document.getElementById('tags-plot'), theme);
+                            option = {
+                                title: {
+                                    show: false
+                                },
+                                tooltip: {
+                                    trigger: 'axis'
+                                },
+                                legend: {
+                                    data: ['男', '女'],
+                                    padding: [10, 5, 10, 5]
+                                },
+                                calculable: true,
+                                xAxis: [{
+                                    type: 'category',
+                                    data: ['大一', '大二', '大三', '大四', '研一', '研二', '研三', '博一', '博二', '博三', '博四', '博五']
+                                }],
+                                yAxis: [{
+                                    type: 'value',
+                                    axisLabel: {
+                                        formatter: '{value}'
+                                    }
+                                }],
+                                grid: {
+                                    x: 60,
+                                    x2: 30,
+                                    y: 40,
+                                    y2: 40
+                                },
+                                series: [{
+                                    name: '男',
+                                    type: 'line',
+                                    data: [(tagTypeBoyRecord['ug1'] / 2507.0).toFixed(3), (tagTypeBoyRecord['ug2'] / 2628.0).toFixed(3), (tagTypeBoyRecord['ug3'] / 2239.0).toFixed(3), (tagTypeBoyRecord['ug4'] / 2099.0).toFixed(3), (tagTypeBoyRecord['mt1'] / 2323.0).toFixed(3), (tagTypeBoyRecord['mt2'] / 2129.0).toFixed(3), (tagTypeBoyRecord['mt3'] / 1881.0).toFixed(3), (tagTypeBoyRecord['doc1'] / 729.0).toFixed(3), (tagTypeBoyRecord['doc2'] / 557.0).toFixed(3), (tagTypeBoyRecord['doc3'] / 644.0).toFixed(3), (tagTypeBoyRecord['doc4'] / 570.0).toFixed(3), (tagTypeBoyRecord['doc5'] / 491.0).toFixed(3)],
+                                }, {
+                                    name: '女',
+                                    type: 'line',
+                                    data: [(tagTypeGirlRecord['ug1'] / 1322.0).toFixed(3), (tagTypeGirlRecord['ug2'] / 1288.0).toFixed(3), (tagTypeGirlRecord['ug3'] / 1339.0).toFixed(3), (tagTypeGirlRecord['ug4'] / 999.0).toFixed(3), (tagTypeGirlRecord['mt1'] / 1617.0).toFixed(3), (tagTypeGirlRecord['mt2'] / 1212.0).toFixed(3), (tagTypeGirlRecord['mt3'] / 1065.0).toFixed(3), (tagTypeGirlRecord['doc1'] / 371.0).toFixed(3), (tagTypeGirlRecord['doc2'] / 249.0).toFixed(3), (tagTypeGirlRecord['doc3'] / 301.0).toFixed(3), (tagTypeGirlRecord['doc4'] / 210.0).toFixed(3), (tagTypeGirlRecord['doc5'] / 208.0).toFixed(3)],
+                                }]
+                            };
+                            tags_plot.setOption(option);
+                        });
+                }, 8000);
+            }
+        }, 16000);
+    });
 
     require(
         [

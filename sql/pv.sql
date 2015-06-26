@@ -19,7 +19,7 @@ SET time_zone = "+00:00";
 --
 -- Table structure for table `pv`
 --
-
+DROP TABLE IF EXISTS `pv`;
 CREATE TABLE `pv` (
 `ID` int(11) NOT NULL,
   `ip` varchar(20) NOT NULL,
