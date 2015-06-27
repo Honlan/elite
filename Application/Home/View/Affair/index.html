@@ -1,11 +1,18 @@
+<script src="__PUBLIC__/js/highcharts/highcharts.js"></script>
+<script src="__PUBLIC__/js/highcharts/highcharts-more.js"></script>
+<script src="__PUBLIC__/js/highcharts/exporting.js"></script>
+<script src="__PUBLIC__/js/highcharts/data.js"></script>
 <script>
 $(document).ready(function() {
     $('#nav-affair').addClass('active');
     $('#header-right i').addClass('fa-graduation-cap');
     $('#header-right span').text('学务管理');
 });
+
 var tagTypeBoy = eval('{$tagTypeBoy}');
 var tagTypeGirl = eval('{$tagTypeGirl}');
+var trafficTimezone = eval('({$trafficTimezone})');
+
 var tagIndex = 0;
 var tags = [];
 for (var i = 0; i <= tagTypeBoy.length - 1; i++) {
@@ -112,18 +119,22 @@ for (var i = 0; i <= tagTypeGirl.length - 1; i++) {
 #affair #undergraduate,
 #affair #master,
 #affair #doctor {
-    height: 250px;
-    background-color: #222 !important;
-}
-
-#scatter-plot {
     height: 300px;
     background-color: #222 !important;
 }
 
-#bath-distribution {
+#affair #scatter-plot {
     height: 300px;
     background-color: #222 !important;
+}
+
+#affair #bath-distribution {
+    height: 300px;
+    background-color: #222 !important;
+}
+
+.highcharts-button {
+    display: none;
 }
 </style>
 <div id="affair">
@@ -150,15 +161,15 @@ for (var i = 0; i <= tagTypeGirl.length - 1; i++) {
     </div>
     <div class="row">
         <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
-            <p class="plot-title">本科生流量时间分布</p>
+            <p class="plot-title">本科生流量时域分布</p>
             <div id="undergraduate"></div>
         </div>
         <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
-            <p class="plot-title">硕士生流量时间分布</p>
+            <p class="plot-title">硕士生流量时域分布</p>
             <div id="master"></div>
         </div>
         <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
-            <p class="plot-title">博士生流量时间分布</p>
+            <p class="plot-title">博士生流量时域分布</p>
             <div id="doctor"></div>
         </div>
     </div>
@@ -437,354 +448,226 @@ $(document).ready(function() {
         }, 16000);
     });
 
-    require(
-        [
-            'echarts',
-            'echarts/chart/radar'
-        ],
-        function(ec) {
-            // 本硕博一天24小时不同场合上网流量分布
-            var undergraduate = ec.init(document.getElementById('undergraduate'), theme);
-            option = {
-                title: {
-                    show: false
-                },
-                tooltip: {
-                    trigger: 'axis'
-                },
-                legend: {
-                    orient: 'vertical',
-                    x: 'right',
-                    y: 'bottom',
-                    data: ['寝室', '教室']
-                },
-                polar: [{
-                    indicator: [{
-                        max: 1000,
-                        text: '00',
-                    }, {
-                        max: 1000,
-                        text: '23',
-                    }, {
-                        max: 1000,
-                        text: '22',
-                    }, {
-                        max: 1000,
-                        text: '21',
-                    }, {
-                        max: 1000,
-                        text: '20',
-                    }, {
-                        max: 1000,
-                        text: '19',
-                    }, {
-                        max: 1000,
-                        text: '18',
-                    }, {
-                        max: 1000,
-                        text: '17',
-                    }, {
-                        max: 1000,
-                        text: '16',
-                    }, {
-                        max: 1000,
-                        text: '15',
-                    }, {
-                        max: 1000,
-                        text: '14',
-                    }, {
-                        max: 1000,
-                        text: '13',
-                    }, {
-                        max: 1000,
-                        text: '12',
-                    }, {
-                        max: 1000,
-                        text: '11',
-                    }, {
-                        max: 1000,
-                        text: '10',
-                    }, {
-                        max: 1000,
-                        text: '09',
-                    }, {
-                        max: 1000,
-                        text: '08',
-                    }, {
-                        max: 1000,
-                        text: '07',
-                    }, {
-                        max: 1000,
-                        text: '06',
-                    }, {
-                        max: 1000,
-                        text: '05',
-                    }, {
-                        max: 1000,
-                        text: '04',
-                    }, {
-                        max: 1000,
-                        text: '03',
-                    }, {
-                        text: '02',
-                        max: 1000,
-                    }, {
-                        text: '01',
-                        max: 1000,
-                    }],
-                    splitNumber: 2,
-                    type: 'circle',
-                    scale: true,
-                }],
-                calculable: true,
-                series: [{
-                    name: '本科生',
-                    type: 'radar',
-                    data: [{
-                        value: [400, 100, 500, 400, 100, 500, 400, 100, 500, 400, 100, 500, 400, 100, 500, 400, 100, 500, 400, 100, 500, 400, 100, 500],
-                        name: '教室',
-                        symbol: 'none'
-                    }, {
-                        value: [100, 800, 600, 100, 800, 600, 100, 800, 600, 100, 800, 600, 100, 800, 600, 100, 800, 600, 100, 800, 600, 100, 800, 600],
-                        name: '寝室',
-                        symbol: 'none'
-                    }]
-                }]
-            };
-            undergraduate.setOption(option);
-        });
+    // 本科硕士博士wifi流量时间分布
+    $('#undergraduate').highcharts({
+        data: {
+            columns: [
+                [null, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23],
+                trafficTimezone['本科']['教学楼'],
+                trafficTimezone['本科']['宿舍'],
+                trafficTimezone['本科']['食堂'],
+                trafficTimezone['本科']['其他']
+            ]
+        },
 
-    require(
-        [
-            'echarts',
-            'echarts/chart/radar'
-        ],
-        function(ec) {
-            var doctor = ec.init(document.getElementById('doctor'), theme);
-            option = {
-                title: {
-                    show: false
-                },
-                tooltip: {
-                    trigger: 'axis'
-                },
-                legend: {
-                    orient: 'vertical',
-                    x: 'right',
-                    y: 'bottom',
-                    data: ['寝室', '教室']
-                },
-                polar: [{
-                    indicator: [{
-                        max: 1000,
-                        text: '00',
-                    }, {
-                        max: 1000,
-                        text: '23',
-                    }, {
-                        max: 1000,
-                        text: '22',
-                    }, {
-                        max: 1000,
-                        text: '21',
-                    }, {
-                        max: 1000,
-                        text: '20',
-                    }, {
-                        max: 1000,
-                        text: '19',
-                    }, {
-                        max: 1000,
-                        text: '18',
-                    }, {
-                        max: 1000,
-                        text: '17',
-                    }, {
-                        max: 1000,
-                        text: '16',
-                    }, {
-                        max: 1000,
-                        text: '15',
-                    }, {
-                        max: 1000,
-                        text: '14',
-                    }, {
-                        max: 1000,
-                        text: '13',
-                    }, {
-                        max: 1000,
-                        text: '12',
-                    }, {
-                        max: 1000,
-                        text: '11',
-                    }, {
-                        max: 1000,
-                        text: '10',
-                    }, {
-                        max: 1000,
-                        text: '09',
-                    }, {
-                        max: 1000,
-                        text: '08',
-                    }, {
-                        max: 1000,
-                        text: '07',
-                    }, {
-                        max: 1000,
-                        text: '06',
-                    }, {
-                        max: 1000,
-                        text: '05',
-                    }, {
-                        max: 1000,
-                        text: '04',
-                    }, {
-                        max: 1000,
-                        text: '03',
-                    }, {
-                        text: '02',
-                        max: 1000,
-                    }, {
-                        text: '01',
-                        max: 1000,
-                    }],
-                    splitNumber: 2,
-                    type: 'circle',
-                    scale: true,
-                }],
-                calculable: true,
-                series: [{
-                    name: '博士生',
-                    type: 'radar',
-                    data: [{
-                        value: [400, 100, 500, 400, 100, 500, 400, 100, 500, 400, 100, 500, 400, 100, 500, 400, 100, 500, 400, 100, 500, 400, 100, 500],
-                        name: '教室',
-                        symbol: 'none'
-                    }, {
-                        value: [100, 800, 600, 100, 800, 600, 100, 800, 600, 100, 800, 600, 100, 800, 600, 100, 800, 600, 100, 800, 600, 100, 800, 600],
-                        name: '寝室',
-                        symbol: 'none'
-                    }]
-                }]
-            };
-            doctor.setOption(option);
-        });
+        colors: ['#60C0DD', '#FE8463', '#9BCA63', '#FAD860'],
 
-    require(
-        [
-            'echarts',
-            'echarts/chart/radar'
-        ],
-        function(ec) {
-            var master = ec.init(document.getElementById('master'), theme);
-            option = {
-                title: {
-                    show: false
-                },
-                tooltip: {
-                    trigger: 'axis'
-                },
-                legend: {
-                    orient: 'vertical',
-                    x: 'right',
-                    y: 'bottom',
-                    data: ['寝室', '教室']
-                },
-                polar: [{
-                    indicator: [{
-                        max: 1000,
-                        text: '00',
-                    }, {
-                        max: 1000,
-                        text: '23',
-                    }, {
-                        max: 1000,
-                        text: '22',
-                    }, {
-                        max: 1000,
-                        text: '21',
-                    }, {
-                        max: 1000,
-                        text: '20',
-                    }, {
-                        max: 1000,
-                        text: '19',
-                    }, {
-                        max: 1000,
-                        text: '18',
-                    }, {
-                        max: 1000,
-                        text: '17',
-                    }, {
-                        max: 1000,
-                        text: '16',
-                    }, {
-                        max: 1000,
-                        text: '15',
-                    }, {
-                        max: 1000,
-                        text: '14',
-                    }, {
-                        max: 1000,
-                        text: '13',
-                    }, {
-                        max: 1000,
-                        text: '12',
-                    }, {
-                        max: 1000,
-                        text: '11',
-                    }, {
-                        max: 1000,
-                        text: '10',
-                    }, {
-                        max: 1000,
-                        text: '09',
-                    }, {
-                        max: 1000,
-                        text: '08',
-                    }, {
-                        max: 1000,
-                        text: '07',
-                    }, {
-                        max: 1000,
-                        text: '06',
-                    }, {
-                        max: 1000,
-                        text: '05',
-                    }, {
-                        max: 1000,
-                        text: '04',
-                    }, {
-                        max: 1000,
-                        text: '03',
-                    }, {
-                        text: '02',
-                        max: 1000,
-                    }, {
-                        text: '01',
-                        max: 1000,
-                    }],
-                    splitNumber: 2,
-                    type: 'circle',
+        chart: {
+            polar: true,
+            type: 'column',
+            backgroundColor: 'rgba(255, 255, 255, 0)'
+        },
 
-                }],
-                calculable: true,
-                series: [{
-                    name: '硕士生',
-                    type: 'radar',
-                    data: [{
-                        value: [400, 100, 500, 400, 100, 500, 400, 100, 500, 400, 100, 500, 400, 100, 500, 400, 100, 500, 400, 100, 500, 400, 100, 500],
-                        name: '教室',
-                        symbol: 'none'
-                    }, {
-                        value: [100, 800, 600, 100, 800, 600, 100, 800, 600, 100, 800, 600, 100, 800, 600, 100, 800, 600, 100, 800, 600, 100, 800, 600],
-                        name: '寝室',
-                        symbol: 'none'
-                    }]
-                }]
-            };
-            master.setOption(option);
-        });
+        title: {
+            text: ''
+        },
+
+        subtitle: {
+            text: ''
+        },
+
+        pane: {
+            size: '65%',
+            center: ['50%', '52%']
+        },
+
+        legend: {
+            align: 'center',
+            verticalAlign: 'bottom',
+            layout: 'horizontal',
+            y: 5,
+            itemStyle: {
+                color: '#ccc'
+            },
+            itemHoverStyle: {
+                color: '#f2f2f2'
+            }
+        },
+
+        xAxis: {
+            categories: ['00', '01', '02', '03', '04', '05', '06', '07', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23'],
+            labels: {
+                style: {
+                    color: 'rgba(220, 220, 220, 0.9)',
+                }
+            },
+            gridLineColor: 'rgba(255, 255, 255, 0.3)'
+        },
+
+        yAxis: {
+            labels: {
+                style: {
+                    color: 'rgba(220, 220, 220, 0.9)'
+                },
+                enabled: false
+            }
+        },
+
+        plotOptions: {
+            series: {
+                stacking: 'normal',
+                shadow: false,
+                groupPadding: 0,
+                pointPlacement: 'on'
+            }
+        }
+    });
+    $('#master').highcharts({
+        data: {
+            columns: [
+                [null, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23],
+                trafficTimezone['硕士']['教学楼'],
+                trafficTimezone['硕士']['宿舍'],
+                trafficTimezone['硕士']['食堂'],
+                trafficTimezone['硕士']['其他']
+            ]
+        },
+
+        colors: ['#60C0DD', '#FE8463', '#9BCA63', '#FAD860'],
+
+        chart: {
+            polar: true,
+            type: 'column',
+            backgroundColor: 'rgba(255, 255, 255, 0)'
+        },
+
+        title: {
+            text: ''
+        },
+
+        subtitle: {
+            text: ''
+        },
+
+        pane: {
+            size: '65%',
+            center: ['50%', '52%']
+        },
+
+        legend: {
+            align: 'center',
+            verticalAlign: 'bottom',
+            layout: 'horizontal',
+            y: 5,
+            itemStyle: {
+                color: '#ccc'
+            },
+            itemHoverStyle: {
+                color: '#f2f2f2'
+            }
+        },
+
+        xAxis: {
+            categories: ['00', '01', '02', '03', '04', '05', '06', '07', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23'],
+            labels: {
+                style: {
+                    color: 'rgba(220, 220, 220, 0.9)',
+                }
+            },
+            gridLineColor: 'rgba(255, 255, 255, 0.3)'
+        },
+
+        yAxis: {
+            labels: {
+                style: {
+                    color: 'rgba(220, 220, 220, 0.9)'
+                },
+                enabled: false
+            }
+        },
+
+        plotOptions: {
+            series: {
+                stacking: 'normal',
+                shadow: false,
+                groupPadding: 0,
+                pointPlacement: 'on'
+            }
+        }
+    });
+    $('#doctor').highcharts({
+        data: {
+            columns: [
+                [null, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23],
+                trafficTimezone['博士']['教学楼'],
+                trafficTimezone['博士']['宿舍'],
+                trafficTimezone['博士']['食堂'],
+                trafficTimezone['博士']['其他']
+            ]
+        },
+
+        colors: ['#60C0DD', '#FE8463', '#9BCA63', '#FAD860'],
+
+        chart: {
+            polar: true,
+            type: 'column',
+            backgroundColor: 'rgba(255, 255, 255, 0)'
+        },
+
+        title: {
+            text: ''
+        },
+
+        subtitle: {
+            text: ''
+        },
+
+        pane: {
+            size: '65%',
+            center: ['50%', '52%']
+        },
+
+        legend: {
+            align: 'center',
+            verticalAlign: 'bottom',
+            layout: 'horizontal',
+            y: 5,
+            itemStyle: {
+                color: '#ccc'
+            },
+            itemHoverStyle: {
+                color: '#f2f2f2'
+            }
+        },
+
+        xAxis: {
+            categories: ['00', '01', '02', '03', '04', '05', '06', '07', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23'],
+            labels: {
+                style: {
+                    color: 'rgba(220, 220, 220, 0.9)',
+                }
+            },
+            gridLineColor: 'rgba(255, 255, 255, 0.3)'
+        },
+
+        yAxis: {
+            labels: {
+                style: {
+                    color: 'rgba(220, 220, 220, 0.9)'
+                },
+                enabled: false
+            }
+        },
+
+        plotOptions: {
+            series: {
+                stacking: 'normal',
+                shadow: false,
+                groupPadding: 0,
+                pointPlacement: 'on'
+            }
+        }
+    });
 
     require(
         [
