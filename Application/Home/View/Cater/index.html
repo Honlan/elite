@@ -1,4 +1,5 @@
 <script>
+var dailyTradeSum = eval('({$dailyTradeSum})');
 $(document).ready(function() {
     $('#nav-cater').addClass('active');
     $('#header-right i').addClass('fa-coffee');
@@ -101,7 +102,7 @@ $(document).ready(function() {
                     splitLine: {
                         show: false
                     },
-                    data: ['餐饮总额', '三餐一楼', '三餐二楼', '上海快餐', '绿园餐厅', '学生餐厅']
+                    data: ['餐饮总额', '三餐一楼', '绿园餐厅', '三餐二楼', '上海快餐', '川味点心']
                 }],
                 yAxis: [{
                     type: 'value'
@@ -126,7 +127,7 @@ $(document).ready(function() {
                             color: 'rgba(0,0,0,0)'
                         }
                     },
-                    data: [0, 1700, 1400, 1200, 300, 0]
+                    data: [0, 306506, 279564, 254983, 233812, 217267]
                 }, {
                     name: '餐饮总额',
                     type: 'bar',
@@ -140,7 +141,7 @@ $(document).ready(function() {
                             }
                         }
                     },
-                    data: [2900, 1200, 300, 200, 900, 300]
+                    data: [339411, 32905, 26942, 24581, 21171, 16545]
                 }]
             };
             sale5.setOption(option);
@@ -173,7 +174,7 @@ $(document).ready(function() {
                     splitLine: {
                         show: false
                     },
-                    data: ['频次总和', '上海快餐', '二餐二楼', '三餐一楼', '三餐二楼', '淮扬快餐']
+                    data: ['频次总和', '三餐一楼', '上海快餐', '川味点心', '绿园餐厅', '江南小吃']
                 }],
                 yAxis: [{
                     type: 'value'
@@ -198,7 +199,7 @@ $(document).ready(function() {
                             color: 'rgba(0,0,0,0)'
                         }
                     },
-                    data: [0, 5700, 3900, 2300, 800, 0]
+                    data: [0, 44381, 40391, 37066, 34196, 31720]
                 }, {
                     name: '频次总和',
                     type: 'bar',
@@ -212,7 +213,7 @@ $(document).ready(function() {
                             }
                         }
                     },
-                    data: [8900, 3200, 1800, 1600, 1500, 800]
+                    data: [49794, 5413, 3990, 3325, 2870, 2476]
                 }]
             };
             count5.setOption(option);
@@ -357,35 +358,36 @@ $(document).ready(function() {
                     trigger: 'axis'
                 },
                 legend: {
-                    show: false,
-                    data: ['最高气温', '最低气温']
+                    data: ['男', '女'],
+                    x: 'right',
+                    y: 'top'
                 },
                 calculable: true,
                 xAxis: [{
                     type: 'category',
-                    boundaryGap: false,
-                    data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
+                    boundaryGap: true,
+                    data: dailyTradeSum['男']['day']
                 }],
                 yAxis: [{
                     type: 'value',
                     axisLabel: {
-                        formatter: '{value} °C'
+                        formatter: '{value} W'
                     }
                 }],
                 grid: {
                     y: 30,
                     y2: 50,
                     x: 70,
-                    x2: 30
+                    x2: 40
                 },
                 series: [{
-                    name: '最高气温',
+                    name: '男',
                     type: 'line',
-                    data: [11, 11, 15, 13, 12, 13, 10],
+                    data: dailyTradeSum['男']['sum'],
                 }, {
-                    name: '最低气温',
+                    name: '女',
                     type: 'line',
-                    data: [1, -2, 2, 5, 3, 2, 0],
+                    data: dailyTradeSum['女']['sum'],
                 }]
             };
             history_daily.setOption(option);
@@ -408,35 +410,39 @@ $(document).ready(function() {
                     formatter: "{a} <br/>{b} : {c} ({d}%)"
                 },
                 legend: {
-                    x: 'center',
-                    y: 'bottom',
-                    data: ['直接访问', '邮件营销', '联盟广告', '视频广告', '搜索引擎'],
+                    x: 'right',
+                    y: 'center',
+                    data: ['男本科', '男硕士', '男博士', '女本科', '女硕士', '女博士'],
                     textStyle: {
                         color: 'auto'
                     },
-                    padding: [5, 5, 15, 5]
+                    padding: [5, 20, 5, 10],
+                    orient: 'vertical'
                 },
                 calculable: true,
                 series: [{
                     name: '访问来源',
                     type: 'pie',
-                    radius: '48%',
-                    center: ['50%', '46%'],
+                    radius: '45%',
+                    center: ['40%', '50%'],
                     data: [{
-                        value: 335,
-                        name: '直接访问'
+                        value: 143828,
+                        name: '男本科'
                     }, {
-                        value: 310,
-                        name: '邮件营销'
+                        value: 73183,
+                        name: '男硕士'
                     }, {
-                        value: 234,
-                        name: '联盟广告'
+                        value: 39792,
+                        name: '男博士'
                     }, {
-                        value: 135,
-                        name: '视频广告'
+                        value: 48127,
+                        name: '女本科'
                     }, {
-                        value: 1548,
-                        name: '搜索引擎'
+                        value: 23865,
+                        name: '女硕士'
+                    }, {
+                        value: 10613,
+                        name: '女博士'
                     }]
                 }]
             };
@@ -460,35 +466,39 @@ $(document).ready(function() {
                     formatter: "{a} <br/>{b} : {c} ({d}%)"
                 },
                 legend: {
-                    x: 'center',
-                    y: 'bottom',
-                    data: ['直接访问', '邮件营销', '联盟广告', '视频广告', '搜索引擎'],
+                    x: 'right',
+                    y: 'center',
+                    data: ['第一食堂', '第二食堂', '第三食堂', '第四食堂', '第五食堂', '第六食堂'],
                     textStyle: {
                         color: 'auto'
                     },
-                    padding: [5, 5, 15, 5]
+                    padding: [5, 20, 5, 10],
+                    orient: 'vertical'
                 },
                 calculable: true,
                 series: [{
                     name: '访问来源',
                     type: 'pie',
-                    radius: '48%',
-                    center: ['50%', '46%'],
+                    radius: '45%',
+                    center: ['40%', '50%'],
                     data: [{
-                        value: 335,
-                        name: '直接访问'
+                        value: 127824,
+                        name: '第二食堂'
                     }, {
-                        value: 310,
-                        name: '邮件营销'
+                        value: 60446,
+                        name: '第三食堂'
                     }, {
-                        value: 234,
-                        name: '联盟广告'
+                        value: 50073,
+                        name: '第四食堂'
                     }, {
-                        value: 135,
-                        name: '视频广告'
+                        value: 50291,
+                        name: '第一食堂'
                     }, {
-                        value: 1548,
-                        name: '搜索引擎'
+                        value: 21076,
+                        name: '第五食堂'
+                    }, {
+                        value: 6947,
+                        name: '第六食堂'
                     }]
                 }]
             };

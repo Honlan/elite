@@ -67,8 +67,8 @@ class AffairController extends Controller {
         $this->bathRealtime = json_encode($temp);
 
         // 一卡通 vs Wifi
-        $students['女'] = M('students')->where(array('gender'=>'女'))->select();
-        $students['男'] = M('students')->where(array('gender'=>'男'))->select();
+        $students['女'] = M('students')->field('ecard, wifi')->where(array('gender'=>'女'))->select();
+        $students['男'] = M('students')->field('ecard, wifi')->where(array('gender'=>'男'))->select();
         $temp = array();
         foreach ($students as $key => $value) {
             foreach ($value as $k => $v) {
