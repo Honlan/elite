@@ -3,53 +3,13 @@ $(document).ready(function() {
     $('#nav-mobility').addClass('active');
     $('#header-right i').addClass('fa-group');
     $('#header-right span').text('实时监测');
+    var $indicators = $('#mobility #indicators').clone();
+    $('#header-right #sub-nav').append($indicators);
 });
 </script>
 <style>
 #mobility #indicators {
-    position: fixed;
-    right: 0;
-    top: 115px;
-    z-index: 999;
-}
-
-#mobility #indicators span {
-    position: relative;
-    right: -60px;
-    display: block;
-    margin-bottom: 3px;
-    padding: 10px 10px 10px 15px;
-    border-left: 1px solid rgba(240, 240, 240, 0.6);
-    border-top: 1px solid rgba(240, 240, 240, 0.6);
-    border-bottom: 1px solid rgba(240, 240, 240, 0.6);
-    border-bottom-left-radius: 6px;
-    transition: color .3s;
-    -o-transition: color .3s;
-    -moz-transition: color .3s;
-    -webkit-transition: color .3s;
-    transition: background-color .3s;
-    -o-transition: background-color .3s;
-    -moz-transition: background-color .3s;
-    -webkit-transition: background-color .3s;
-    transition: right .3s;
-    -o-transition: right .3s;
-    -moz-transition: right .3s;
-    -webkit-transition: right .3s;
-}
-
-#mobility #indicators:hover span {
-    right: 0;
-}
-
-#mobility #indicators span:hover {
-    color: #222;
-    background-color: rgba(240, 240, 240, 0.8);
-    cursor: pointer;
-}
-
-#mobility #indicators span.active {
-    color: #222;
-    background-color: rgba(240, 240, 240, 0.8);
+    display: none;
 }
 
 #mobility #realtime-mobility #allmap {
@@ -100,11 +60,11 @@ $(document).ready(function() {
 }
 </style>
 <div id="mobility">
-    <div id="indicators">
-        <span name="realtime-mobility" class="active">实时人群监测</span>
-        <span name="mobility-trend">人群迁移趋势</span>
-        <span name="cater-predict">就餐人数预测</span>
-    </div>
+    <ul id='indicators'>
+        <li name='realtime-mobility' class='active'>实时人群监测</li>/
+        <li name='mobility-trend'> 人群迁移趋势 </li>/
+        <li name='cater-predict'>就餐人数预测</li>
+    </ul>
     <div id="realtime-mobility">
         <div class="row">
             <div class="col-xs-12 col-sm-8 col-md-8 col-lg-8">
@@ -144,24 +104,24 @@ $(document).ready(function() {
 </div>
 <script>
 $(document).ready(function() {
-    $('#indicators span').click(function(event) {
+    $('#sub-nav #indicators li').click(function(event) {
         $('body,html').animate({
-            scrollTop: $('#' + $(this).attr('name')).offset().top - 60
+            scrollTop: $('#' + $(this).attr('name')).offset().top - 100
         }, 600);
-        $('#indicators span').removeClass('active');
+        $('#sub-nav #indicators li').removeClass('active');
         $(this).addClass('active');
     });
 
     $('body,html').bind('mousewheel', function() {
-        if ($('body').scrollTop() < $('#mobility-trend').offset().top - 60) {
-            $('#indicators span').removeClass('active');
-            $('#indicators span[name="realtime-mobility"]').addClass('active');
-        } else if ($('body').scrollTop() < $('#cater-predict').offset().top - 60) {
-            $('#indicators span').removeClass('active');
-            $('#indicators span[name="mobility-trend"]').addClass('active');
+        if ($('body').scrollTop() < $('#mobility-trend').offset().top - 100) {
+            $('#sub-nav #indicators li').removeClass('active');
+            $('#sub-nav #indicators li[name="realtime-mobility"]').addClass('active');
+        } else if ($('body').scrollTop() < $('#cater-predict').offset().top - 100) {
+            $('#sub-nav #indicators li').removeClass('active');
+            $('#sub-nav #indicators li[name="mobility-trend"]').addClass('active');
         } else {
-            $('#indicators span').removeClass('active');
-            $('#indicators span[name="cater-predict"]').addClass('active');
+            $('#sub-nav #indicators li').removeClass('active');
+            $('#sub-nav #indicators li[name="cater-predict"]').addClass('active');
         }
     });
 
@@ -170,13 +130,11 @@ $(document).ready(function() {
         paths: {
             echarts: PUBLIC + '/js/ECharts'
         },
-        packages: [
-            {
-                name: 'BMap',
-                location: PUBLIC + '/js/BMap',
-                main: 'main'
-            }
-        ]
+        packages: [{
+            name: 'BMap',
+            location: PUBLIC + '/js/BMap',
+            main: 'main'
+        }]
     });
     require(
         [
@@ -184,15 +142,15 @@ $(document).ready(function() {
             'BMap',
             'echarts/chart/map'
         ],
-        function (echarts, BMapExtension) {
+        function(echarts, BMapExtension) {
 
             // 初始化地图
             var BMapExt = new BMapExtension($('#allmap')[0], BMap, echarts);
             var map = BMapExt.getMap();
             // 上交
             var container = BMapExt.getEchartsContainer();
-            var point = new BMap.Point(121.442869,31.032031); //SJTU经纬度
-            map.centerAndZoom(point, 17);             // 初始化地图，设置中心点坐标和地图级别
+            var point = new BMap.Point(121.442869, 31.032031); //SJTU经纬度
+            map.centerAndZoom(point, 17); // 初始化地图，设置中心点坐标和地图级别
             map.enableScrollWheelZoom(true);
             // 显示交通流量的图层
             // map.centerAndZoom(new BMap.Point(116.404, 39.915), 12); 
@@ -204,102 +162,99 @@ $(document).ready(function() {
             // ctrl.setAnchor(BMAP_ANCHOR_BOTTOM_RIGHT);
 
             // 构造指定日期字符串,用于展示指定日期的当前时刻
-            function CurentTime()
-            { 
-                var now = new Date();
-               
-                var year = 2014;            //年
-                var month = 11;              //月
-                var day = 03;               //日
-               
-                var hh = now.getHours();            //时
-                var mm = now.getMinutes();          //分
-               
-                // IE兼容，要将"-"替换为"/""
-                // var clock = year + "-";
-                var clock = year + "/";
-               
-                if(month < 10)
-                    clock += "0";
-               
-                //clock += month + "-";
-                clock += month + "/";
-               
-                if(day < 10)
-                    clock += "0";
-                   
-                clock += day + " ";
-               
-                if(hh < 10)
-                    clock += "0";
-                   
-                clock += hh + ":";
-                if (mm < 10) clock += '0'; 
-                clock += mm; 
-                return(clock); 
-            }                
-            // 将获取的时间转化为距00:00:00起始时间的分钟数
-            function DeltaMinutes(){
-                // 指定日期的记录开始时刻，默认为 20130725 00:00:00
-                // IE浏览器支持的格式，要将"-"替换为"/""
-                var starttime = new Date("2014/11/03 05:00:00");
-                // 指定日期的当前时刻
-                var showtime = new Date(CurentTime());
-                // 计算分钟差
-                var delta = showtime.getTime() - starttime.getTime();
-                deltam = delta/(1000*60);
-                // return deltam;
-                return 750;
-            }        
-            // 非常重要的查询函数，返回两个值，df用于绘制MarkPoint图，df_heatmap用于绘制heatmap
-            function MySqlQuery(query,types){
-                //绘制MarkPoint
-                df = {};
-                //绘制MarkPoint
-                df_heatmap = [];
-                //请求数据
-                var xhr = new XMLHttpRequest();
-                //url = "http://localhost:1972/Service1.asmx/RealTimeMensaStatus?query="+query+"&types="+types;
-                //url = {:U('Index/mensa_status', array('query'=>query, 'type'=>types))};
-                url = "http://localhost:8088/elite/index.php/Home/Index/mensa_status/query/"+query+"/type/"+types;
-                xhr.open("GET", url, false);
-                xhr.send(null);
-                result = xhr.responseText;
-                result = JSON.parse(result);
-                //提取用于绘制MarkPoints的数据
-                for(var i in Object.keys(result))
-                {   
-                    //rlon = result.Table[i].lon + 0.001*Math.random()-0.0005;
-                    //rlat = result.Table[i].lat + 0.001*Math.random()-0.0005;
-                    rlon = parseFloat(result[i].lon) + 0.001*Math.random()-0.0005;
-                    rlat = parseFloat(result[i].lat) + 0.001*Math.random()-0.0005; 
-                    df[result[i].studentcode] = [rlon, rlat];
-                }
-                //提取用于绘制云图的数据
-                for(var i in Object.keys(result))
-                {
-                    temppoints = new Object();
-                    temppoints.lng = parseFloat(result[i].lon) + 0.001*Math.random()-0.0005;
-                    temppoints.lat = parseFloat(result[i].lat) + 0.001*Math.random()-0.0005;
-                    temppoints.count = 1;
-                    df_heatmap[i] = temppoints;
-                }
+            function CurentTime() {
+                    var now = new Date();
 
-                return {
-                    markpoint: df,
-                    heatmap: df_heatmap
-                };
-            }
-            // low speed, [0,15]
-            query1 = MySqlQuery(DeltaMinutes(),"undergraduat"); //DeltaMinutes()自动计算和05:00:00时刻的分钟差
+                    var year = 2014; //年
+                    var month = 11; //月
+                    var day = 03; //日
+
+                    var hh = now.getHours(); //时
+                    var mm = now.getMinutes(); //分
+
+                    // IE兼容，要将"-"替换为"/""
+                    // var clock = year + "-";
+                    var clock = year + "/";
+
+                    if (month < 10)
+                        clock += "0";
+
+                    //clock += month + "-";
+                    clock += month + "/";
+
+                    if (day < 10)
+                        clock += "0";
+
+                    clock += day + " ";
+
+                    if (hh < 10)
+                        clock += "0";
+
+                    clock += hh + ":";
+                    if (mm < 10) clock += '0';
+                    clock += mm;
+                    return (clock);
+                }
+                // 将获取的时间转化为距00:00:00起始时间的分钟数
+            function DeltaMinutes() {
+                    // 指定日期的记录开始时刻，默认为 20130725 00:00:00
+                    // IE浏览器支持的格式，要将"-"替换为"/""
+                    var starttime = new Date("2014/11/03 05:00:00");
+                    // 指定日期的当前时刻
+                    var showtime = new Date(CurentTime());
+                    // 计算分钟差
+                    var delta = showtime.getTime() - starttime.getTime();
+                    deltam = delta / (1000 * 60);
+                    // return deltam;
+                    return 750;
+                }
+                // 非常重要的查询函数，返回两个值，df用于绘制MarkPoint图，df_heatmap用于绘制heatmap
+            function MySqlQuery(query, types) {
+                    //绘制MarkPoint
+                    df = {};
+                    //绘制MarkPoint
+                    df_heatmap = [];
+                    //请求数据
+                    var xhr = new XMLHttpRequest();
+                    //url = "http://localhost:1972/Service1.asmx/RealTimeMensaStatus?query="+query+"&types="+types;
+                    //url = {:U('Index/mensa_status', array('query'=>query, 'type'=>types))};
+                    url = "http://localhost:8088/elite/index.php/Home/Index/mensa_status/query/" + query + "/type/" + types;
+                    xhr.open("GET", url, false);
+                    xhr.send(null);
+                    result = xhr.responseText;
+                    result = JSON.parse(result);
+                    //提取用于绘制MarkPoints的数据
+                    for (var i in Object.keys(result)) {
+                        //rlon = result.Table[i].lon + 0.001*Math.random()-0.0005;
+                        //rlat = result.Table[i].lat + 0.001*Math.random()-0.0005;
+                        rlon = parseFloat(result[i].lon) + 0.001 * Math.random() - 0.0005;
+                        rlat = parseFloat(result[i].lat) + 0.001 * Math.random() - 0.0005;
+                        df[result[i].studentcode] = [rlon, rlat];
+                    }
+                    //提取用于绘制云图的数据
+                    for (var i in Object.keys(result)) {
+                        temppoints = new Object();
+                        temppoints.lng = parseFloat(result[i].lon) + 0.001 * Math.random() - 0.0005;
+                        temppoints.lat = parseFloat(result[i].lat) + 0.001 * Math.random() - 0.0005;
+                        temppoints.count = 1;
+                        df_heatmap[i] = temppoints;
+                    }
+
+                    return {
+                        markpoint: df,
+                        heatmap: df_heatmap
+                    };
+                }
+                // low speed, [0,15]
+            query1 = MySqlQuery(DeltaMinutes(), "undergraduat"); //DeltaMinutes()自动计算和05:00:00时刻的分钟差
             var taxiCoord_1 = query1.markpoint;
             var heatmap1 = query1.heatmap;
             // midel speed, [15,30]
-            query2 = MySqlQuery(DeltaMinutes(),"master"); //DeltaMinutes()自动计算和00:00:00时刻的分钟差
+            query2 = MySqlQuery(DeltaMinutes(), "master"); //DeltaMinutes()自动计算和00:00:00时刻的分钟差
             var taxiCoord_2 = query2.markpoint;
             var heatmap2 = query2.heatmap;
             // high speed, [30,60]
-            query3 = MySqlQuery(DeltaMinutes(),"phd"); //DeltaMinutes()自动计算和00:00:00时刻的分钟差
+            query3 = MySqlQuery(DeltaMinutes(), "phd"); //DeltaMinutes()自动计算和00:00:00时刻的分钟差
             var taxiCoord_3 = query3.markpoint;
             var heatmap3 = query3.heatmap;
             // 整理heatmap data
@@ -307,41 +262,41 @@ $(document).ready(function() {
 
             // 显示heatmap
             // 计算高峰热力图
-            function randomHeatPoint_high(num){
-                idx = 0;
-                heatpoints = [];
-                for (idx=0;idx<num;idx++){
-                    //console.log(idx);
-                    temppoints = new Object();
-                    //temppoints.lng = 121.564813 + (0.15*2)*(Math.random()-0.5); //随机数其实是在-0.15~+0.15区间的
-                    temppoints.lng = 121.564813 + (0.15*2)*(Math.random()-0.7); //随机数其实是在-0.15~+0.15区间的
-                    temppoints.lat = 29.866791 + (0.10*2)*(Math.random()-0.1);
-                    temppoints.count = Math.ceil(100*Math.random());
-                    heatpoints[idx] = temppoints;
+            function randomHeatPoint_high(num) {
+                    idx = 0;
+                    heatpoints = [];
+                    for (idx = 0; idx < num; idx++) {
+                        //console.log(idx);
+                        temppoints = new Object();
+                        //temppoints.lng = 121.564813 + (0.15*2)*(Math.random()-0.5); //随机数其实是在-0.15~+0.15区间的
+                        temppoints.lng = 121.564813 + (0.15 * 2) * (Math.random() - 0.7); //随机数其实是在-0.15~+0.15区间的
+                        temppoints.lat = 29.866791 + (0.10 * 2) * (Math.random() - 0.1);
+                        temppoints.count = Math.ceil(100 * Math.random());
+                        heatpoints[idx] = temppoints;
+                    }
+                    return heatpoints;
                 }
-                return heatpoints;
-            }   
-            // 计算高峰热力图
-            function randomHeatPoint_smooth(num){
-                idx = 0;
-                heatpoints = [];
-                for (idx=0;idx<num;idx++){
-                    //console.log(idx);
-                    temppoints = new Object();
-                    //temppoints.lng = 121.564813 + (0.15*2)*(Math.random()-0.5); //随机数其实是在-0.15~+0.15区间的
-                    temppoints.lng = 121.564813 + (0.12*2)*(Math.random()-0.3); //随机数其实是在-0.15~+0.15区间的
-                    temppoints.lat = 29.866791 + (0.10*2)*(Math.random()-0.7);
-                    temppoints.count = Math.ceil(100*Math.random());
-                    heatpoints[idx] = temppoints;
+                // 计算高峰热力图
+            function randomHeatPoint_smooth(num) {
+                    idx = 0;
+                    heatpoints = [];
+                    for (idx = 0; idx < num; idx++) {
+                        //console.log(idx);
+                        temppoints = new Object();
+                        //temppoints.lng = 121.564813 + (0.15*2)*(Math.random()-0.5); //随机数其实是在-0.15~+0.15区间的
+                        temppoints.lng = 121.564813 + (0.12 * 2) * (Math.random() - 0.3); //随机数其实是在-0.15~+0.15区间的
+                        temppoints.lat = 29.866791 + (0.10 * 2) * (Math.random() - 0.7);
+                        temppoints.count = Math.ceil(100 * Math.random());
+                        heatpoints[idx] = temppoints;
+                    }
+                    return heatpoints;
                 }
-                return heatpoints;
-            }
-            // 获得高峰、平峰点数据
+                // 获得高峰、平峰点数据
             var points_now = heatpoints_now;
-            var points_high = randomHeatPoint_high(100);    
-            var points_smooth = randomHeatPoint_smooth(100);  
+            var points_high = randomHeatPoint_high(100);
+            var points_smooth = randomHeatPoint_smooth(100);
 
-            if(!isSupportCanvas()){
+            if (!isSupportCanvas()) {
                 alert('热力图目前只支持有canvas支持的浏览器,您所使用的浏览器不能使用热力图功能~')
             }
             //详细的参数,可以查看heatmap.js的文档 https://github.com/pa7/heatmap.js/blob/master/README.md
@@ -360,90 +315,124 @@ $(document).ready(function() {
              */
 
             // 当前时刻heatmap参数调节
-            heatmapOverlay_now = new BMapLib.HeatmapOverlay({"radius":20});
+            heatmapOverlay_now = new BMapLib.HeatmapOverlay({
+                "radius": 20
+            });
             map.addOverlay(heatmapOverlay_now);
-            heatmapOverlay_now.setDataSet({data:points_now,max:3});
+            heatmapOverlay_now.setDataSet({
+                data: points_now,
+                max: 3
+            });
             // 高峰参数调节
-            heatmapOverlay_high = new BMapLib.HeatmapOverlay({"radius":10});
+            heatmapOverlay_high = new BMapLib.HeatmapOverlay({
+                "radius": 10
+            });
             map.addOverlay(heatmapOverlay_high);
-            heatmapOverlay_high.setDataSet({data:points_high,max:3});
+            heatmapOverlay_high.setDataSet({
+                data: points_high,
+                max: 3
+            });
             // 平峰参数调节
-            heatmapOverlay_smooth = new BMapLib.HeatmapOverlay({"radius":10});
+            heatmapOverlay_smooth = new BMapLib.HeatmapOverlay({
+                "radius": 10
+            });
             map.addOverlay(heatmapOverlay_smooth);
-            heatmapOverlay_smooth.setDataSet({data:points_smooth,max:3});
+            heatmapOverlay_smooth.setDataSet({
+                data: points_smooth,
+                max: 3
+            });
 
             //是否显示热力图
-            function openHeatmapNow(){
+            function openHeatmapNow() {
                 heatmapOverlay_now.show();
-            }        
-            function openHeatmapHigh(){
+            }
+
+            function openHeatmapHigh() {
                 heatmapOverlay_high.show();
             }
-            function openHeatmapSmooth(){
+
+            function openHeatmapSmooth() {
                 heatmapOverlay_smooth.show();
             }
-            function closeHeatmap(){
+
+            function closeHeatmap() {
                 heatmapOverlay_now.hide();
                 heatmapOverlay_high.hide();
                 heatmapOverlay_smooth.hide();
             }
             closeHeatmap();
-            function setGradient(){
-                /*格式如下所示:
-                {
-                    0:'rgb(102, 255, 0)',
-                    .5:'rgb(255, 170, 0)',
-                    1:'rgb(255, 0, 0)'
-                }*/
-                var gradient = {};
-                var colors = document.querySelectorAll("input[type='color']");
-                colors = [].slice.call(colors,0);
-                colors.forEach(function(ele){
-                    gradient[ele.getAttribute("data-key")] = ele.value; 
-                });
-                heatmapOverlay_now.setOptions({"gradient":gradient});
-                heatmapOverlay_high.setOptions({"gradient":gradient});
-                heatmapOverlay_smooth.setOptions({"gradient":gradient});
-            }
-            //判断浏览区是否支持canvas
-            function isSupportCanvas(){
+
+            function setGradient() {
+                    /*格式如下所示:
+                    {
+                        0:'rgb(102, 255, 0)',
+                        .5:'rgb(255, 170, 0)',
+                        1:'rgb(255, 0, 0)'
+                    }*/
+                    var gradient = {};
+                    var colors = document.querySelectorAll("input[type='color']");
+                    colors = [].slice.call(colors, 0);
+                    colors.forEach(function(ele) {
+                        gradient[ele.getAttribute("data-key")] = ele.value;
+                    });
+                    heatmapOverlay_now.setOptions({
+                        "gradient": gradient
+                    });
+                    heatmapOverlay_high.setOptions({
+                        "gradient": gradient
+                    });
+                    heatmapOverlay_smooth.setOptions({
+                        "gradient": gradient
+                    });
+                }
+                //判断浏览区是否支持canvas
+            function isSupportCanvas() {
                 var elem = document.createElement('canvas');
                 return !!(elem.getContext && elem.getContext('2d'));
             }
 
             // Set option
             option = {
-                title : {
+                title: {
                     text: '实时消费数据监测',
-                    x:'center',
-                    textStyle : {
+                    x: 'center',
+                    textStyle: {
                         color: 'black'
                     }
                 },
                 legend: {
-                    show:true,
+                    show: true,
                     orient: 'vertical',
-                    x:'left',
-                    data:['本科生','研究生','博士生'],
-                    textStyle : {
+                    x: 'left',
+                    data: ['本科生', '研究生', '博士生'],
+                    textStyle: {
                         color: '#black'
                     }
                 },
                 //series、legend的颜色根据这一设定取值
-                color:['red','blue','green'],
-                tooltip : {
+                color: ['red', 'blue', 'green'],
+                tooltip: {
                     trigger: 'item'
                 },
                 toolbox: {
-                    show : false,
-                    orient : 'vertical',
+                    show: false,
+                    orient: 'vertical',
                     x: 'right',
                     y: 'center',
-                    feature : {
-                        mark : {show: true},
-                        dataView : {show: true, readOnly: false},
-                        restore : {show: true},
-                        saveAsImage : {show: true}
+                    feature: {
+                        mark: {
+                            show: true
+                        },
+                        dataView: {
+                            show: true,
+                            readOnly: false
+                        },
+                        restore: {
+                            show: true
+                        },
+                        saveAsImage: {
+                            show: true
+                        }
                     }
                 },
                 // dataRange: {
@@ -453,327 +442,340 @@ $(document).ready(function() {
                 //     calculable : true,
                 //     color: ['#ff3333', 'orange', 'yellow','lime','aqua']
                 // },
-                series : [
-                    {
-                        name:'本科生',
-                        type:'map',
-                        mapType: 'none',
-                        data:[],
-                        // 出租车OD数据
-                        geoCoord: taxiCoord_1,                    
-                        markPoint : {
-                            symbolSize: 4,
-                            // effect : {
-                            //     show: true,
-                            //     shadowBlur : 1
-                            // },
-                            itemStyle:{
-                                normal:{
-                                    label:{show:false}
+                series: [{
+                    name: '本科生',
+                    type: 'map',
+                    mapType: 'none',
+                    data: [],
+                    // 出租车OD数据
+                    geoCoord: taxiCoord_1,
+                    markPoint: {
+                        symbolSize: 4,
+                        // effect : {
+                        //     show: true,
+                        //     shadowBlur : 1
+                        // },
+                        itemStyle: {
+                            normal: {
+                                label: {
+                                    show: false
                                 }
-                            },
-                            // data形式
-                            // data : [
-                                //     {name:'福州',value:95},
-                                //     {name:'太原',value:90},
-                                //     {name:'长春',value:80},
-                                //     {name:'重庆',value:70},
-                                //     {name:'西安',value:60},
-                                //     {name:'成都',value:50},
-                                //     {name:'常州',value:40},
-                                //     {name:'北京',value:30},
-                                //     {name:'北海',value:20},
-                                //     {name:'海口',value:10}
-                                // ]
-                            data : (function(){
-                                //console.log(taxiCoord_1);
-                                var data = [];
-                                var df = Object.keys(taxiCoord_1);
-                                //console.log(Object.keys(taxiCoord_1));
-                                var len = df.length;
-                                while(len--) {
-                                    data.push({
-                                        // name : placeList[len].name
-                                        name : df[len]
+                            }
+                        },
+                        // data形式
+                        // data : [
+                        //     {name:'福州',value:95},
+                        //     {name:'太原',value:90},
+                        //     {name:'长春',value:80},
+                        //     {name:'重庆',value:70},
+                        //     {name:'西安',value:60},
+                        //     {name:'成都',value:50},
+                        //     {name:'常州',value:40},
+                        //     {name:'北京',value:30},
+                        //     {name:'北海',value:20},
+                        //     {name:'海口',value:10}
+                        // ]
+                        data: (function() {
+                            //console.log(taxiCoord_1);
+                            var data = [];
+                            var df = Object.keys(taxiCoord_1);
+                            //console.log(Object.keys(taxiCoord_1));
+                            var len = df.length;
+                            while (len--) {
+                                data.push({
+                                    // name : placeList[len].name
+                                    name: df[len]
                                         //geoCoord : placeList[len].geoCoord
-                                    })
-                                }
-                                return data;
-                            })()
-                        }
-                    },
-                    {
-                        name:'研究生',
-                        type:'map',
-                        mapType: 'none',
-                        data:[],
-                        // 出租车OD数据
-                        geoCoord: taxiCoord_2,
-                        markPoint : {
-                            symbolSize: 4,
-                            // effect : {
-                            //     show: true,
-                            //     shadowBlur : 1
-                            // },
-                            itemStyle:{
-                                normal:{
-                                    label:{show:false}
-                                }
-                            },
-                            data : (function(){
-                                var data = [];
-                                var df = Object.keys(taxiCoord_2);
-                                var len = df.length;
-                                while(len--) {
-                                    data.push({
-                                        // name : placeList[len].name
-                                        name : df[len]
-                                        //geoCoord : placeList[len].geoCoord
-                                    })
-                                }
-                                return data;
-                            })()
-                        }
-                    },
-                    {
-                        name:'博士生',
-                        type:'map',
-                        mapType: 'none',
-                        data:[],
-                        // 出租车OD数据
-                        geoCoord: taxiCoord_3,
-                        markPoint : {
-                            symbolSize: 4,
-                            // effect : {
-                            //     show: true,
-                            //     shadowBlur : 1
-                            // },
-                            itemStyle:{
-                                normal:{
-                                    label:{show:false}
-                                }
-                            },
-                            data : (function(){
-                                var data = [];
-                                var df = Object.keys(taxiCoord_3);
-                                var len = df.length;
-                                while(len--) {
-                                    data.push({
-                                        // name : placeList[len].name
-                                        name : df[len]
-                                        //geoCoord : placeList[len].geoCoord
-                                    })
-                                }
-                                return data;
-                            })()
-                        }
+                                })
+                            }
+                            return data;
+                        })()
                     }
-                ]
-            };//var option
-            
+                }, {
+                    name: '研究生',
+                    type: 'map',
+                    mapType: 'none',
+                    data: [],
+                    // 出租车OD数据
+                    geoCoord: taxiCoord_2,
+                    markPoint: {
+                        symbolSize: 4,
+                        // effect : {
+                        //     show: true,
+                        //     shadowBlur : 1
+                        // },
+                        itemStyle: {
+                            normal: {
+                                label: {
+                                    show: false
+                                }
+                            }
+                        },
+                        data: (function() {
+                            var data = [];
+                            var df = Object.keys(taxiCoord_2);
+                            var len = df.length;
+                            while (len--) {
+                                data.push({
+                                    // name : placeList[len].name
+                                    name: df[len]
+                                        //geoCoord : placeList[len].geoCoord
+                                })
+                            }
+                            return data;
+                        })()
+                    }
+                }, {
+                    name: '博士生',
+                    type: 'map',
+                    mapType: 'none',
+                    data: [],
+                    // 出租车OD数据
+                    geoCoord: taxiCoord_3,
+                    markPoint: {
+                        symbolSize: 4,
+                        // effect : {
+                        //     show: true,
+                        //     shadowBlur : 1
+                        // },
+                        itemStyle: {
+                            normal: {
+                                label: {
+                                    show: false
+                                }
+                            }
+                        },
+                        data: (function() {
+                            var data = [];
+                            var df = Object.keys(taxiCoord_3);
+                            var len = df.length;
+                            while (len--) {
+                                data.push({
+                                    // name : placeList[len].name
+                                    name: df[len]
+                                        //geoCoord : placeList[len].geoCoord
+                                })
+                            }
+                            return data;
+                        })()
+                    }
+                }]
+            }; //var option
+
             var myChart = BMapExt.initECharts(container);
             //window.onresize = myChart.resize;
             //BMapExt.setOption(option, true)
             BMapExt.setOption(option)
-            
-            var timeIndex = DeltaMinutes()+1;
-            timeTicket = setInterval(function() {  
+
+            var timeIndex = DeltaMinutes() + 1;
+            timeTicket = setInterval(function() {
                 //每一次更新都要载入数据
                 // low speed, [0,15]
-                query_dynamic1 = MySqlQuery(timeIndex,"undergraduat"); //DeltaMinutes()自动计算和00:00:00时刻的分钟差
+                query_dynamic1 = MySqlQuery(timeIndex, "undergraduat"); //DeltaMinutes()自动计算和00:00:00时刻的分钟差
                 var taxiCoord_dynamic1 = query_dynamic1.markpoint;
                 heatmap_dynamic1 = query_dynamic1.heatmap;
                 // midel speed, [15,30]
-                query_dynamic2 = MySqlQuery(timeIndex,"master"); //DeltaMinutes()自动计算和00:00:00时刻的分钟差
+                query_dynamic2 = MySqlQuery(timeIndex, "master"); //DeltaMinutes()自动计算和00:00:00时刻的分钟差
                 var taxiCoord_dynamic2 = query_dynamic2.markpoint;
                 heatmap_dynamic2 = query_dynamic2.heatmap;
                 // high speed, [30,60]
-                query_dynamic3 = MySqlQuery(timeIndex,"phd"); //DeltaMinutes()自动计算和00:00:00时刻的分钟差
+                query_dynamic3 = MySqlQuery(timeIndex, "phd"); //DeltaMinutes()自动计算和00:00:00时刻的分钟差
                 var taxiCoord_dynamic3 = query_dynamic3.markpoint;
                 heatmap_dynamic3 = query_dynamic3.heatmap;
                 heatmap_dynamic_now = heatmap_dynamic1.concat(heatmap_dynamic2).concat(heatmap_dynamic3);
 
                 //option_dynamic
                 option_dynamic = {
-                            title : {
-                                text: '实时消费监测',
-                                x:'center',
-                                textStyle : {
-                                    color: 'black'
-                                }
+                    title: {
+                        text: '实时消费监测',
+                        x: 'center',
+                        textStyle: {
+                            color: 'black'
+                        }
+                    },
+                    legend: {
+                        show: true,
+                        orient: 'vertical',
+                        x: 'left',
+                        data: ['本科生', '研究生', '博士生'],
+                        textStyle: {
+                            color: '#black'
+                        }
+                    },
+                    //series、legend的颜色根据这一设定取值
+                    color: ['red', 'blue', 'green'],
+                    tooltip: {
+                        trigger: 'item'
+                    },
+                    toolbox: {
+                        show: false,
+                        orient: 'vertical',
+                        x: 'right',
+                        y: 'center',
+                        feature: {
+                            mark: {
+                                show: true
                             },
-                            legend: {
-                                show:true,
-                                orient: 'vertical',
-                                x:'left',
-                                data:['本科生','研究生','博士生'],
-                                textStyle : {
-                                    color: '#black'
-                                }
+                            dataView: {
+                                show: true,
+                                readOnly: false
                             },
-                            //series、legend的颜色根据这一设定取值
-                            color:['red','blue','green'],
-                            tooltip : {
-                                trigger: 'item'
+                            restore: {
+                                show: true
                             },
-                            toolbox: {
-                                show : false,
-                                orient : 'vertical',
-                                x: 'right',
-                                y: 'center',
-                                feature : {
-                                    mark : {show: true},
-                                    dataView : {show: true, readOnly: false},
-                                    restore : {show: true},
-                                    saveAsImage : {show: true}
-                                }
-                            },
-                            // dataRange: {
-                            //     min : 0,
-                            //     max : 100,
-                            //     y: '60%',
-                            //     calculable : true,
-                            //     color: ['#ff3333', 'orange', 'yellow','lime','aqua']
+                            saveAsImage: {
+                                show: true
+                            }
+                        }
+                    },
+                    // dataRange: {
+                    //     min : 0,
+                    //     max : 100,
+                    //     y: '60%',
+                    //     calculable : true,
+                    //     color: ['#ff3333', 'orange', 'yellow','lime','aqua']
+                    // },
+                    series: [{
+                        name: '本科生',
+                        type: 'map',
+                        mapType: 'none',
+                        data: [],
+                        // 出租车OD数据
+                        geoCoord: taxiCoord_dynamic1,
+                        markPoint: {
+                            symbolSize: 4,
+                            // effect : {
+                            //     show: true,
+                            //     shadowBlur : 1
                             // },
-                            series : [
-                                {
-                                    name:'本科生',
-                                    type:'map',
-                                    mapType: 'none',
-                                    data:[],
-                                    // 出租车OD数据
-                                    geoCoord: taxiCoord_dynamic1,                    
-                                    markPoint : {
-                                        symbolSize: 4,
-                                        // effect : {
-                                        //     show: true,
-                                        //     shadowBlur : 1
-                                        // },
-                                        itemStyle:{
-                                            normal:{
-                                                label:{show:false}
-                                            }
-                                        },
-                                        // data形式
-                                        // data : [
-                                            //     {name:'福州',value:95},
-                                            //     {name:'太原',value:90},
-                                            //     {name:'长春',value:80},
-                                            //     {name:'重庆',value:70},
-                                            //     {name:'西安',value:60},
-                                            //     {name:'成都',value:50},
-                                            //     {name:'常州',value:40},
-                                            //     {name:'北京',value:30},
-                                            //     {name:'北海',value:20},
-                                            //     {name:'海口',value:10}
-                                            // ]
-                                        data : (function(){
-                                            //console.log(taxiCoord_1);
-                                            var data = [];
-                                            var df = Object.keys(taxiCoord_dynamic1);
-                                            //console.log(Object.keys(taxiCoord_1));
-                                            var len = df.length;
-                                            while(len--) {
-                                                data.push({
-                                                    // name : placeList[len].name
-                                                    name : df[len]
-                                                    //geoCoord : placeList[len].geoCoord
-                                                })
-                                            }
-                                            return data;
-                                        })()
-                                    }
-                                },
-                                {
-                                    name:'研究生',
-                                    type:'map',
-                                    mapType: 'none',
-                                    data:[],
-                                    // 出租车OD数据
-                                    geoCoord: taxiCoord_dynamic2,
-                                    markPoint : {
-                                        symbolSize: 4,
-                                        // effect : {
-                                        //     show: true,
-                                        //     shadowBlur : 1
-                                        // },
-                                        itemStyle:{
-                                            normal:{
-                                                label:{show:false}
-                                            }
-                                        },
-                                        data : (function(){
-                                            var data = [];
-                                            var df = Object.keys(taxiCoord_dynamic2);
-                                            var len = df.length;
-                                            while(len--) {
-                                                data.push({
-                                                    // name : placeList[len].name
-                                                    name : df[len]
-                                                    //geoCoord : placeList[len].geoCoord
-                                                })
-                                            }
-                                            return data;
-                                        })()
-                                    }
-                                },
-                                {
-                                    name:'博士生',
-                                    type:'map',
-                                    mapType: 'none',
-                                    data:[],
-                                    // 出租车OD数据
-                                    geoCoord: taxiCoord_dynamic3,
-                                    markPoint : {
-                                        symbolSize: 4,
-                                        // effect : {
-                                        //     show: true,
-                                        //     shadowBlur : 1
-                                        // },
-                                        itemStyle:{
-                                            normal:{
-                                                label:{show:false}
-                                            }
-                                        },
-                                        data : (function(){
-                                            var data = [];
-                                            var df = Object.keys(taxiCoord_dynamic3);
-                                            var len = df.length;
-                                            while(len--) {
-                                                data.push({
-                                                    // name : placeList[len].name
-                                                    name : df[len]
-                                                    //geoCoord : placeList[len].geoCoord
-                                                })
-                                            }
-                                            return data;
-                                        })()
+                            itemStyle: {
+                                normal: {
+                                    label: {
+                                        show: false
                                     }
                                 }
-                            ]
-                };//var option_dynamic 
+                            },
+                            // data形式
+                            // data : [
+                            //     {name:'福州',value:95},
+                            //     {name:'太原',value:90},
+                            //     {name:'长春',value:80},
+                            //     {name:'重庆',value:70},
+                            //     {name:'西安',value:60},
+                            //     {name:'成都',value:50},
+                            //     {name:'常州',value:40},
+                            //     {name:'北京',value:30},
+                            //     {name:'北海',value:20},
+                            //     {name:'海口',value:10}
+                            // ]
+                            data: (function() {
+                                //console.log(taxiCoord_1);
+                                var data = [];
+                                var df = Object.keys(taxiCoord_dynamic1);
+                                //console.log(Object.keys(taxiCoord_1));
+                                var len = df.length;
+                                while (len--) {
+                                    data.push({
+                                        // name : placeList[len].name
+                                        name: df[len]
+                                            //geoCoord : placeList[len].geoCoord
+                                    })
+                                }
+                                return data;
+                            })()
+                        }
+                    }, {
+                        name: '研究生',
+                        type: 'map',
+                        mapType: 'none',
+                        data: [],
+                        // 出租车OD数据
+                        geoCoord: taxiCoord_dynamic2,
+                        markPoint: {
+                            symbolSize: 4,
+                            // effect : {
+                            //     show: true,
+                            //     shadowBlur : 1
+                            // },
+                            itemStyle: {
+                                normal: {
+                                    label: {
+                                        show: false
+                                    }
+                                }
+                            },
+                            data: (function() {
+                                var data = [];
+                                var df = Object.keys(taxiCoord_dynamic2);
+                                var len = df.length;
+                                while (len--) {
+                                    data.push({
+                                        // name : placeList[len].name
+                                        name: df[len]
+                                            //geoCoord : placeList[len].geoCoord
+                                    })
+                                }
+                                return data;
+                            })()
+                        }
+                    }, {
+                        name: '博士生',
+                        type: 'map',
+                        mapType: 'none',
+                        data: [],
+                        // 出租车OD数据
+                        geoCoord: taxiCoord_dynamic3,
+                        markPoint: {
+                            symbolSize: 4,
+                            // effect : {
+                            //     show: true,
+                            //     shadowBlur : 1
+                            // },
+                            itemStyle: {
+                                normal: {
+                                    label: {
+                                        show: false
+                                    }
+                                }
+                            },
+                            data: (function() {
+                                var data = [];
+                                var df = Object.keys(taxiCoord_dynamic3);
+                                var len = df.length;
+                                while (len--) {
+                                    data.push({
+                                        // name : placeList[len].name
+                                        name: df[len]
+                                            //geoCoord : placeList[len].geoCoord
+                                    })
+                                }
+                                return data;
+                            })()
+                        }
+                    }]
+                }; //var option_dynamic 
 
                 // 设定loading界面
-                var myChart = BMapExt.initECharts(container);            
+                var myChart = BMapExt.initECharts(container);
                 myChart.showLoading({
-                  text : 'loading...',
-                  effect : 'whirling',
-                  textStyle : {
-                      fontSize : 20
-                  }
+                    text: 'loading...',
+                    effect: 'whirling',
+                    textStyle: {
+                        fontSize: 20
+                    }
                 });
-                loadingTicket = setTimeout(function (){
-                  myChart.hideLoading();
-                  myChart.setOption(option_dynamic);
-                },2000);              
+                loadingTicket = setTimeout(function() {
+                    myChart.hideLoading();
+                    myChart.setOption(option_dynamic);
+                }, 2000);
                 // 更新地图
                 BMapExt.setOption(option_dynamic);
                 // 更新时间索引
-                timeIndex = timeIndex+1
+                timeIndex = timeIndex + 1
                 console.log(timeIndex);
             }, 60000);
-        }//function (echarts, BMapExtension) 
-    );//require
+        } //function (echarts, BMapExtension) 
+    ); //require
 
     // 人群密集top5
     require(
@@ -821,7 +823,7 @@ $(document).ready(function() {
             };
             top5.setOption(option);
         }
-    );//require
+    ); //require
 
     // 人群消费top5
     require(
@@ -830,133 +832,213 @@ $(document).ready(function() {
             'echarts/chart/bar',
             'echarts/chart/line'
         ],
-        function (echarts) {
+        function(echarts) {
             // 基于准备好的dom，初始化echarts图表
             var myChart = echarts.init(document.getElementById('consum_top5'), theme);
-            
-            // 构造指定日期字符串,用于展示指定日期的当前时刻
-            function CurentTime()
-            { 
-                var now = new Date();
-               
-                var year = 2014;            //年
-                var month = 11;              //月
-                var day = 03;               //日
-               
-                var hh = now.getHours();            //时
-                var mm = now.getMinutes();          //分
-               
-                // IE兼容，要将"-"替换为"/""
-                // var clock = year + "-";
-                var clock = year + "/";
-               
-                if(month < 10)
-                    clock += "0";
-               
-                //clock += month + "-";
-                clock += month + "/";
-               
-                if(day < 10)
-                    clock += "0";
-                   
-                clock += day + " ";
-               
-                if(hh < 10)
-                    clock += "0";
-                   
-                clock += hh + ":";
-                if (mm < 10) clock += '0'; 
-                clock += mm; 
-                return(clock); 
-            }                
-            // 将获取的时间转化为距00:00:00起始时间的分钟数
-            function DeltaMinutes(){
-                // 指定日期的记录开始时刻，默认为 20130725 00:00:00
-                // IE浏览器支持的格式，要将"-"替换为"/""
-                var starttime = new Date("2014/11/03 05:00:00");
-                // 指定日期的当前时刻
-                var showtime = new Date(CurentTime());
-                // 计算分钟差
-                var delta = showtime.getTime() - starttime.getTime();
-                deltam = delta/(1000*60);
-                // return deltam;
-                return 750;
-            }        
-            // 非常重要的查询函数，返回两个值，df用于绘制MarkPoint图，df_heatmap用于绘制heatmap
-            function MensaAmount(query, topn){
-                //绘制MarkPoint
-                df = {};
-                df_name = [];
-                //请求数据
-                var xhr = new XMLHttpRequest();
-                //url = "http://localhost:1972/Service1.asmx/MensaAmount?query="+query;
-                url = "http://localhost:8088/elite/index.php/Home/Index/mensa_amount/query/"+query;
-                xhr.open("GET", url, false);
-                xhr.send(null);
-                result = xhr.responseText;
-                result = JSON.parse(result);
-                //提取用于绘制Amount的数据
-                i=0;
-                while(i < topn){
-                    df[result[i].toacount] = result[i].sales/100;
-                    df_name.push(result[i].mname);
-                    i = i+1;
-                }
 
-                return {
-                    mensa_amount: df,
-                    mensa_name: df_name
-                };
-            }
-            // data topn 5
+            // 构造指定日期字符串,用于展示指定日期的当前时刻
+            function CurentTime() {
+                    var now = new Date();
+
+                    var year = 2014; //年
+                    var month = 11; //月
+                    var day = 03; //日
+
+                    var hh = now.getHours(); //时
+                    var mm = now.getMinutes(); //分
+
+                    // IE兼容，要将"-"替换为"/""
+                    // var clock = year + "-";
+                    var clock = year + "/";
+
+                    if (month < 10)
+                        clock += "0";
+
+                    //clock += month + "-";
+                    clock += month + "/";
+
+                    if (day < 10)
+                        clock += "0";
+
+                    clock += day + " ";
+
+                    if (hh < 10)
+                        clock += "0";
+
+                    clock += hh + ":";
+                    if (mm < 10) clock += '0';
+                    clock += mm;
+                    return (clock);
+                }
+                // 将获取的时间转化为距00:00:00起始时间的分钟数
+            function DeltaMinutes() {
+                    // 指定日期的记录开始时刻，默认为 20130725 00:00:00
+                    // IE浏览器支持的格式，要将"-"替换为"/""
+                    var starttime = new Date("2014/11/03 05:00:00");
+                    // 指定日期的当前时刻
+                    var showtime = new Date(CurentTime());
+                    // 计算分钟差
+                    var delta = showtime.getTime() - starttime.getTime();
+                    deltam = delta / (1000 * 60);
+                    // return deltam;
+                    return 750;
+                }
+                // 非常重要的查询函数，返回两个值，df用于绘制MarkPoint图，df_heatmap用于绘制heatmap
+            function MensaAmount(query, topn) {
+                    //绘制MarkPoint
+                    df = {};
+                    df_name = [];
+                    //请求数据
+                    var xhr = new XMLHttpRequest();
+                    //url = "http://localhost:1972/Service1.asmx/MensaAmount?query="+query;
+                    url = "http://localhost:8088/elite/index.php/Home/Index/mensa_amount/query/" + query;
+                    xhr.open("GET", url, false);
+                    xhr.send(null);
+                    result = xhr.responseText;
+                    result = JSON.parse(result);
+                    //提取用于绘制Amount的数据
+                    i = 0;
+                    while (i < topn) {
+                        df[result[i].toacount] = result[i].sales / 100;
+                        df_name.push(result[i].mname);
+                        i = i + 1;
+                    }
+
+                    return {
+                        mensa_amount: df,
+                        mensa_name: df_name
+                    };
+                }
+                // data topn 5
             mensa_amount = MensaAmount(DeltaMinutes(), 5).mensa_amount;
             mensa_name = MensaAmount(DeltaMinutes(), 5).mensa_name;
             // Echart Option
             option = {
-                title : {
-                    show : false,
+                title: {
+                    show: false,
                     text: '人群累积消费 top 5',
                     subtext: '一日数据',
                     x: 'center'
                 },
-                tooltip : {
+                tooltip: {
                     trigger: 'axis'
                 },
                 legend: {
                     x: 'left',
-                    orient: 'vertical',         
-                    selectedMode:true,
-                    data:['总价']
+                    orient: 'vertical',
+                    selectedMode: true,
+                    data: ['总价']
                 },
                 toolbox: {
                     x: 'right',
-                    orient: 'vertical',                         
-                    show : true,
-                    feature : {
-                        mark : {show: true},
-                        dataView : {show: true, readOnly: false},
-                        restore : {show: true},
-                        saveAsImage : {show: true}
+                    orient: 'vertical',
+                    show: true,
+                    feature: {
+                        mark: {
+                            show: true
+                        },
+                        dataView: {
+                            show: true,
+                            readOnly: false
+                        },
+                        restore: {
+                            show: true
+                        },
+                        saveAsImage: {
+                            show: true
+                        }
                     }
                 },
-                calculable : true,
-                xAxis : [
-                    {
-                        type : 'category',
-                        data : mensa_name
-                    }
-                ],
-                yAxis : [
-                    {
-                        type : 'value',
-                        name : '消费总量（单位：元）',
+                calculable: true,
+                xAxis: [{
+                    type: 'category',
+                    data: mensa_name
+                }],
+                yAxis: [{
+                    type: 'value',
+                    name: '消费总量（单位：元）',
+                    boundaryGap: [0, 0.1]
+                }],
+                series: [{
+                    name: '总价',
+                    type: 'bar',
+                    stack: 'sum',
+                    barCategoryGap: '50%',
+                    itemStyle: {
+                        normal: {
+                            color: 'tomato',
+                            barBorderColor: 'tomato',
+                            barBorderWidth: 6,
+                            barBorderRadius: 0,
+                            label: {
+                                show: true,
+                                position: 'insideTop'
+                            }
+                        }
+                    },
+                    data: [mensa_amount[Object.keys(mensa_amount)[0]], mensa_amount[Object.keys(mensa_amount)[1]], mensa_amount[Object.keys(mensa_amount)[2]], mensa_amount[Object.keys(mensa_amount)[3]], mensa_amount[Object.keys(mensa_amount)[4]]]
+                }]
+            };
+
+            // 为echarts对象加载数据 
+            myChart.setOption(option);
+            // 动态数据
+            var timeIndex = DeltaMinutes() + 1;
+            timeTicket = setInterval(function() {
+                //每一次更新都要载入数据
+                // data topn 5
+                mensa_amount_dynamic = MensaAmount(timeIndex, 5).mensa_amount;
+                mensa_name_dynamic = MensaAmount(timeIndex, 5).mensa_name;
+                // Echart Option
+                option_mensa_dynamic = {
+                    title: {
+                        show: false,
+                        text: '人群累积消费 top 5',
+                        subtext: '一日数据',
+                        x: 'center'
+                    },
+                    tooltip: {
+                        trigger: 'axis'
+                    },
+                    legend: {
+                        x: 'left',
+                        orient: 'vertical',
+                        selectedMode: true,
+                        data: ['总价']
+                    },
+                    toolbox: {
+                        x: 'right',
+                        orient: 'vertical',
+                        show: true,
+                        feature: {
+                            mark: {
+                                show: true
+                            },
+                            dataView: {
+                                show: true,
+                                readOnly: false
+                            },
+                            restore: {
+                                show: true
+                            },
+                            saveAsImage: {
+                                show: true
+                            }
+                        }
+                    },
+                    calculable: true,
+                    xAxis: [{
+                        type: 'category',
+                        data: mensa_name_dynamic
+                    }],
+                    yAxis: [{
+                        type: 'value',
+                        name: '消费总量（单位：元）',
                         boundaryGap: [0, 0.1]
-                    }
-                ],
-                series : [
-                    {
-                        name:'总价',
-                        type:'bar',
+                    }],
+                    series: [{
+                        name: '总价',
+                        type: 'bar',
                         stack: 'sum',
                         barCategoryGap: '50%',
                         itemStyle: {
@@ -964,109 +1046,36 @@ $(document).ready(function() {
                                 color: 'tomato',
                                 barBorderColor: 'tomato',
                                 barBorderWidth: 6,
-                                barBorderRadius:0,
-                                label : {
-                                    show: true, position: 'insideTop'
+                                barBorderRadius: 0,
+                                label: {
+                                    show: true,
+                                    position: 'insideTop'
                                 }
                             }
                         },
-                       data:[mensa_amount[Object.keys(mensa_amount)[0]], mensa_amount[Object.keys(mensa_amount)[1]], mensa_amount[Object.keys(mensa_amount)[2]], mensa_amount[Object.keys(mensa_amount)[3]], mensa_amount[Object.keys(mensa_amount)[4]]]
-                    }
-                ]
-            };
-                        
-            // 为echarts对象加载数据 
-            myChart.setOption(option); 
-            // 动态数据
-            var timeIndex = DeltaMinutes()+1;
-            timeTicket = setInterval(function() {  
-                //每一次更新都要载入数据
-                // data topn 5
-                mensa_amount_dynamic = MensaAmount(timeIndex, 5).mensa_amount;
-                mensa_name_dynamic = MensaAmount(timeIndex, 5).mensa_name;
-                // Echart Option
-                option_mensa_dynamic = {
-                    title : {
-                        show : false,
-                        text: '人群累积消费 top 5',
-                        subtext: '一日数据',
-                        x: 'center'
-                    },
-                    tooltip : {
-                        trigger: 'axis'
-                    },
-                    legend: {
-                        x: 'left',
-                        orient: 'vertical',         
-                        selectedMode:true,
-                        data:['总价']
-                    },
-                    toolbox: {
-                        x: 'right',
-                        orient: 'vertical',                         
-                        show : true,
-                        feature : {
-                            mark : {show: true},
-                            dataView : {show: true, readOnly: false},
-                            restore : {show: true},
-                            saveAsImage : {show: true}
-                        }
-                    },
-                    calculable : true,
-                    xAxis : [
-                        {
-                            type : 'category',
-                            data : mensa_name_dynamic
-                        }
-                    ],
-                    yAxis : [
-                        {
-                            type : 'value',
-                            name : '消费总量（单位：元）',
-                            boundaryGap: [0, 0.1]
-                        }
-                    ],
-                    series : [
-                        {
-                            name:'总价',
-                            type:'bar',
-                            stack: 'sum',
-                            barCategoryGap: '50%',
-                            itemStyle: {
-                                normal: {
-                                    color: 'tomato',
-                                    barBorderColor: 'tomato',
-                                    barBorderWidth: 6,
-                                    barBorderRadius:0,
-                                    label : {
-                                        show: true, position: 'insideTop'
-                                    }
-                                }
-                            },
-                            data:[mensa_amount_dynamic[Object.keys(mensa_amount_dynamic)[0]], mensa_amount_dynamic[Object.keys(mensa_amount_dynamic)[1]], mensa_amount_dynamic[Object.keys(mensa_amount_dynamic)[2]], mensa_amount_dynamic[Object.keys(mensa_amount_dynamic)[3]], mensa_amount_dynamic[Object.keys(mensa_amount_dynamic)[4]]]
-                        }
-                    ]
-                };//var option_mensa_dynamic 
+                        data: [mensa_amount_dynamic[Object.keys(mensa_amount_dynamic)[0]], mensa_amount_dynamic[Object.keys(mensa_amount_dynamic)[1]], mensa_amount_dynamic[Object.keys(mensa_amount_dynamic)[2]], mensa_amount_dynamic[Object.keys(mensa_amount_dynamic)[3]], mensa_amount_dynamic[Object.keys(mensa_amount_dynamic)[4]]]
+                    }]
+                }; //var option_mensa_dynamic 
 
                 // 设定loading界面
                 myChart.showLoading({
-                  text : 'loading...',
-                  effect : 'whirling',
-                  textStyle : {
-                      fontSize : 20
-                  }
+                    text: 'loading...',
+                    effect: 'whirling',
+                    textStyle: {
+                        fontSize: 20
+                    }
                 });
-                loadingTicket = setTimeout(function (){
-                  myChart.hideLoading();
-                  myChart.setOption(option_mensa_dynamic);
-                },1000);              
+                loadingTicket = setTimeout(function() {
+                    myChart.hideLoading();
+                    myChart.setOption(option_mensa_dynamic);
+                }, 1000);
                 // 更新地图
-                myChart.setOption(option_mensa_dynamic); 
+                myChart.setOption(option_mensa_dynamic);
                 // 更新时间索引
-                timeIndex = timeIndex+1
-            }, 60000);               
-        }//function (echarts) 
-    );//require
+                timeIndex = timeIndex + 1
+            }, 60000);
+        } //function (echarts) 
+    ); //require
 
     // 消费总额
     require(
@@ -1075,169 +1084,173 @@ $(document).ready(function() {
             'echarts/chart/bar',
             'echarts/chart/line'
         ],
-        function (echarts) {
+        function(echarts) {
             // 基于准备好的dom，初始化echarts图表
             var myChart = echarts.init(document.getElementById('sum_amount'), theme);
-            
+
             // 构造指定日期字符串,用于展示指定日期的当前时刻
-            function CurentTime()
-            { 
-                var now = new Date();
-               
-                var year = 2014;            //年
-                var month = 11;              //月
-                var day = 03;               //日
-               
-                var hh = now.getHours();            //时
-                var mm = now.getMinutes();          //分
-               
-                // IE兼容，要将"-"替换为"/""
-                // var clock = year + "-";
-                var clock = year + "/";
-               
-                if(month < 10)
-                    clock += "0";
-               
-                //clock += month + "-";
-                clock += month + "/";
-               
-                if(day < 10)
-                    clock += "0";
-                   
-                clock += day + " ";
-               
-                if(hh < 10)
-                    clock += "0";
-                   
-                clock += hh + ":";
-                if (mm < 10) clock += '0'; 
-                clock += mm; 
-                return(clock); 
-            }                
-            // 将获取的时间转化为距00:00:00起始时间的分钟数
-            function DeltaMinutes(){
-                // 指定日期的记录开始时刻，默认为 20130725 00:00:00
-                // IE浏览器支持的格式，要将"-"替换为"/""
-                var starttime = new Date("2014/11/03 05:00:00");
-                // 指定日期的当前时刻
-                var showtime = new Date(CurentTime());
-                // 计算分钟差
-                var delta = showtime.getTime() - starttime.getTime();
-                deltam = delta/(1000*60);
-                // return deltam;
-                return 750;
-            }        
-            // 非常重要的查询函数，返回当前时刻的累积消费金额(单位:元)
-            function SumAmount(query){
-                //绘制MarkPoint
-                df = {};
-                //请求数据
-                var xhr = new XMLHttpRequest();
-                url = "http://localhost:8088/elite/index.php/Home/Index/sum_amount/query/"+query;
-                xhr.open("GET", url, false);
-                xhr.send(null);
-                result = xhr.responseText;
-                result = JSON.parse(result);
-                //提取用于绘制Amount的数据
-                var sum = 0;
-                for(var i in Object.keys(result))
-                {   
-                    var temp = parseInt(result[i].amount);
-                    sum = sum + temp;
+            function CurentTime() {
+                    var now = new Date();
+
+                    var year = 2014; //年
+                    var month = 11; //月
+                    var day = 03; //日
+
+                    var hh = now.getHours(); //时
+                    var mm = now.getMinutes(); //分
+
+                    // IE兼容，要将"-"替换为"/""
+                    // var clock = year + "-";
+                    var clock = year + "/";
+
+                    if (month < 10)
+                        clock += "0";
+
+                    //clock += month + "-";
+                    clock += month + "/";
+
+                    if (day < 10)
+                        clock += "0";
+
+                    clock += day + " ";
+
+                    if (hh < 10)
+                        clock += "0";
+
+                    clock += hh + ":";
+                    if (mm < 10) clock += '0';
+                    clock += mm;
+                    return (clock);
                 }
-                return {
-                    amount: sum/100,
-                };
-            }
-            // Init
-            data_10min = SumAmount(DeltaMinutes()-10).amount;
-            data_9min = SumAmount(DeltaMinutes()-9).amount;
-            data_8min = SumAmount(DeltaMinutes()-8).amount;
-            data_7min = SumAmount(DeltaMinutes()-7).amount;
-            data_6min = SumAmount(DeltaMinutes()-6).amount;
-            data_5min = SumAmount(DeltaMinutes()-5).amount;
-            data_4min = SumAmount(DeltaMinutes()-4).amount;
-            data_3min = SumAmount(DeltaMinutes()-3).amount;
-            data_2min = SumAmount(DeltaMinutes()-2).amount;
-            data_1min = SumAmount(DeltaMinutes()-1).amount;
+                // 将获取的时间转化为距00:00:00起始时间的分钟数
+            function DeltaMinutes() {
+                    // 指定日期的记录开始时刻，默认为 20130725 00:00:00
+                    // IE浏览器支持的格式，要将"-"替换为"/""
+                    var starttime = new Date("2014/11/03 05:00:00");
+                    // 指定日期的当前时刻
+                    var showtime = new Date(CurentTime());
+                    // 计算分钟差
+                    var delta = showtime.getTime() - starttime.getTime();
+                    deltam = delta / (1000 * 60);
+                    // return deltam;
+                    return 750;
+                }
+                // 非常重要的查询函数，返回当前时刻的累积消费金额(单位:元)
+            function SumAmount(query) {
+                    //绘制MarkPoint
+                    df = {};
+                    //请求数据
+                    var xhr = new XMLHttpRequest();
+                    url = "http://localhost:8088/elite/index.php/Home/Index/sum_amount/query/" + query;
+                    xhr.open("GET", url, false);
+                    xhr.send(null);
+                    result = xhr.responseText;
+                    result = JSON.parse(result);
+                    //提取用于绘制Amount的数据
+                    var sum = 0;
+                    for (var i in Object.keys(result)) {
+                        var temp = parseInt(result[i].amount);
+                        sum = sum + temp;
+                    }
+                    return {
+                        amount: sum / 100,
+                    };
+                }
+                // Init
+            data_10min = SumAmount(DeltaMinutes() - 10).amount;
+            data_9min = SumAmount(DeltaMinutes() - 9).amount;
+            data_8min = SumAmount(DeltaMinutes() - 8).amount;
+            data_7min = SumAmount(DeltaMinutes() - 7).amount;
+            data_6min = SumAmount(DeltaMinutes() - 6).amount;
+            data_5min = SumAmount(DeltaMinutes() - 5).amount;
+            data_4min = SumAmount(DeltaMinutes() - 4).amount;
+            data_3min = SumAmount(DeltaMinutes() - 3).amount;
+            data_2min = SumAmount(DeltaMinutes() - 2).amount;
+            data_1min = SumAmount(DeltaMinutes() - 1).amount;
             // Echart Option
             option = {
-                title : {
+                title: {
                     show: true,
-                    x:'center',
+                    x: 'center',
                     text: '校园卡消费交易总量'
                 },
-                tooltip : {
+                tooltip: {
                     trigger: 'axis'
                 },
                 toolbox: {
                     x: 'right',
-                    orient: 'vertical',                    
-                    show : true,
-                    feature : {
-                        mark : {show: true},
-                        dataView : {show: true, readOnly: false},
-                        magicType : {show: true, type: ['line', 'bar']},
-                        restore : {show: true},
-                        saveAsImage : {show: true}
+                    orient: 'vertical',
+                    show: true,
+                    feature: {
+                        mark: {
+                            show: true
+                        },
+                        dataView: {
+                            show: true,
+                            readOnly: false
+                        },
+                        magicType: {
+                            show: true,
+                            type: ['line', 'bar']
+                        },
+                        restore: {
+                            show: true
+                        },
+                        saveAsImage: {
+                            show: true
+                        }
                     }
                 },
-                dataZoom : {
-                    show : true,
-                    start : 20,
-                    end : 80
+                dataZoom: {
+                    show: true,
+                    start: 20,
+                    end: 80
                 },
-                xAxis : [
-                    {
-                        type : 'category',
-                        boundaryGap : true,
-                        data : (function (){
-                            var now = new Date();
-                            var res = [];
-                            var len = 10;
-                            while (len--) {
-                                res.unshift(now.toLocaleTimeString().replace(/^\D*/,''));
-                                now = new Date(now - 30000);
-                            }
-                            return res;
-                        })()
-                    }
-                ],
-                yAxis : [
-                    {
-                        type : 'value',
-                        scale: true,
-                        name : '消费总量（单位：元）',
-                        boundaryGap: [0.1, 0.1]
-                    }
-                ],
-                series : [
-                    {
-                        name:'消费总量',
-                        type:'line',
-                        data:[data_10min,data_9min,data_8min,data_7min,data_6min,data_5min,data_4min,data_3min,data_2min,data_1min]
-                    }
-                ]
+                xAxis: [{
+                    type: 'category',
+                    boundaryGap: true,
+                    data: (function() {
+                        var now = new Date();
+                        var res = [];
+                        var len = 10;
+                        while (len--) {
+                            res.unshift(now.toLocaleTimeString().replace(/^\D*/, ''));
+                            now = new Date(now - 30000);
+                        }
+                        return res;
+                    })()
+                }],
+                yAxis: [{
+                    type: 'value',
+                    scale: true,
+                    name: '消费总量（单位：元）',
+                    boundaryGap: [0.1, 0.1]
+                }],
+                series: [{
+                    name: '消费总量',
+                    type: 'line',
+                    data: [data_10min, data_9min, data_8min, data_7min, data_6min, data_5min, data_4min, data_3min, data_2min, data_1min]
+                }]
             };
             // 为echarts对象加载数据 
-            myChart.setOption(option); 
+            myChart.setOption(option);
             var axisData;
-            timeTicket = setInterval(function (){
-                axisData = (new Date()).toLocaleTimeString().replace(/^\D*/,'');
+            timeTicket = setInterval(function() {
+                axisData = (new Date()).toLocaleTimeString().replace(/^\D*/, '');
                 // 动态数据接口 addData
                 myChart.addData([
                     [
-                        0,        // 系列索引
+                        0, // 系列索引
                         SumAmount(DeltaMinutes()).amount, // 新增数据
-                        false,    // 新增数据是否从队列头部插入
-                        false,    // 是否增加队列长度，false则自定删除原有数据，队头插入删队尾，队尾插入删队头
-                        axisData  // 坐标轴标签
+                        false, // 新增数据是否从队列头部插入
+                        false, // 是否增加队列长度，false则自定删除原有数据，队头插入删队尾，队尾插入删队头
+                        axisData // 坐标轴标签
                     ]
                 ]);
             }, 60000);
-        }//function (echarts) 
-    );//require
-    
+        } //function (echarts) 
+    ); //require
+
     require(
         [
             'echarts',
@@ -1245,7 +1258,7 @@ $(document).ready(function() {
             'echarts/chart/map',
             'echarts/chart/chord'
         ],
-        function (echarts, BMapExtension) {
+        function(echarts, BMapExtension) {
             // $('#main').css({
             //     height:$('body').height(),
             //     width: $('body').width()
@@ -1255,8 +1268,8 @@ $(document).ready(function() {
             var BMapExt = new BMapExtension($('#mobilitymap')[0], BMap, echarts);
             var map = BMapExt.getMap();
             var container = BMapExt.getEchartsContainer();
-            var point = new BMap.Point(121.442869,31.032031); //SJTU经纬度
-            map.centerAndZoom(point, 17);             // 初始化地图，设置中心点坐标和地图级别
+            var point = new BMap.Point(121.442869, 31.032031); //SJTU经纬度
+            map.centerAndZoom(point, 17); // 初始化地图，设置中心点坐标和地图级别
             map.enableScrollWheelZoom(true);
             // 百度地图自定义样式范例
             // map.setMapStyle({
@@ -1391,60 +1404,69 @@ $(document).ready(function() {
             //           }
             //     ]
             // });
-            
+
             // Taxi GPS数据
             var taxiCoord_1 = {
-                '主图书馆': [121.444019,31.032317],
-                '三期学生公寓': [121.441927,31.030549],
-                '四期学生公寓': [121.441082,31.033303]
+                '主图书馆': [121.444019, 31.032317],
+                '三期学生公寓': [121.441927, 31.030549],
+                '四期学生公寓': [121.441082, 31.033303]
             };
             var taxiCoord_2 = {
-                '陈瑞球楼': [121.444617,31.031064],
-                '五期学生公寓': [121.441082,31.033303],
-                '六期学生公寓': [121.436788,31.032746]
+                '陈瑞球楼': [121.444617, 31.031064],
+                '五期学生公寓': [121.441082, 31.033303],
+                '六期学生公寓': [121.436788, 31.032746]
             };
             var taxiCoord_3 = {
-                '东中院': [121.443996,31.029663],
-                '七期学生公寓': [121.435854,31.034246],
-                '八期学生公寓': [121.433932,31.033519],
-                '西南区学生公寓': [121.438926,31.02716],
-                '行政A楼': [121.447586,31.034038]
+                '东中院': [121.443996, 31.029663],
+                '七期学生公寓': [121.435854, 31.034246],
+                '八期学生公寓': [121.433932, 31.033519],
+                '西南区学生公寓': [121.438926, 31.02716],
+                '行政A楼': [121.447586, 31.034038]
             };
-            
+
             // Set option
             option = {
-                title : {
-                    show: false, 
+                title: {
+                    show: false,
                     text: '上海交通大学学生OD信息',
-                    x:'center',
-                    textStyle : {
+                    x: 'center',
+                    textStyle: {
                         color: 'black'
                     }
                 },
                 legend: {
                     orient: 'vertical',
-                    x:'left',
-                    data:['主图书馆','陈瑞球楼','东中院'],
+                    x: 'left',
+                    data: ['主图书馆', '陈瑞球楼', '东中院'],
                     // textStyle : {
                     //     color: '#fff'
                     // }
                 },
-                tooltip : {
+                tooltip: {
                     trigger: 'item',
-                    formatter: function (v) {
+                    formatter: function(v) {
                         return v[1].replace('>', ' &rarr; ');
                     }
                 },
                 toolbox: {
-                    show : false,
-                    orient : 'vertical',
+                    show: false,
+                    orient: 'vertical',
                     x: 'right',
                     y: 'center',
-                    feature : {
-                        mark : {show: true},
-                        dataView : {show: true, readOnly: false},
-                        restore : {show: true},
-                        saveAsImage : {show: true}
+                    feature: {
+                        mark: {
+                            show: true
+                        },
+                        dataView: {
+                            show: true,
+                            readOnly: false
+                        },
+                        restore: {
+                            show: true
+                        },
+                        saveAsImage: {
+                            show: true
+                        }
                     }
                 },
                 // dataRange: {
@@ -1454,280 +1476,394 @@ $(document).ready(function() {
                 //     calculable : true,
                 //     color: ['#ff3333', 'orange', 'yellow','lime','aqua']
                 // },
-                series : [
-                    {
-                        name:'主图书馆',
-                        type:'map',
-                        mapType: 'none',
-                        data:[],
-                        // 出租车OD数据
-                        geoCoord: taxiCoord_1,
-                        markLine : {
-                            smooth:true,
-                            effect : {
-                                show: true,
-                                scaleSize: 1,
-                                period: 30,
-                                color: '#fff',
-                                shadowBlur: 10
-                            },
-                            itemStyle : {
-                                normal: {
-                                    borderWidth:1,
-                                    lineStyle: {
-                                        type: 'solid',
-                                        shadowBlur: 10
-                                    }
-                                }
-                            },
-                            data : [
-                                [{name:'主图书馆'},{name:'三期学生公寓',value:95}],
-                                [{name:'主图书馆'},{name:'四期学生公寓',value:90}]
-                            ]
+                series: [{
+                    name: '主图书馆',
+                    type: 'map',
+                    mapType: 'none',
+                    data: [],
+                    // 出租车OD数据
+                    geoCoord: taxiCoord_1,
+                    markLine: {
+                        smooth: true,
+                        effect: {
+                            show: true,
+                            scaleSize: 1,
+                            period: 30,
+                            color: '#fff',
+                            shadowBlur: 10
                         },
-                        markPoint : {
-                            symbolSize: 10,
-                            effect : {
-                                show: true,
-                                shadowBlur : 1
-                            },
-                            itemStyle:{
-                                normal:{
-                                    label:{show:false}
+                        itemStyle: {
+                            normal: {
+                                borderWidth: 1,
+                                lineStyle: {
+                                    type: 'solid',
+                                    shadowBlur: 10
                                 }
-                            },
-                            // data形式
-                            // data : [
-                                //     {name:'福州',value:95},
-                                //     {name:'太原',value:90},
-                                //     {name:'长春',value:80},
-                                //     {name:'重庆',value:70},
-                                //     {name:'西安',value:60},
-                                //     {name:'成都',value:50},
-                                //     {name:'常州',value:40},
-                                //     {name:'北京',value:30},
-                                //     {name:'北海',value:20},
-                                //     {name:'海口',value:10}
-                                // ]
-                            data : (function(){
-                                var data = [];
-                                var df = Object.keys(taxiCoord_1);
-                                var len = df.length;
-                                while(len--) {
-                                    data.push({
-                                        // name : placeList[len].name
-                                        name : df[len]
-                                        //geoCoord : placeList[len].geoCoord
-                                    })
-                                }
-                                return data;
-                            })()
-                        }
+                            }
+                        },
+                        data: [
+                            [{
+                                name: '主图书馆'
+                            }, {
+                                name: '三期学生公寓',
+                                value: 95
+                            }],
+                            [{
+                                name: '主图书馆'
+                            }, {
+                                name: '四期学生公寓',
+                                value: 90
+                            }]
+                        ]
                     },
-                    {
-                        name:'陈瑞球楼',
-                        type:'map',
-                        mapType: 'none',
-                        data:[],
-                        // 出租车OD数据
-                        geoCoord: taxiCoord_2,
-                        markLine : {
-                            smooth:true,
-                            effect : {
-                                show: true,
-                                scaleSize: 1,
-                                period: 30,
-                                color: '#fff',
-                                shadowBlur: 10
-                            },
-                            itemStyle : {
-                                normal: {
-                                    borderWidth:1,
-                                    lineStyle: {
-                                        type: 'solid',
-                                        shadowBlur: 10
-                                    }
-                                }
-                            },
-                            data : [
-                                [{name:'陈瑞球楼'},{name:'五期学生公寓',value:95}],
-                                [{name:'陈瑞球楼'},{name:'六期学生公寓',value:90}]
-                            ]
+                    markPoint: {
+                        symbolSize: 10,
+                        effect: {
+                            show: true,
+                            shadowBlur: 1
                         },
-                        markPoint : {
-                            symbolSize: 10,
-                            effect : {
-                                show: true,
-                                shadowBlur : 1
-                            },
-                            itemStyle:{
-                                normal:{
-                                    label:{show:false}
+                        itemStyle: {
+                            normal: {
+                                label: {
+                                    show: false
                                 }
-                            },
-                            data : (function(){
-                                var data = [];
-                                var df = Object.keys(taxiCoord_2);
-                                var len = df.length;
-                                while(len--) {
-                                    data.push({
-                                        // name : placeList[len].name
-                                        name : df[len]
-                                        //geoCoord : placeList[len].geoCoord
-                                    })
-                                }
-                                return data;
-                            })()
-                        }
-                    },
-                    {
-                        name:'东中院',
-                        type:'map',
-                        mapType: 'none',
-                        data:[],
-                        // 出租车OD数据
-                        geoCoord: taxiCoord_3,
-                        markLine : {
-                            smooth:true,
-                            effect : {
-                                show: true,
-                                scaleSize: 1,
-                                period: 30,
-                                color: '#fff',
-                                shadowBlur: 10
-                            },
-                            itemStyle : {
-                                normal: {
-                                    borderWidth:1,
-                                    lineStyle: {
-                                        type: 'solid',
-                                        shadowBlur: 10
-                                    }
-                                }
-                            },
-                            data : [
-                                [{name:'东中院'},{name:'七期学生公寓',value:95}],
-                                [{name:'东中院'},{name:'八期学生公寓',value:90}],
-                                [{name:'东中院'},{name:'西南区学生公寓',value:90}],
-                                [{name:'东中院'},{name:'行政A楼',value:90}]
-                            ]
+                            }
                         },
-                        markPoint : {
-                            symbolSize: 5,
-                            effect : {
-                                show: true,
-                                shadowBlur : 1
-                            },
-                            itemStyle:{
-                                normal:{
-                                    label:{show:false}
-                                }
-                            },
-                            data : (function(){
-                                var data = [];
-                                var df = Object.keys(taxiCoord_3);
-                                var len = df.length;
-                                while(len--) {
-                                    data.push({
-                                        // name : placeList[len].name
-                                        name : df[len]
+                        // data形式
+                        // data : [
+                        //     {name:'福州',value:95},
+                        //     {name:'太原',value:90},
+                        //     {name:'长春',value:80},
+                        //     {name:'重庆',value:70},
+                        //     {name:'西安',value:60},
+                        //     {name:'成都',value:50},
+                        //     {name:'常州',value:40},
+                        //     {name:'北京',value:30},
+                        //     {name:'北海',value:20},
+                        //     {name:'海口',value:10}
+                        // ]
+                        data: (function() {
+                            var data = [];
+                            var df = Object.keys(taxiCoord_1);
+                            var len = df.length;
+                            while (len--) {
+                                data.push({
+                                    // name : placeList[len].name
+                                    name: df[len]
                                         //geoCoord : placeList[len].geoCoord
-                                    })
-                                }
-                                return data;
-                            })()
-                        }
+                                })
+                            }
+                            return data;
+                        })()
                     }
-                ]
-            };//var option
-            
+                }, {
+                    name: '陈瑞球楼',
+                    type: 'map',
+                    mapType: 'none',
+                    data: [],
+                    // 出租车OD数据
+                    geoCoord: taxiCoord_2,
+                    markLine: {
+                        smooth: true,
+                        effect: {
+                            show: true,
+                            scaleSize: 1,
+                            period: 30,
+                            color: '#fff',
+                            shadowBlur: 10
+                        },
+                        itemStyle: {
+                            normal: {
+                                borderWidth: 1,
+                                lineStyle: {
+                                    type: 'solid',
+                                    shadowBlur: 10
+                                }
+                            }
+                        },
+                        data: [
+                            [{
+                                name: '陈瑞球楼'
+                            }, {
+                                name: '五期学生公寓',
+                                value: 95
+                            }],
+                            [{
+                                name: '陈瑞球楼'
+                            }, {
+                                name: '六期学生公寓',
+                                value: 90
+                            }]
+                        ]
+                    },
+                    markPoint: {
+                        symbolSize: 10,
+                        effect: {
+                            show: true,
+                            shadowBlur: 1
+                        },
+                        itemStyle: {
+                            normal: {
+                                label: {
+                                    show: false
+                                }
+                            }
+                        },
+                        data: (function() {
+                            var data = [];
+                            var df = Object.keys(taxiCoord_2);
+                            var len = df.length;
+                            while (len--) {
+                                data.push({
+                                    // name : placeList[len].name
+                                    name: df[len]
+                                        //geoCoord : placeList[len].geoCoord
+                                })
+                            }
+                            return data;
+                        })()
+                    }
+                }, {
+                    name: '东中院',
+                    type: 'map',
+                    mapType: 'none',
+                    data: [],
+                    // 出租车OD数据
+                    geoCoord: taxiCoord_3,
+                    markLine: {
+                        smooth: true,
+                        effect: {
+                            show: true,
+                            scaleSize: 1,
+                            period: 30,
+                            color: '#fff',
+                            shadowBlur: 10
+                        },
+                        itemStyle: {
+                            normal: {
+                                borderWidth: 1,
+                                lineStyle: {
+                                    type: 'solid',
+                                    shadowBlur: 10
+                                }
+                            }
+                        },
+                        data: [
+                            [{
+                                name: '东中院'
+                            }, {
+                                name: '七期学生公寓',
+                                value: 95
+                            }],
+                            [{
+                                name: '东中院'
+                            }, {
+                                name: '八期学生公寓',
+                                value: 90
+                            }],
+                            [{
+                                name: '东中院'
+                            }, {
+                                name: '西南区学生公寓',
+                                value: 90
+                            }],
+                            [{
+                                name: '东中院'
+                            }, {
+                                name: '行政A楼',
+                                value: 90
+                            }]
+                        ]
+                    },
+                    markPoint: {
+                        symbolSize: 5,
+                        effect: {
+                            show: true,
+                            shadowBlur: 1
+                        },
+                        itemStyle: {
+                            normal: {
+                                label: {
+                                    show: false
+                                }
+                            }
+                        },
+                        data: (function() {
+                            var data = [];
+                            var df = Object.keys(taxiCoord_3);
+                            var len = df.length;
+                            while (len--) {
+                                data.push({
+                                    // name : placeList[len].name
+                                    name: df[len]
+                                        //geoCoord : placeList[len].geoCoord
+                                })
+                            }
+                            return data;
+                        })()
+                    }
+                }]
+            }; //var option
+
             option_co = {
-                title : {
+                title: {
                     show: false,
                     text: 'OD弦图',
-                    x:'right',
-                    y:'bottom'
+                    x: 'right',
+                    y: 'bottom'
                 },
-                tooltip : {
+                tooltip: {
                     trigger: 'item',
-                    formatter: function (params) {
-                        if (params.indicator2) {    // is edge
+                    formatter: function(params) {
+                        if (params.indicator2) { // is edge
                             return params.indicator2 + ' ' + params.name + ' ' + params.indicator;
-                        } else {    // is node
+                        } else { // is node
                             return params.name
                         }
                     }
                 },
                 toolbox: {
-                    show : true,
+                    show: true,
                     x: 'right',
-                    orient: 'vertical',                
-                    feature : {
-                        restore : {show: true},
-                        magicType: {show: true, type: ['force', 'chord']},
-                        saveAsImage : {show: true}
+                    orient: 'vertical',
+                    feature: {
+                        restore: {
+                            show: true
+                        },
+                        magicType: {
+                            show: true,
+                            type: ['force', 'chord']
+                        },
+                        saveAsImage: {
+                            show: true
+                        }
                     }
                 },
                 legend: {
                     x: 'left',
-                    data:['主图书馆', '陈瑞球楼', '东中院']
+                    data: ['主图书馆', '陈瑞球楼', '东中院']
                 },
-                series : [
-                    {
-                        type:'chord',
-                        sort : 'ascending',
-                        sortSub : 'descending',
-                        showScale : false,
-                        itemStyle : {
-                            normal : {
-                                label : {
-                                    rotate : true
-                                }
+                series: [{
+                    type: 'chord',
+                    sort: 'ascending',
+                    sortSub: 'descending',
+                    showScale: false,
+                    itemStyle: {
+                        normal: {
+                            label: {
+                                rotate: true
                             }
+                        }
+                    },
+                    // 使用 nodes links 表达和弦图
+                    nodes: [{
+                        name: '主图书馆'
+                    }, {
+                        name: '三期学生公寓'
+                    }, {
+                        name: '四期学生公寓'
+                    }, {
+                        name: '陈瑞球楼'
+                    }, {
+                        name: '五期学生公寓'
+                    }, {
+                        name: '六期学生公寓'
+                    }, {
+                        name: '东中院'
+                    }, {
+                        name: '七期学生公寓'
+                    }, {
+                        name: '八期学生公寓'
+                    }, {
+                        name: '西南区学生公寓'
+                    }, {
+                        name: '行政A楼'
+                    }],
+                    links: [{
+                            source: '主图书馆',
+                            target: '三期学生公寓',
+                            weight: 0.9,
+                            name: '去往'
+                        }, {
+                            source: '主图书馆',
+                            target: '四期学生公寓',
+                            weight: 0.9,
+                            name: '去往'
+                        }, {
+                            source: '陈瑞球楼',
+                            target: '五期学生公寓',
+                            weight: 0.9,
+                            name: '去往'
+                        }, {
+                            source: '陈瑞球楼',
+                            target: '六期学生公寓',
+                            weight: 0.9,
+                            name: '去往'
+                        }, {
+                            source: '东中院',
+                            target: '七期学生公寓',
+                            weight: 0.9,
+                            name: '去往'
+                        }, {
+                            source: '东中院',
+                            target: '八期学生公寓',
+                            weight: 0.9,
+                            name: '去往'
+                        }, {
+                            source: '东中院',
+                            target: '西南区学生公寓',
+                            weight: 0.9,
+                            name: '去往'
+                        }, {
+                            source: '东中院',
+                            target: '行政A楼',
+                            weight: 0.9,
+                            name: '去往'
                         },
-                        // 使用 nodes links 表达和弦图
-                        nodes: [
-                            {name:'主图书馆'},
-                            {name:'三期学生公寓'},
-                            {name:'四期学生公寓'},
-                            {name:'陈瑞球楼'},
-                            {name:'五期学生公寓'},
-                            {name:'六期学生公寓'},
-                            {name:'东中院'},
-                            {name:'七期学生公寓'},
-                            {name:'八期学生公寓'},
-                            {name:'西南区学生公寓'},
-                            {name:'行政A楼'}
-                        ],
-                        links: [
-                            {source: '主图书馆', target: '三期学生公寓', weight: 0.9, name: '去往'},
-                            {source: '主图书馆', target: '四期学生公寓', weight: 0.9, name: '去往'},
-                            {source: '陈瑞球楼', target: '五期学生公寓', weight: 0.9, name: '去往'},
-                            {source: '陈瑞球楼', target: '六期学生公寓', weight: 0.9, name: '去往'},
-                            {source: '东中院', target: '七期学生公寓', weight: 0.9, name: '去往'},
-                            {source: '东中院', target: '八期学生公寓', weight: 0.9, name: '去往'},
-                            {source: '东中院', target: '西南区学生公寓', weight: 0.9, name: '去往'},
-                            {source: '东中院', target: '行政A楼', weight: 0.9, name: '去往'},
 
-                            // Ribbon Type 的和弦图每一对节点之间必须是双向边
-                            {target: '主图书馆', source: '三期学生公寓', weight: 1},
-                            {target: '主图书馆', source: '四期学生公寓', weight: 1},
-                            {target: '陈瑞球楼', source: '五期学生公寓', weight: 1},
-                            {target: '陈瑞球楼', source: '六期学生公寓', weight: 1},
-                            {target: '东中院', source: '七期学生公寓', weight: 1},
-                            {target: '东中院', source: '八期学生公寓', weight: 1},
-                            {target: '东中院', source: '西南区学生公寓', weight: 1},
-                            {target: '东中院', source: '行政A楼', weight: 1}
-                        ]
-                    }
-                ]
-            };//var option_co
+                        // Ribbon Type 的和弦图每一对节点之间必须是双向边
+                        {
+                            target: '主图书馆',
+                            source: '三期学生公寓',
+                            weight: 1
+                        }, {
+                            target: '主图书馆',
+                            source: '四期学生公寓',
+                            weight: 1
+                        }, {
+                            target: '陈瑞球楼',
+                            source: '五期学生公寓',
+                            weight: 1
+                        }, {
+                            target: '陈瑞球楼',
+                            source: '六期学生公寓',
+                            weight: 1
+                        }, {
+                            target: '东中院',
+                            source: '七期学生公寓',
+                            weight: 1
+                        }, {
+                            target: '东中院',
+                            source: '八期学生公寓',
+                            weight: 1
+                        }, {
+                            target: '东中院',
+                            source: '西南区学生公寓',
+                            weight: 1
+                        }, {
+                            target: '东中院',
+                            source: '行政A楼',
+                            weight: 1
+                        }
+                    ]
+                }]
+            }; //var option_co
 
             if (myChart && myChart.dispose) {
                 myChart.dispose();
             }
             // myChart = BMapExt.initECharts(container, curTheme);
-            
+
             var myChart = BMapExt.initECharts(container);
             window.onresize = myChart.resize;
             // BMapExt.setOption(option, true)
@@ -1745,8 +1881,8 @@ $(document).ready(function() {
             //         myChart2.resize();
             //     }
             // },200)
-        }//function (echarts, BMapExtension) 
-    );//require
+        } //function (echarts, BMapExtension) 
+    ); //require
 
 
     var map3 = new BMap.Map("catermap"); // 创建地图实例

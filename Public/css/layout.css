@@ -1,112 +1,170 @@
 body {
-	color: #eee;
-	font-family: Microsoft Yahei;
-	background-color: #1b1b1b;
+    color: #eee;
+    font-family: Microsoft Yahei;
+    background-color: #1b1b1b;
 }
 
 .container {
-	background: transparent;
-	margin: 0;
-	padding: 0;
+    background: transparent;
+    margin: 0;
+    padding: 0;
 }
+
 .content {
-	padding: 50px 70px;
-	background: transparent;
-	text-align: center;
+    padding: 50px 70px;
+    background: transparent;
+    text-align: center;
 }
+
 .content:before {
-	position: fixed;
+    position: fixed;
 }
+
 .content-wrap {
-	overflow-y: hidden;	
+    overflow-y: hidden;
 }
 
 .menu-wrap {
-	width: 210px;
+    width: 210px;
 }
+
 .icon-list {
-	width: 120px;
-	margin-top: 20px;
+    width: 120px;
+    margin-top: 20px;
 }
+
 .icon-list a i {
-	position: relative;
-	top: 2px;
-	opacity: 1;
+    position: relative;
+    top: 2px;
+    opacity: 1;
 }
+
 .icon-list a {
-	width: 120px;
-	color: #aaa;
-	transition: color .3s;
-	-o-transition: color .3s;
-	-moz-transition: color .3s;
-	-webkit-transition: color .3s;
-	margin-left: 40px;
-	padding: 10px 0px;
-	padding-bottom: 10px;
-	font-size: 18px;
-	text-decoration: none;
+    width: 120px;
+    color: #aaa;
+    transition: color .3s;
+    -o-transition: color .3s;
+    -moz-transition: color .3s;
+    -webkit-transition: color .3s;
+    margin-left: 40px;
+    padding: 10px 0px;
+    padding-bottom: 10px;
+    font-size: 18px;
+    text-decoration: none;
 }
-.icon-list a:hover, .icon-list a:focus {
-	color: #F5F6FF;
+
+.icon-list a:hover,
+.icon-list a:focus {
+    color: #F5F6FF;
 }
+
 .icon-list a.active {
-	color: #F5F6FF;
+    color: #F5F6FF;
 }
+
 .menu {
-	background-color: rgba(56, 58, 68, 1);
-	width: calc(100% - 60px);
-	padding-left: 0;
+    background-color: rgba(56, 58, 68, 0.8);
+    width: calc(100% - 60px);
+    padding-left: 0;
 }
+
 .morph-shape {
-	width: 60px;
-	fill: rgba(56, 58, 68, 1);
+    width: 60px;
+    fill: rgba(56, 58, 68, 0.8);
 }
+
 .menu-button {
-	width: 40px;
-	height: 40px;
-	margin: 10px;
+    width: 40px;
+    height: 40px;
+    margin: 10px;
 }
 
 header {
-	padding: 20px 50px;
-	border-bottom: 1px solid rgba(220, 220, 220, 0.2);
-	background-color: #0E1018;
+    padding: 20px 50px;
+    border-bottom: 1px solid rgba(220, 220, 220, 0.2);
+    background-color: #0E1018;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 9999;
 }
+
 header h1 {
-	margin: 0;
-	font-size: 22px;
-	display: inline-block;
+    margin: 0;
+    font-size: 22px;
+    display: inline-block;
 }
+
 header h1 span {
-	margin-left: 8px;
+    margin-left: 8px;
 }
 
 header #header-right {
-	float: right;
-	color: #eee;
-	font-size: 15px;
-}
-header #header-right i {
-	font-size: 20px;
-	position: relative;
-	top: 1px;
-}
-header #header-right span {
-	margin-left: 6px;
+    float: right;
+    color: #eee;
+    font-size: 15px;
 }
 
-.BMap_cpyCtrl, .anchorBL {
+header #header-right #current {
+    display: inline-block;
+    float: right;
+}
+
+header #header-right #current i {
+    font-size: 20px;
+    position: relative;
+    top: 1px;
+}
+
+header #header-right #current span {
+    margin-left: 6px;
+}
+
+header #header-right #sub-nav {
+    display: inline-block;
+    margin-right: 40px;
+}
+
+header #header-right #indicators {
+    list-style-type: none;
+    margin-bottom: 0;
+    padding-left: 0;
+    color: #666;
+    font-size: 14px;
+}
+
+header #header-right #indicators li {
+    display: inline-block;
+    margin-right: 8px;
+    transition: color .2s;
+    -o-transition: color .2s;
+    -moz-transition: color .2s;
+    -webkit-transition: color .2s;
+}
+
+header #header-right #indicators li:hover {
+	color: #eee;
+    cursor: pointer;
+}
+
+header #header-right #indicators li.active {
+	color: #eee;
+}
+
+.BMap_cpyCtrl,
+.anchorBL {
     display: none;
 }
 
 footer {
-	text-align: center;
-	background-color: #0E1018;
-	padding: 30px;
+    text-align: center;
+    background-color: #0E1018;
+    padding: 30px;
 }
+
 footer h3 {
-	margin: 0;
-	font-size: 16px;
+    margin: 0;
+    font-size: 16px;
 }
 
 .plot-title {
@@ -120,4 +178,43 @@ footer h3 {
     width: 100%;
     text-align: left;
     margin-bottom: 0;
+}
+
+#login-modal .modal-dialog {
+    margin: 80px auto;
+}
+#login-modal .modal-content {
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 5px;
+}
+
+#login-modal .modal-body {
+    padding: 20px;
+}
+
+#login-modal {
+    color: #222;
+}
+
+#login-modal form {
+    margin: 0 auto;
+    text-align: center;
+    color: #444;
+}
+
+#login-modal label,
+#login-modal input {
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+#login-modal label {
+	margin-right: 10px;
+}
+
+#login-modal p {
+    text-align: left;
+}
+
+#login-modal .modal-footer button {
+    font-size: 10px;
 }

@@ -30,13 +30,59 @@
         paths: {
             echarts: PUBLIC + '/js/ECharts'
         },
-        packages: [
-            {
-                name: 'BMap',
-                location: PUBLIC + '/js/BMap',
-                main: 'main'
-            }
-        ]
+        packages: [{
+            name: 'BMap',
+            location: PUBLIC + '/js/BMap',
+            main: 'main'
+        }]
+    });
+    var target = "{:U('Stat/index')}";
+    $(document).ready(function() {
+        $('a.login_needed').click(function() {
+            event.preventDefault();
+            target = $(this).attr('href');
+
+            $.ajax({
+                url: "{:U('Login/state')}",
+                type: 'GET',
+                error: function() {},
+                success: function(data) {
+                    if (data == 1) {
+                        window.location.href = target;
+                    } else if (data == 0) {
+                        $('#login-modal').modal();
+                    }
+                }
+            });
+        });
+
+        $('a#nav-login').click(function(){
+            event.preventDefault();
+            $('#login-modal').modal();
+        })
+
+        $('#login_submit').click(function() {
+            var account = $('#login-modal form #username').val();
+            var password = $('#login-modal form #password').val();
+
+            $.ajax({
+                url: "{:U('Login/index')}",
+                type: 'POST',
+                data: {
+                    account: account,
+                    password: password
+                },
+                dataType: 'json',
+                error: function() {},
+                success: function(data) {
+                    if (data == 1) {
+                        window.location.href = target;
+                    } else if (data == 0){
+                        $('#login-modal .modal-body').append($('<p style="color:rgb(232, 53, 53);margin-left:5ox;margin-top:12px;">账号不存在或密码错误</p>'));
+                    }
+                }
+            });
+        });
     });
     </script>
     <!--[if IE]>
@@ -48,9 +94,12 @@
     <div class="container">
         <header>
             <h1>Elite<span>智慧校园数据生态系统</span></h1>
-            <div id="header-right"><i class="fa fa-fw"></i><span><span></div>
+            <div id="header-right">
+                <div id="current"><i class="fa fa-fw"></i><span></span></div>
+                <div id="sub-nav"></div>
+            </div>
         </header>
-
+        <div style="height: 65px;"></div>
         <div class="menu-wrap">
             <nav class="menu">
                 <div class="icon-list">
@@ -59,10 +108,15 @@
                     <a id="nav-affair" href="{:U('Affair/index')}"><i class="fa fa-fw fa-graduation-cap"></i><span>学务管理</span></a>
                     <a id="nav-education" href="{:U('Education/index')}"><i class="fa fa-fw fa-book"></i><span>教学决策</span></a>
                     <br>
-                    <a id="nav-stat" href="{:U('Stat/index')}"><i class="fa fa-fw fa-bar-chart"></i><span>个人顾问</span></a>
+                    <a id="nav-stat" class="login_needed" href="{:U('Stat/index')}"><i class="fa fa-fw fa-bar-chart"></i><span>个人顾问</span></a>
                     <a id="nav-info" href="{:U('Info/index')}"><i class="fa fa-fw fa-share-square-o"></i><span>信息共享</span></a>
                     <br>
                     <a id="nav-web" href="{:U('Web/index')}"><i class="fa fa-fw fa-paper-plane-o"></i><span>网站统计</span></a>
+                    <if condition="isset($_SESSION['elite_uid'])">
+                        <a id="nav-quit" href="{:U('Login/quit')}"><i class="fa fa-fw fa-close"></i><span>注销登录</span></a>
+                    <else/>
+                        <a id="nav-login" href=""><i class="fa fa-fw fa-check"></i><span>用户登录</span></a>
+                    </if>
                 </div>
             </nav>
             <!-- <button class="close-button" id="close-button">Close Menu</button> -->
@@ -71,14 +125,44 @@
                     <path d="M-1,0h101c0,0-97.833,153.603-97.833,396.167C2.167,627.579,100,800,100,800H-1V0z" />
                 </svg>
             </div>
-    </div>
-    <button class="menu-button" id="open-button">Open Menu</button>
-    <div class="content-wrap">
-        <div class="content">
-            {__CONTENT__}
         </div>
-    </div>
-    <!-- /content-wrap -->
+        <button class="menu-button" id="open-button">Open Menu</button>
+        <div class="content-wrap">
+            <div class="content">
+                {__CONTENT__}
+            </div>
+        </div>
+        <!-- /content-wrap -->
+        <div class="modal fade" id="login-modal">
+            <div class="modal-dialog modal-sm">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title">登录</h4>
+                    </div>
+                    <div class="modal-body">
+                        <form class='form-inline'>
+                            <div class="form-group">
+                                <p>登录以咨询个人顾问</p>
+                                <label for='username'>Jaccount</label>
+                                <input type='text' name='username' id='username' class='form-control' placeholder=''>
+                                <br>
+                                <label for='password'>Password</label>
+                                <input type='password' name='password' id='password' class='form-control' placeholder=''>
+                                <br>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" id="login_submit">登录</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    </div>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
+        <!-- /.modal -->
     </div>
     <!-- /container -->
     <footer>
