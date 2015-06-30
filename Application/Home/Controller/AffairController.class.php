@@ -67,12 +67,12 @@ class AffairController extends Controller {
         $this->bathRealtime = json_encode($temp);
 
         // 一卡通 vs Wifi
-        $students['女'] = M('wifi_ecard')->where(array('gender'=>'女'))->select();
-        $students['男'] = M('wifi_ecard')->where(array('gender'=>'男'))->select();
+        $students['女'] = M('students')->where(array('gender'=>'女'))->select();
+        $students['男'] = M('students')->where(array('gender'=>'男'))->select();
         $temp = array();
         foreach ($students as $key => $value) {
             foreach ($value as $k => $v) {
-                $temp[$key][] = [intval($v['wifi']), intval($v['ecard'])/100];
+                $temp[$key][] = [intval($v['ecard'])/100, floatval($v['wifi'])/1024];
             }
         }
         $this->students = json_encode($temp);

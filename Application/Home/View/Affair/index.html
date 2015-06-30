@@ -722,18 +722,33 @@ $(document).ready(function() {
                     }
                 },
                 legend: {
-                    data: [ '男', '女']
+                    data: ['男', '女'],
+                    x: 'right',
+                    y: 'top',
+                    padding: [15, 8, 5, 5]
                 },
                 xAxis: [{
                     type: 'value',
                     scale: false,
-                    max: 10000
+                    // max: 10000,
+                    axisLabel: {
+                        formatter: '¥ {value}'
+                    }
                 }],
                 yAxis: [{
                     type: 'value',
                     scale: false,
-                    max: 6000
+                    // max: 6000,
+                    axisLabel: {
+                        formatter: '{value} GB'
+                    }
                 }],
+                grid: {
+                    x: 80,
+                    x2: 40,
+                    y: 40,
+                    y2: 40
+                },
                 series: [{
                     name: '男',
                     type: 'scatter',
