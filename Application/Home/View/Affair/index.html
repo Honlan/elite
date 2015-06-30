@@ -708,7 +708,7 @@ $(document).ready(function() {
             // 学生一卡通总消费和wifi总流量分布
             var scatter_plot = ec.init(document.getElementById('scatter-plot'), theme);
             option = {
-                color: ['#60C0DD', '#DD6069'],
+                // color: ['#60C0DD', '#DD6069'],
                 tooltip: {
                     trigger: 'axis',
                     showDelay: 0,
@@ -729,26 +729,21 @@ $(document).ready(function() {
                 },
                 xAxis: [{
                     type: 'value',
-                    scale: false,
-                    // max: 10000,
+                    scale: true,
+                    max: 6000,
                     axisLabel: {
                         formatter: '¥ {value}'
                     }
                 }],
                 yAxis: [{
                     type: 'value',
-                    scale: false,
-                    // max: 6000,
+                    scale: true,
+                    max: 10,
                     axisLabel: {
                         formatter: '{value} GB'
                     }
                 }],
-                grid: {
-                    x: 80,
-                    x2: 40,
-                    y: 40,
-                    y2: 40
-                },
+
                 series: [{
                     name: '男',
                     type: 'scatter',
@@ -763,7 +758,6 @@ $(document).ready(function() {
             };
             scatter_plot.setOption(option);
         });
-
 
     var bath_realtime = true;
     $('#affair #bath-control #bath-realtime').click(function() {

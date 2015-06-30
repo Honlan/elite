@@ -72,7 +72,9 @@ class AffairController extends Controller {
         $temp = array();
         foreach ($students as $key => $value) {
             foreach ($value as $k => $v) {
-                $temp[$key][] = [intval($v['ecard'])/100, floatval($v['wifi'])/1024];
+                if (rand(0, 10) == 1) {
+                   $temp[$key][] = [intval($v['ecard'])/100, floatval($v['wifi'])/1024]; 
+                }
             }
         }
         $this->students = json_encode($temp);
