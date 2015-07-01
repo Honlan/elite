@@ -4,6 +4,7 @@ use Think\Controller;
 class CaterController extends Controller {
     public function index(){
     	// 历史每日总额
+        $map = array();
     	$map['day'] = array(array('GT', strtotime('2014-11-03') - 30 * 24 * 3600), array('ELT', strtotime('2014-11-03')));
     	$map['gender'] = '男';
     	$dailyTradeSum['男'] = M('trade_daily_sum')->field('day, sum')->where($map)->order('day')->select();
@@ -17,6 +18,37 @@ class CaterController extends Controller {
     		}
     	}
     	$this->dailyTradeSum = json_encode($temp);
+
+    	// 实时餐饮总额
+    	$now = time() % (24 * 3600) + strtotime('2014-11-03 08:00:00') - 7200;
+        $map = array();
+    	$interval = 5;
+    	$map['timestamp'] = array('ELT', $now - $interval * 4);
+    	$todayMensa['timestamp'][] = date("H:i:s", $now - $interval * 4);
+    	$todayMensa['amount'][] = M('trade_today')->where($map)->sum('amount')/100;
+    	$map['timestamp'] = array('ELT', $now - $interval * 3);
+    	$todayMensa['timestamp'][] = date("H:i:s", $now - $interval * 3);
+    	$todayMensa['amount'][] = M('trade_today')->where($map)->sum('amount')/100;
+    	$map['timestamp'] = array('ELT', $now - $interval * 2);
+    	$todayMensa['timestamp'][] = date("H:i:s", $now - $interval * 2);
+    	$todayMensa['amount'][] = M('trade_today')->where($map)->sum('amount')/100;
+    	$map['timestamp'] = array('ELT', $now - $interval * 1);
+    	$todayMensa['timestamp'][] = date("H:i:s", $now - $interval * 1);
+    	$todayMensa['amount'][] = M('trade_today')->where($map)->sum('amount')/100;
+    	$map['timestamp'] = array('ELT', $now - $interval * 0);
+    	$todayMensa['timestamp'][] = date("H:i:s", $now - $interval * 0);
+    	$todayMensa['amount'][] = M('trade_today')->where($map)->sum('amount')/100;
+    	$this->todayMensa = json_encode($todayMensa);
+    	$this->now = $now;
+
     	$this->display();
+    }
+
+    public function realtime(){
+    	// 根据时间戳获取实时数据
+    	$now = $_POST['timestamp'];
+    	$map = array();
+    	$map['timestamp'] = array('ELT', $now);
+    	echo M('trade_today')->where($map)->sum('amount')/100;
     }
 }

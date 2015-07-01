@@ -48,6 +48,7 @@ class AffairController extends Controller {
     	$this->bathStat = json_encode($temp);
         $now = time() % (24 * 3600) + strtotime('2014-11-03 08:00:00');
         // 最近两小时实时洗浴
+        $map = array();
         $map['toaccount'] = 1000091;
         $map['timestamp'] = array(array('EGT', $now - 3600 * 2), array('ELT', $now));
         $bathRealtime['1000091'] = M('bath_realtime')->where($map)->field('timestamp, count')->order('timestamp')->select();

@@ -1,5 +1,7 @@
 <script>
 var dailyTradeSum = eval('({$dailyTradeSum})');
+var todayMensa = eval('({$todayMensa})');
+var now = eval('({$now})');
 $(document).ready(function() {
     $('#nav-cater').addClass('active');
     $('#header-right i').addClass('fa-coffee');
@@ -20,13 +22,13 @@ $(document).ready(function() {
 }
 
 #cater #realtime-total {
-    height: 300px;
+    height: 250px;
     background-color: #222 !important;
     margin-bottom: 30px;
 }
 
 #cater #history-daily {
-    height: 300px;
+    height: 250px;
     background-color: #222 !important;
     margin-bottom: 30px;
 }
@@ -240,11 +242,6 @@ $(document).ready(function() {
                     show: false,
                     data: ['总额']
                 },
-                dataZoom: {
-                    show: false,
-                    start: 0,
-                    end: 100
-                },
                 grid: {
                     y: 30,
                     y2: 50,
@@ -254,90 +251,62 @@ $(document).ready(function() {
                 xAxis: [{
                     type: 'category',
                     boundaryGap: true,
-                    data: (function() {
-                        var now = new Date();
-                        var res = [];
-                        var len = 10;
-                        while (len--) {
-                            res.unshift(now.toLocaleTimeString().replace(/^\D*/, ''));
-                            now = new Date(now - 2000);
-                        }
-                        return res;
-                    })()
-                }, {
-                    type: 'category',
-                    boundaryGap: true,
-                    data: (function() {
-                        var res = [];
-                        var len = 10;
-                        while (len--) {
-                            res.push(len + 1);
-                        }
-                        return res;
-                    })()
+                    data: todayMensa['timestamp']
                 }],
                 yAxis: [{
                     type: 'value',
                     scale: true,
-                    name: '价格',
-                    boundaryGap: [0.2, 0.2]
-                }, {
-                    type: 'value',
-                    scale: true,
-                    name: '预购量',
-                    boundaryGap: [0.2, 0.2]
+                    splitNumber: 5
                 }],
                 series: [{
-                    name: '预购队列',
-                    type: 'bar',
-                    xAxisIndex: 1,
-                    yAxisIndex: 1,
-                    data: (function() {
-                        var res = [];
-                        var len = 10;
-                        while (len--) {
-                            res.push(Math.round(Math.random() * 1000));
-                        }
-                        return res;
-                    })()
-                }, {
-                    name: '最新成交价',
+                    name: '实时餐饮总额',
                     type: 'line',
-                    data: (function() {
-                        var res = [];
-                        var len = 10;
-                        while (len--) {
-                            res.push((Math.random() * 10 + 5).toFixed(1) - 0);
-                        }
-                        return res;
-                    })()
+                    data: todayMensa['amount']
                 }]
             };
-            var lastData = 11;
+            var lastData;
             var axisData;
             clearInterval(timeTicket);
+            var step = 1;
             timeTicket = setInterval(function() {
-                lastData += Math.random() * ((Math.round(Math.random() * 10) % 2) == 0 ? 1 : -1);
-                lastData = lastData.toFixed(1) - 0;
-                axisData = (new Date()).toLocaleTimeString().replace(/^\D*/, '');
-
-                // 动态数据接口 addData
-                realtime_total.addData([
-                    [
-                        0, // 系列索引
-                        Math.round(Math.random() * 1000), // 新增数据
-                        true, // 新增数据是否从队列头部插入
-                        false // 是否增加队列长度，false则自定删除原有数据，队头插入删队尾，队尾插入删队头
-                    ],
-                    [
-                        1, // 系列索引
-                        lastData, // 新增数据
-                        false, // 新增数据是否从队列头部插入
-                        false, // 是否增加队列长度，false则自定删除原有数据，队头插入删队尾，队尾插入删队头
-                        axisData // 坐标轴标签
-                    ]
-                ]);
-            }, 2100);
+                var interval = now + 5 * step;
+                $.ajax({
+                    url: "{:U('Cater/realtime')}",
+                    type: 'POST',
+                    data: {
+                        timestamp: interval
+                    },
+                    dataType: 'json',
+                    error: function() {},
+                    success: function(data) {
+                        lastData = parseInt(data);
+                        var hour = (new Date(interval * 1000)).getHours();
+                        if (hour < 10) {
+                            hour = '0' + String(hour);
+                        }
+                        var minute = (new Date(interval * 1000)).getMinutes();
+                        if (minute < 10) {
+                            minute = '0' + String(minute);
+                        }
+                        var second = (new Date(interval * 1000)).getSeconds();
+                        if (second < 10) {
+                            second = '0' + String(second);
+                        }
+                        axisData = hour + ':' + minute + ':' + second;
+                        step = step + 1;
+                        // 动态数据接口 addData
+                        realtime_total.addData([
+                            [
+                                0, // 系列索引
+                                lastData, // 新增数据
+                                false, // 新增数据是否从队列头部插入
+                                false, // 是否增加队列长度，false则自定删除原有数据，队头插入删队尾，队尾插入删队头
+                                axisData // 坐标轴标签
+                            ]
+                        ]);
+                    }
+                });
+            }, 2000);
 
             realtime_total.setOption(option);
         });
@@ -372,7 +341,7 @@ $(document).ready(function() {
                     type: 'value',
                     axisLabel: {
                         formatter: '{value} W'
-                    }
+                    },
                 }],
                 grid: {
                     y: 30,
