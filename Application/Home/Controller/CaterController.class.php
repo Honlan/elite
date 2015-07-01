@@ -17,7 +17,6 @@ class CaterController extends Controller {
     		}
     	}
     	$this->dailyTradeSum = json_encode($temp);
-    	print_r($temp);die;
     	$this->display();
     }
 }
