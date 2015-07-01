@@ -22,22 +22,22 @@ class CaterController extends Controller {
     	// 实时餐饮总额
     	$now = time() % (24 * 3600) + strtotime('2014-11-03 08:00:00');
         $map = array();
-    	$interval = 5;
+    	$interval = 2;
     	$map['timestamp'] = array('ELT', $now - $interval * 4);
     	$todayMensa['timestamp'][] = date("H:i:s", $now - $interval * 4);
-    	$todayMensa['amount'][] = M('trade_today')->where($map)->sum('amount')/100;
+    	$todayMensa['amount'][] = intval(M('trade_today')->where($map)->sum('amount')/100);
     	$map['timestamp'] = array('ELT', $now - $interval * 3);
     	$todayMensa['timestamp'][] = date("H:i:s", $now - $interval * 3);
-    	$todayMensa['amount'][] = M('trade_today')->where($map)->sum('amount')/100;
+    	$todayMensa['amount'][] = intval(M('trade_today')->where($map)->sum('amount')/100);
     	$map['timestamp'] = array('ELT', $now - $interval * 2);
     	$todayMensa['timestamp'][] = date("H:i:s", $now - $interval * 2);
-    	$todayMensa['amount'][] = M('trade_today')->where($map)->sum('amount')/100;
+    	$todayMensa['amount'][] = intval(M('trade_today')->where($map)->sum('amount')/100);
     	$map['timestamp'] = array('ELT', $now - $interval * 1);
     	$todayMensa['timestamp'][] = date("H:i:s", $now - $interval * 1);
-    	$todayMensa['amount'][] = M('trade_today')->where($map)->sum('amount')/100;
+    	$todayMensa['amount'][] = intval(M('trade_today')->where($map)->sum('amount')/100);
     	$map['timestamp'] = array('ELT', $now - $interval * 0);
     	$todayMensa['timestamp'][] = date("H:i:s", $now - $interval * 0);
-    	$todayMensa['amount'][] = M('trade_today')->where($map)->sum('amount')/100;
+    	$todayMensa['amount'][] = intval(M('trade_today')->where($map)->sum('amount')/100);
     	$this->todayMensa = json_encode($todayMensa);
     	$this->now = $now;
 

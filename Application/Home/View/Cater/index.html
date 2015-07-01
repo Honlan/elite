@@ -236,7 +236,7 @@ $(document).ready(function() {
                     show: false
                 },
                 tooltip: {
-                    trigger: 'axis'
+                    trigger: 'item'
                 },
                 legend: {
                     show: false,
@@ -256,7 +256,7 @@ $(document).ready(function() {
                 yAxis: [{
                     type: 'value',
                     scale: true,
-                    splitNumber: 5
+                    splitNumber: 4
                 }],
                 series: [{
                     name: '实时餐饮总额',
@@ -269,7 +269,7 @@ $(document).ready(function() {
             clearInterval(timeTicket);
             var step = 1;
             timeTicket = setInterval(function() {
-                var interval = now + 5 * step;
+                var interval = now + 2 * step;
                 $.ajax({
                     url: "{:U('Cater/realtime')}",
                     type: 'POST',
