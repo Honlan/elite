@@ -20,7 +20,7 @@ class CaterController extends Controller {
     	$this->dailyTradeSum = json_encode($temp);
 
     	// 实时餐饮总额
-    	$now = time() % (24 * 3600) + strtotime('2014-11-03 08:00:00') - 7200;
+    	$now = time() % (24 * 3600) + strtotime('2014-11-03 08:00:00');
         $map = array();
     	$interval = 5;
     	$map['timestamp'] = array('ELT', $now - $interval * 4);
