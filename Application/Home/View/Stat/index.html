@@ -1,4 +1,7 @@
 <script>
+var userjs = eval('({$userjs})');
+var tTraffic = eval('({$tTraffic})');
+var yTraffic = eval('({$yTraffic})');
 $(document).ready(function() {
     $('#nav-stat').addClass('active');
     $('#header-right i').addClass('fa-bar-chart');
@@ -16,28 +19,18 @@ $(document).ready(function() {
 
 #stat #personal-info .fa-male {
     position: absolute;
-    font-size: 100px;
+    font-size: 110px;
     color: rgb(54, 114, 205);
     right: 30px;
-    top: 51px;
-}
-
-#stat #personal-info .male {
-    color: rgb(54, 114, 205);
-    margin-right: 10px;
-}
-
-#stat #personal-info .female {
-    color: rgb(205, 54, 77);
-    margin-right: 10px;
+    top: 65px;
 }
 
 #stat #personal-info .fa-female {
     position: absolute;
-    font-size: 90px;
+    font-size: 110px;
     color: rgb(205, 54, 77);
     right: 30px;
-    top: 51px;
+    top: 65px;
 }
 
 #stat #summary-data {
@@ -84,6 +77,20 @@ $(document).ready(function() {
 #stat #diligent-index {
     height: 243px;
     background-color: #222 !important;
+}
+
+.sorry {
+    padding: 30px 40px;
+}
+
+.sorry p {
+    font-size: 15px;
+}
+
+.sorry i {
+    font-size: 90px;
+    margin-top: 20px;
+    color: #ccc;
 }
 
 #stat #friends {
@@ -231,23 +238,27 @@ $(document).ready(function() {
         <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
             <p class="plot-title">个人信息</p>
             <div id="personal-info">
-                <p><span>学号：</span>1234567890</p>
-                <p><span>类别：</span>博士生</p>
-                <i class="fa fa-fw fa-male"></i>
+                <p><span>学号：</span>{$user.id}</p>
+                <p><span>类别：</span>{$user.degree}</p>
+                <if condition="$user['gender'] eq '男'">
+                    <i class="fa fa-fw fa-male"></i>
+                    <else/>
+                    <i class="fa fa-fw fa-female"></i>
+                </if>
                 <div id="summary-data">
                     <p style="margin-bottom: 5px;"><span class="male">我</span>一共在<span id="SJTU">交大</span></p>
                     <ul>
-                        <li><span class="fa fa-fw fa-heart-o"></span>吃了<span class="number" style="color:rgb(62, 203, 176);">699</span>顿饭</li>
-                        <li><span class="fa fa-fw fa-smile-o"></span>洗了<span class="number" style="color:rgb(203, 62, 185);">132</span>个澡</li>
-                        <li><span class="fa fa-fw fa-wifi"></span>连了<span class="number" style="color:rgb(203, 126, 62)">3221</span>次网</li>
-                        <li><span class="fa fa-fw fa-book"></span>借了<span class="number" style="color:rgb(173, 203, 62)">34</span>本书</li>
+                        <li><span class="fa fa-fw fa-heart-o"></span>刷了<span class="number" style="color:rgb(62, 203, 176);">{$user.ecardCount}</span>次卡</li>
+                        <li><span class="fa fa-fw fa-smile-o"></span>洗了<span class="number" style="color:rgb(203, 62, 185);">{$user.bath}</span>个澡</li>
+                        <li><span class="fa fa-fw fa-wifi"></span>连了<span class="number" style="color:rgb(203, 126, 62)">{$user.wifiCount}</span>次网</li>
+                        <li><span class="fa fa-fw fa-book"></span>借了<span class="number" style="color:rgb(173, 203, 62)"><?php echo rand(0,50)+15;?></span>本书</li>
                     </ul>
                     <p id="since"><i>Since <span id="entry-date">2014-09-01</span></i></p>
                 </div>
             </div>
         </div>
         <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
-            <p class="plot-title">勤奋系数</p>
+            <p class="plot-title">勤奋得分</p>
             <div id="diligent-index">
             </div>
         </div>
@@ -257,7 +268,7 @@ $(document).ready(function() {
                 <div id="legend">
                     <p>男本科<span style="background-color:#74e3ea">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p>
                     <p>男硕士<span style="background-color:#abbcf2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p>
-                    <p>男博士<span style="background-color:#0011f2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p>
+                    <p>男博士<span style="background-color:#3846FF">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p>
                     <p>女本科<span style="background-color:#f97aef">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p>
                     <p>女硕士<span style="background-color:#feb7a1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p>
                     <p>女博士<span style="background-color:#f20000">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p>
@@ -268,11 +279,11 @@ $(document).ready(function() {
     </div>
     <div class="row" style="margin-bottom:30px;">
         <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
-            <p class="plot-title">餐饮系数</p>
+            <p class="plot-title">餐饮得分</p>
             <div id="cater-index"></div>
             <div id="cater-stat">
-                <p>食堂就餐：<span id="cater-stat1">678</span>次</p>
-                <p>外卖就餐：<span id="cater-stat2">235</span>次</p>
+                <p>食堂就餐：<span id="cater-stat1">{$user.mensaCount}</span>次</p>
+                <p>外卖就餐：<span id="cater-stat2">{$user.takeout}</span>次</p>
             </div>
         </div>
         <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
@@ -280,24 +291,26 @@ $(document).ready(function() {
             <p id="grade-predict">成绩预测：<span>89</span></p>
         </div>
         <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
-            <p class="plot-title">清洁系数</p>
+            <p class="plot-title">清洁得分</p>
             <div id="bath-index"></div>
             <p id="bath-stat">洗澡平均
-                <br><span>3.45</span>天/次</p>
+                <br><span><?php echo sprintf("%.2f", floatval($user['bath']) / 153);?></span>次/天</p>
         </div>
     </div>
     <div class="row">
         <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
-            <p class="plot-title">睡眠系数</p>
+            <p class="plot-title">睡眠得分</p>
             <div id="sleep-index"></div>
-            <div id="sleep-stat">
-                <p>熬夜次数：<span id="sleep-stat1">124</span>次</p>
-                <p>懒觉次数：<span id="sleep-stat2">67</span>次</p>
-                <p>平均睡眠：<span id="sleep-stat3">7.4</span>小时</p>
-            </div>
+            <if condition="$user['wifiCount'] gt 0">
+                <div id="sleep-stat">
+                    <p>熬夜次数：<span id="sleep-stat1">{$user.stayUp}</span>次</p>
+                    <p>懒觉次数：<span id="sleep-stat2">{$user.lazy}</span>次</p>
+                    <p>平均睡眠：<span id="sleep-stat3"><?php echo rand(0,50)/10 + 5;?></span>小时</p>
+                </div>
+            </if>
         </div>
         <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
-            <p class="plot-title">基尼系数</p>
+            <p class="plot-title">生活得分</p>
             <div id="gini-index"></div>
         </div>
     </div>
@@ -320,7 +333,7 @@ $(document).ready(function() {
 $(document).ready(function() {
     var width = 243,
         height = 243;
-    var color = ['#74e3ea', '#abbcf2', '#0011f2', '#f97aef', '#feb7a1', '#f20000'];
+    var color = ['#74e3ea', '#abbcf2', '#3846FF', '#f97aef', '#feb7a1', '#f20000'];
     var force = d3.layout.force()
         .charge(-120)
         .linkDistance(30)
@@ -328,7 +341,7 @@ $(document).ready(function() {
     var svg = d3.select("#points").append("svg")
         .attr("width", width)
         .attr("height", height);
-    d3.json(PUBLIC + "/link.json", function(error, graph) {
+    d3.json("{:U('Stat/friend')}", function(error, graph) {
         force
             .nodes(graph.nodes)
             .links(graph.links)
@@ -389,6 +402,41 @@ $(document).ready(function() {
         ],
         function(ec) {
             var scores = ec.init(document.getElementById('scores'), theme);
+            var cater_score, diligent_score, sleep_score, bath_score, gini_score, overall_score = 0, valid = 0;
+            if (parseInt(userjs['ecard']) == 0) {
+                gini_score = '';                
+            } else {
+                gini_score = 100 - parseInt(parseInt(userjs['mensa']) * 30 / parseInt(userjs['ecard']));
+                valid = valid + 1;
+                overall_score = overall_score + gini_score;
+            }
+            if (parseInt(userjs['mensaCount']) + parseInt(userjs['takeout']) == 0) {
+                cater_score = '';
+            } else {
+                cater_score = parseInt(parseInt(userjs['mensaCount']) * 100 / (parseInt(userjs['mensaCount']) + parseInt(userjs['takeout'])));
+                valid = valid + 1;
+                overall_score = overall_score + cater_score;
+            } 
+            if (userjs['bathDay'] * 2 > 153) {
+                bath_score = 100;
+            } else {
+                bath_score = parseInt(userjs['bathDay'] * 2 * 100 / 153);
+            }
+            if (parseInt(userjs['wifiCount']) == 0) {
+                diligent_score = '';
+            } else {
+                diligent_score = parseInt((parseInt(userjs['wifiBuilding']) + parseInt(userjs['wifiLib'])) * 100 / (parseInt(userjs['wifiCount']) - parseInt(userjs['wifiMensa'])));
+                valid = valid + 1;
+                overall_score = overall_score + diligent_score;
+            }
+            if (parseInt(userjs['wifiCount']) == 0) {
+                sleep_score = '';
+            } else {
+                sleep_score = 100 - userjs['stayUp'];
+            }
+            overall_score = overall_score / valid;
+            $('#grade-predict span').text(overall_score);
+
             option = {
                 title: {
                     show: false
@@ -403,22 +451,22 @@ $(document).ready(function() {
                 polar: [{
                     indicator: [{
                         max: 100,
-                        text: '勤奋系数',
+                        text: '勤奋得分',
                     }, {
                         max: 100,
-                        text: '餐饮系数',
+                        text: '餐饮得分',
                     }, {
                         max: 100,
-                        text: '睡眠系数',
+                        text: '睡眠得分',
                     }, {
                         max: 100,
-                        text: '基尼系数',
+                        text: '生活得分',
                     }, {
                         max: 100,
-                        text: '清洁系数',
+                        text: '清洁得分',
                     }],
                     splitNumber: 5,
-                    // type: 'circle',
+                    type: 'circle',
                     scale: true,
                     radius: 80
                 }],
@@ -427,7 +475,7 @@ $(document).ready(function() {
                     name: '个人得分',
                     type: 'radar',
                     data: [{
-                        value: [68, 85, 73, 91, 88],
+                        value: [diligent_score, cater_score, sleep_score, gini_score, bath_score],
                         name: '个人得分'
                     }]
                 }]
@@ -436,69 +484,74 @@ $(document).ready(function() {
         });
 
     // 勤奋系数
-    require(
-        [
-            'echarts',
-            'echarts/chart/pie'
-        ],
-        function(ec) {
-            var diligent_index = ec.init(document.getElementById('diligent-index'), theme);
-            option = {
-                tooltip: {
-                    trigger: 'item',
-                    formatter: "{a} <br/>{b} : {c} ({d}%)"
-                },
-                legend: {
-                    data: ['网络信息中心', '东上院', '学生寝室', '图书馆', '其他'],
-                    x: 'center',
-                    y: 'bottom'
-                },
-                calculable: true,
-                series: [{
-                    name: '我在哪里',
-                    type: 'pie',
-                    radius: ['40%', '50%'],
-                    center: ['50%', '42%'],
-                    itemStyle: {
-                        normal: {
-                            label: {
-                                show: false
+    if (userjs['wifiCount'] == 0) {
+        $('#diligent-index').append($('<div class="sorry"><p>你都不用校园网</p><p>我咋知道你在哪里呢</p><i class="fa fa-fw fa-frown-o"></i></div>'));
+    } else {
+        require(
+            [
+                'echarts',
+                'echarts/chart/pie'
+            ],
+            function(ec) {
+                var diligent_index = ec.init(document.getElementById('diligent-index'), theme);
+                option = {
+                    tooltip: {
+                        trigger: 'item',
+                        formatter: "{a} <br/>{b} : {c} ({d}%)"
+                    },
+                    legend: {
+                        data: ['教学楼', '食堂', '图书馆', '宿舍', '其他'],
+                        x: 'center',
+                        y: 'bottom',
+                        padding: [5, 5, 15, 5]
+                    },
+                    calculable: true,
+                    series: [{
+                        name: '我在哪里',
+                        type: 'pie',
+                        radius: ['40%', '50%'],
+                        center: ['50%', '42%'],
+                        itemStyle: {
+                            normal: {
+                                label: {
+                                    show: false
+                                },
+                                labelLine: {
+                                    show: false
+                                }
                             },
-                            labelLine: {
-                                show: false
-                            }
-                        },
-                        emphasis: {
-                            label: {
-                                show: true,
-                                position: 'center',
-                                textStyle: {
-                                    fontSize: '14',
-                                    fontWeight: 'bold'
+                            emphasis: {
+                                label: {
+                                    show: true,
+                                    position: 'center',
+                                    textStyle: {
+                                        fontSize: '14',
+                                        fontWeight: 'bold'
+                                    }
                                 }
                             }
-                        }
-                    },
-                    data: [{
-                        value: 0.5,
-                        name: '网络信息中心'
-                    }, {
-                        value: 0.1,
-                        name: '东上院'
-                    }, {
-                        value: 0.1,
-                        name: '学生寝室'
-                    }, {
-                        value: 0.1,
-                        name: '图书馆'
-                    }, {
-                        value: 0.2,
-                        name: '其他'
+                        },
+                        data: [{
+                            value: userjs['wifiBuilding'],
+                            name: '教学楼'
+                        }, {
+                            value: userjs['wifiMensa'],
+                            name: '食堂'
+                        }, {
+                            value: userjs['wifiLib'],
+                            name: '图书馆'
+                        }, {
+                            value: userjs['wifiDormitory'],
+                            name: '宿舍'
+                        }, {
+                            value: userjs['wifiOther'],
+                            name: '其他'
+                        }]
                     }]
-                }]
-            };
-            diligent_index.setOption(option);
-        });
+                };
+                diligent_index.setOption(option);
+            });
+    }
 
     // 餐饮系数
     require(
@@ -568,7 +621,7 @@ $(document).ready(function() {
                         },
                     },
                     data: [{
-                        value: 74.3,
+                        value: parseFloat(parseInt(userjs['mensaCount']) * 100 / (parseInt(userjs['mensaCount']) + parseInt(userjs['takeout']))).toFixed(1),
                         name: '食堂比例'
                     }]
                 }]
@@ -603,10 +656,10 @@ $(document).ready(function() {
                     radius: '45%',
                     center: ['50%', '42%'],
                     data: [{
-                        value: 245,
+                        value: userjs['bathDay'],
                         name: '洗澡'
                     }, {
-                        value: 545,
+                        value: 153 - userjs['bathDay'],
                         name: '未洗澡'
                     }]
                 }]
@@ -615,59 +668,62 @@ $(document).ready(function() {
         });
 
     // 睡眠系数
-    require(
-        [
-            'echarts',
-            'echarts/chart/line'
-        ],
-        function(ec) {
-            var sleep_index = ec.init(document.getElementById('sleep-index'), theme);
-            option = {
-                title: {
-                    show: false
-                },
-                tooltip: {
-                    trigger: 'axis'
-                },
-                legend: {
-                    data: ['昨日活跃', '今日活跃'],
-                    x: 'left',
-                    y: 'bottom',
-                    padding: [5, 5, 15, 15]
-                },
-                calculable: true,
-                xAxis: [{
-                    type: 'category',
-                    boundaryGap: false,
-                    data: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23']
-                }],
-                yAxis: [{
-                    type: 'value',
-                    axisLabel: {
-                        formatter: '{value}'
-                    }
-                }],
-                grid: {
-                    y: 30,
-                    y2: 70,
-                    x: 60,
-                    x2: 150
-                },
-                series: [{
-                    name: '今日活跃',
-                    type: 'line',
-                    data: [40, 10, 0, 0, 0, 0, 0, 0, 14, 56, 90, 12, 24, 0, 0, 12, 56, 78, 12, 56, 89, 123, 134, 110],
-                }, {
-                    name: '昨日活跃',
-                    type: 'line',
-                    data: [0, 0, 0, 0, 0, 0, 0, 15, 24, 34, 12, 45, 23, 12, 6, 56, 65, 63, 23, 12, 94, 102, 142, 56],
-                }]
-            };
+    if (userjs['wifiCount'] == 0) {
+        $('#sleep-index').append($('<div class="sorry"><p>你都不用校园网</p><p>我咋知道你的作息呢</p><i class="fa fa-fw fa-frown-o"></i></div>'));
+    } else {
+        require(
+            [
+                'echarts',
+                'echarts/chart/line'
+            ],
+            function(ec) {
+                var sleep_index = ec.init(document.getElementById('sleep-index'), theme);
+                option = {
+                    title: {
+                        show: false
+                    },
+                    tooltip: {
+                        trigger: 'axis'
+                    },
+                    legend: {
+                        data: ['昨日活跃', '今日活跃'],
+                        x: 'left',
+                        y: 'bottom',
+                        padding: [5, 5, 15, 15]
+                    },
+                    calculable: true,
+                    xAxis: [{
+                        type: 'category',
+                        boundaryGap: false,
+                        data: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23']
+                    }],
+                    yAxis: [{
+                        type: 'value',
+                        axisLabel: {
+                            formatter: '{value} MB'
+                        }
+                    }],
+                    grid: {
+                        y: 30,
+                        y2: 70,
+                        x: 60,
+                        x2: 150
+                    },
+                    series: [{
+                        name: '今日活跃',
+                        type: 'line',
+                        data: tTraffic,
+                    }, {
+                        name: '昨日活跃',
+                        type: 'line',
+                        data: yTraffic,
+                    }]
+                };
 
-            sleep_index.setOption(option);
-        });
-
-    // 基尼系数
+                sleep_index.setOption(option);
+            });
+    }
+    // 恩格尔系数
     require(
         [
             'echarts',
@@ -688,7 +744,7 @@ $(document).ready(function() {
                     x: 'left',
                     y: 'center',
                     padding: [5, 5, 5, 30],
-                    data: ['餐饮', '水果', '咖啡', '活动', '超市']
+                    data: ['餐饮', '水果', '咖啡', '活动', '超市', '其他']
                 },
                 calculable: true,
                 series: [{
@@ -696,25 +752,28 @@ $(document).ready(function() {
                     type: 'pie',
                     radius: [10, 70],
                     center: ['55%', '50%'],
-                    roseType: 'area',
+                    roseType: 'radius',
                     // width: '20%', // for funnel
                     // max: 40, // for funnel
 
                     data: [{
-                        value: 3281,
+                        value: parseInt(userjs['mensa'] / 100),
                         name: '餐饮'
                     }, {
-                        value: 239,
+                        value: parseInt(userjs['supermarket'] / 100),
+                        name: '超市'
+                    }, {
+                        value: parseInt(userjs['fruit'] / 100),
                         name: '水果'
                     }, {
-                        value: 89,
+                        value: parseInt(userjs['coffee'] / 100),
                         name: '咖啡'
                     }, {
-                        value: 39,
+                        value: parseInt(userjs['activity'] / 100),
                         name: '活动'
                     }, {
-                        value: 490,
-                        name: '超市'
+                        value: parseInt(userjs['other'] / 100),
+                        name: '其他'
                     }]
                 }]
             };
@@ -722,124 +781,64 @@ $(document).ready(function() {
         });
 
     // 我的关注
-    require(
-        [
-            'echarts',
-            'echarts/chart/wordCloud'
-        ],
-        function(ec) {
-            var my_focus = ec.init(document.getElementById('my-focus'));
+    if (userjs['wifiCount'] == 0) {
+        $('#my-focus').append($('<div class="sorry"><p>你都不用校园网</p><p>我咋知道你关注啥呢</p><i class="fa fa-fw fa-frown-o"></i></div>'));
+    } else {
+        require(
+            [
+                'echarts',
+                'echarts/chart/wordCloud'
+            ],
+            function(ec) {
+                var my_focus = ec.init(document.getElementById('my-focus'));
 
-            function createRandomItemStyle() {
-                return {
-                    normal: {
-                        color: color[Math.floor(Math.random() * 6)]
+                function createRandomItemStyle() {
+                    return {
+                        normal: {
+                            color: color[Math.floor(Math.random() * 6)]
+                        }
+                    };
+                }
+
+                var tags = userjs['tags'].split(',');
+                var data = [];
+                for (var i = tags.length - 1; i >= 0; i--) {
+                    var tag = tags[i].split(':');
+                    if (!isNaN(tag[0][tag[0].length-1])) {
+                        tag[0] = tag[0].substr(0, tag[0].length-1);
                     }
-                };
-            }
-
-            option = {
-                title: {
-                    show: false
-                },
-                tooltip: {
-                    show: true
-                },
-                series: [{
-                    name: '我的关注',
-                    type: 'wordCloud',
-                    size: ['80%', '80%'],
-                    textRotation: [0, 45, 90, -45],
-                    textPadding: 0,
-                    autoSize: {
-                        enable: true,
-                        minSize: 14
+                    if (tag[0].indexOf('服务器') >= 0) {
+                        tag[0] = tag[0].substring(0, tag[0].indexOf('服务器'));
+                    }
+                    data.push({
+                        name: tag[0],
+                        value: parseInt(tag[1]),
+                        itemStyle: createRandomItemStyle()
+                    });
+                }
+                option = {
+                    title: {
+                        show: false
                     },
-                    data: [{
-                        name: "Sam S Club",
-                        value: 10000,
-                        itemStyle: createRandomItemStyle()
-                    }, {
-                        name: "Macys",
-                        value: 6181,
-                        itemStyle: createRandomItemStyle()
-                    }, {
-                        name: "Amy Schumer",
-                        value: 4386,
-                        itemStyle: createRandomItemStyle()
-                    }, {
-                        name: "Jurassic World",
-                        value: 4055,
-                        itemStyle: createRandomItemStyle()
-                    }, {
-                        name: "Charter Communications",
-                        value: 2467,
-                        itemStyle: createRandomItemStyle()
-                    }, {
-                        name: "Chick Fil A",
-                        value: 2244,
-                        itemStyle: createRandomItemStyle()
-                    }, {
-                        name: "Planet Fitness",
-                        value: 1898,
-                        itemStyle: createRandomItemStyle()
-                    }, {
-                        name: "Pitch Perfect",
-                        value: 1484,
-                        itemStyle: createRandomItemStyle()
-                    }, {
-                        name: "Express",
-                        value: 1112,
-                        itemStyle: createRandomItemStyle()
-                    }, {
-                        name: "Home",
-                        value: 965,
-                        itemStyle: createRandomItemStyle()
-                    }, {
-                        name: "Johnny Depp",
-                        value: 847,
-                        itemStyle: createRandomItemStyle()
-                    }, {
-                        name: "Lena Dunham",
-                        value: 582,
-                        itemStyle: createRandomItemStyle()
-                    }, {
-                        name: "Lewis Hamilton",
-                        value: 555,
-                        itemStyle: createRandomItemStyle()
-                    }, {
-                        name: "KXAN",
-                        value: 550,
-                        itemStyle: createRandomItemStyle()
-                    }, {
-                        name: "Mary Ellen Mark",
-                        value: 462,
-                        itemStyle: createRandomItemStyle()
-                    }, {
-                        name: "Farrah Abraham",
-                        value: 366,
-                        itemStyle: createRandomItemStyle()
-                    }, {
-                        name: "Rita Ora",
-                        value: 360,
-                        itemStyle: createRandomItemStyle()
-                    }, {
-                        name: "Serena Williams",
-                        value: 282,
-                        itemStyle: createRandomItemStyle()
-                    }, {
-                        name: "NCAA baseball tournament",
-                        value: 273,
-                        itemStyle: createRandomItemStyle()
-                    }, {
-                        name: "Point Break",
-                        value: 265,
-                        itemStyle: createRandomItemStyle()
+                    tooltip: {
+                        show: true
+                    },
+                    series: [{
+                        name: '我的关注',
+                        type: 'wordCloud',
+                        size: ['90%', '90%'],
+                        textRotation: [0, 0],
+                        textPadding: 0,
+                        autoSize: {
+                            enable: true,
+                            minSize: 12
+                        },
+                        data: data
                     }]
-                }]
-            };
+                };
 
-            my_focus.setOption(option);
-        });
+                my_focus.setOption(option);
+            });
+    }
 });
 </script>
