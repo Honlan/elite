@@ -226,11 +226,42 @@ $(document).ready(function() {
 #stat #my-evaluation {
     height: 250px;
     background-color: #222 !important;
+    padding: 40px;
+}
+
+#stat #my-evaluation h3 {
+    margin-top: 0px;
+    margin-bottom: 20px;
+    letter-spacing: 5px;
+    color: rgb(240, 52, 52);
+    font-size: 30px;
+}
+
+#stat #my-evaluation p {
+    text-align: left;
+    text-indent: 2em;
+    line-height: 2;
 }
 
 #stat #my-recommendation {
     height: 250px;
     background-color: #222 !important;
+    padding: 20px 20%;
+}
+
+#stat #my-recommendation h4 {
+    margin-top: 0;
+    padding-top: 25px;
+    margin-bottom: 20px;
+}
+
+#stat #my-recommendation span {
+    background-color: rgba(250, 250, 250, 0.9);
+    color: #222;
+    border-radius: 3px;
+    margin-bottom: 8px;
+    padding: 2px 3px;
+    display: block;
 }
 </style>
 <div id="stat">
@@ -321,11 +352,23 @@ $(document).ready(function() {
         </div>
         <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
             <p class="plot-title">个人评价</p>
-            <div id="my-evaluation"></div>
+            <div id="my-evaluation">
+                <h3></h3>
+                <p></p>
+            </div>
         </div>
         <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
             <p class="plot-title">兴趣推荐</p>
-            <div id="my-recommendation"></div>
+            <div id="my-recommendation">
+                <div style="float:left;">
+                    <h4 style="color:rgb(89, 89, 255);">推荐好友</h4>
+                    <span>2139589</span><span>9587287</span><span>1098276</span><span>8768162</span>
+                </div>
+                <div style="float:right;">
+                    <h4 style="color:rgb(255, 89, 89);">推荐食堂</h4>
+                    <span>绿园餐厅</span><span>上海快餐</span><span>教工餐厅</span><span>新疆餐厅</span>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -395,6 +438,8 @@ $(document).ready(function() {
     });
 
     // 个人统计得分雷达图
+    var cater_score, diligent_score, sleep_score, bath_score, gini_score, overall_score = 0,
+        valid = 0;
     require(
         [
             'echarts',
@@ -402,9 +447,8 @@ $(document).ready(function() {
         ],
         function(ec) {
             var scores = ec.init(document.getElementById('scores'), theme);
-            var cater_score, diligent_score, sleep_score, bath_score, gini_score, overall_score = 0, valid = 0;
             if (parseInt(userjs['ecard']) == 0) {
-                gini_score = '';                
+                gini_score = '';
             } else {
                 gini_score = 100 - parseInt(parseInt(userjs['mensa']) * 30 / parseInt(userjs['ecard']));
                 valid = valid + 1;
@@ -416,7 +460,7 @@ $(document).ready(function() {
                 cater_score = parseInt(parseInt(userjs['mensaCount']) * 100 / (parseInt(userjs['mensaCount']) + parseInt(userjs['takeout'])));
                 valid = valid + 1;
                 overall_score = overall_score + cater_score;
-            } 
+            }
             if (userjs['bathDay'] * 2 > 153) {
                 bath_score = 100;
             } else {
@@ -434,7 +478,7 @@ $(document).ready(function() {
             } else {
                 sleep_score = 100 - userjs['stayUp'];
             }
-            overall_score = overall_score / valid;
+            overall_score = parseInt(overall_score / valid);
             $('#grade-predict span').text(overall_score);
 
             option = {
@@ -481,6 +525,13 @@ $(document).ready(function() {
                 }]
             };
             scores.setOption(option);
+
+            //我的评价
+            var evaluations = ['男神女神', '无敌学霸', '宅男宅女', '神秘人士', '人民群众'];
+            var descriptions = ['他们气质非凡、优雅高贵，备受同学们的关注。他们有着规律良好的就餐和作息习惯，按时洗浴、爱逛超市，生活消费多样化、丰富多彩。', '他们专于学术，勤奋刻苦，选择用无言地努力换来所追求的目标。与其把时间花在别的事情上，他们更愿意全身心投入到学习和科研当中。', '他们喜欢安静地呆在自己的小空间中，不喜欢出门、不喜欢走动，宅在寝室或实验室里，安心地做着自己喜欢的事情便已足够。那吃饭问题怎么办？点外卖呗～', '他们行踪神秘，总是在你还未反应过来便已消失，却真实地留下来过的痕迹。他们现在在哪里？谁也不知道，包括无所不在的校园网和一卡通。', '他们是普通人民群众中的一员，是社会主义建设事业中一颗默默无闻的螺丝钉，他们吃饭、学习、睡觉，生活简单却不乏属于自己的精彩。']
+            var evaluation = Math.floor(Math.random() * 4);
+            $('#my-evaluation h3').text(evaluations[evaluation]);
+            $('#my-evaluation p').text(descriptions[evaluation]);
         });
 
     // 勤奋系数
@@ -804,8 +855,8 @@ $(document).ready(function() {
                 var data = [];
                 for (var i = tags.length - 1; i >= 0; i--) {
                     var tag = tags[i].split(':');
-                    if (!isNaN(tag[0][tag[0].length-1])) {
-                        tag[0] = tag[0].substr(0, tag[0].length-1);
+                    if (!isNaN(tag[0][tag[0].length - 1])) {
+                        tag[0] = tag[0].substr(0, tag[0].length - 1);
                     }
                     if (tag[0].indexOf('服务器') >= 0) {
                         tag[0] = tag[0].substring(0, tag[0].indexOf('服务器'));
