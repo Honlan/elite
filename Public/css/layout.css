@@ -184,7 +184,7 @@ footer h3 {
     margin: 80px auto;
 }
 #login-modal .modal-content {
-    background-color: rgba(255, 255, 255, 0.9);
+    background-color: rgba(255, 255, 255, 0.85);
     border-radius: 5px;
 }
 

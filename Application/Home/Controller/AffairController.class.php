@@ -74,7 +74,7 @@ class AffairController extends Controller {
         foreach ($students as $key => $value) {
             foreach ($value as $k => $v) {
                 if (rand(0, 10) == 1) {
-                   $temp[$key][] = [intval($v['ecard'])/100, floatval($v['wifi'])/1024]; 
+                   $temp[$key][] = [round(intval($v['ecard'])/100,1), round(floatval($v['wifi'])/1024,3)]; 
                 }
             }
         }
