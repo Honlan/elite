@@ -88,7 +88,7 @@ class IndexController extends Controller {
         // 时间的查询条件
         $time_now = strftime($timeformat ,DateAdd("n" , $query, strtotime($stamp0))); // 从初始时刻开始，增加$query分钟
         // 复杂语句直接query, 拼接字符串用黑点.
-        $select_header = "select toacount, mname, SUM(amount) as 'sales' from  mensa_name where times <";
+        $select_header = "select toacount, accountname, SUM(amount) as 'sales' from  mensa_name where times <";
         $select_time = "'".$time_now."'";
         $select_group = " GROUP BY toacount ORDER BY SUM(amount) DESC";
         $select_query = $select_header.$select_time.$select_group;
