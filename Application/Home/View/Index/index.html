@@ -1250,7 +1250,8 @@ $(document).ready(function() {
             }, 60000);
         } //function (echarts) 
     ); //require
-
+    
+    // 人群迁徙趋势
     require(
         [
             'echarts',
@@ -1884,12 +1885,12 @@ $(document).ready(function() {
         } //function (echarts, BMapExtension) 
     ); //require
 
-
+    // 预测人流量
     var map3 = new BMap.Map("catermap"); // 创建地图实例
-    map3.centerAndZoom(new BMap.Point(121.44821, 31.033276), 15); // 初始化地图，设置中心点坐标和地图级别
+    map3.centerAndZoom(new BMap.Point(121.44821, 31.033276), 16); // 初始化地图，设置中心点坐标和地图级别
     map3.disableScrollWheelZoom();
     map3.setMapStyle({
-        style: "hardedge"
+        style: "light"
     });
 });
 </script>
