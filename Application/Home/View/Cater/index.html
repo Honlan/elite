@@ -261,7 +261,8 @@ $(document).ready(function() {
                 series: [{
                     name: '实时餐饮总额',
                     type: 'line',
-                    data: todayMensa['amount']
+                    data: todayMensa['amount'],
+                    smooth: true,
                 }]
             };
             var lastData;
@@ -353,10 +354,12 @@ $(document).ready(function() {
                     name: '男',
                     type: 'line',
                     data: dailyTradeSum['男']['sum'],
+                    smooth: true,
                 }, {
                     name: '女',
                     type: 'line',
                     data: dailyTradeSum['女']['sum'],
+                    smooth: true,
                 }]
             };
             history_daily.setOption(option);
@@ -390,7 +393,7 @@ $(document).ready(function() {
                 },
                 calculable: true,
                 series: [{
-                    name: '访问来源',
+                    name: '餐饮人群组成',
                     type: 'pie',
                     radius: '45%',
                     center: ['40%', '50%'],
@@ -446,7 +449,7 @@ $(document).ready(function() {
                 },
                 calculable: true,
                 series: [{
-                    name: '访问来源',
+                    name: '各大食堂占比',
                     type: 'pie',
                     radius: '45%',
                     center: ['40%', '50%'],

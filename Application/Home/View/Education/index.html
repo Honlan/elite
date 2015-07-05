@@ -2,10 +2,201 @@
 $(document).ready(function() {
     $('#nav-education').addClass('active');
     $('#header-right i').addClass('fa-book');
-    $('#header-right span').text('教学决策');
+    $('#header-right span').text('教学统计');
 });
 </script>
+<style>
+#education #fixed-assets {
+    height: 300px;
+    background-color: #222 !important;
+    margin-bottom: 30px;
+}
 
+#education #research-assets {
+    height: 250px;
+    background-color: #222 !important;
+}
+
+#education #teaching-assets {
+    height: 250px;
+    background-color: #222 !important;
+}
+</style>
 <div id="education">
-	
+    <div>
+        <p class="plot-title">校园设备统计</p>
+        <div id="fixed-assets"></div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+            <p class="plot-title">科研设备使用趋势</p>
+            <div id="research-assets"></div>
+        </div>
+        <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+            <p class="plot-title">教学设备使用趋势</p>
+            <div id="teaching-assets"></div>
+        </div>
+    </div>
 </div>
+<script>
+$(document).ready(function() {
+    // 固定资产统计
+    require(
+        [
+            'echarts',
+            'echarts/chart/bar'
+        ],
+        function(ec) {
+            var fixed_assets = ec.init(document.getElementById('fixed-assets'), theme);
+            option = {
+                title: {
+                    show: false,
+                    text: '',
+                },
+                tooltip: {
+                    trigger: 'item',
+                },
+                legend: {
+                    data: ['2014年', '2015年'],
+                    x: 'right',
+                    y: 'top',
+                    padding: [20, 15, 5, 5]
+                },
+                calculable: true,
+                xAxis: [{
+                    type: 'value',
+                    axisLabel: {
+                        formatter: '{value} 百万'
+                    }
+                }],
+                yAxis: [{
+                    type: 'category',
+                    data: ['其他', '教学', '科研']
+                }],
+                series: [{
+                    name: '2014年',
+                    type: 'bar',
+                    data: [352.6, 1198.9, 1532.5]
+                }, {
+                    name: '2015年',
+                    type: 'bar',
+                    data: [428.2, 1288.1, 1782.7]
+                }]
+            };
+            fixed_assets.setOption(option);
+        });
+
+    // 科研设备使用趋势
+    require(
+        [
+            'echarts',
+            'echarts/chart/line'
+        ],
+        function(ec) {
+            var research_assets = ec.init(document.getElementById('research-assets'), theme);
+            option = {
+                title: {
+                    display: false,
+                    text: '',
+                },
+                tooltip: {
+                    trigger: 'item'
+                },
+                legend: {
+                    display: false,
+                    data: []
+                },
+                calculable: true,
+                grid: {
+                	x: 90,
+                	x2: 30,
+                	y: 40,
+                	y2: 60
+                },
+                xAxis: [{
+                    type: 'category',
+                    data: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月']
+                }],
+                yAxis: [{
+                    type: 'value',
+                    axisLabel: {
+                        formatter: '{value} 百万'
+                    },
+                    scale: true,
+                    splitNumber: 4
+                }],
+                series: [{
+                    name: '科研设备使用趋势',
+                    type: 'line',
+                    data: [1689.6, 1702.3, 1760.6, 1729.6, 1789.5, 1839.2, 1815.3, 1859.3, 1878.3, 1845.8, 1910.2, 1933.3],
+                    smooth: true,
+                    itemStyle: {
+                        normal: {
+                            areaStyle: {
+                                type: 'default'
+                            }
+                        }
+                    },
+                }]
+            };
+            research_assets.setOption(option);
+        });
+
+    // 教学设备使用趋势
+    require(
+        [
+            'echarts',
+            'echarts/chart/line'
+        ],
+        function(ec) {
+            var teaching_assets = ec.init(document.getElementById('teaching-assets'), theme);
+            option = {
+                title: {
+                    show: false,
+                    text: '',
+                },
+                tooltip: {
+                    trigger: 'item'
+                },
+                legend: {
+                    show: false,
+                    data: []
+                },
+                calculable: true,
+                xAxis: [{
+                    type: 'category',
+                    data: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月']
+                }],
+                yAxis: [{
+                    type: 'value',
+                    axisLabel: {
+                        formatter: '{value} 百万'
+                    },
+                    scale: true,
+                    splitNumber: 4
+                }],
+                grid: {
+                	x: 90,
+                	x2: 30,
+                	y: 40,
+                	y2: 60
+                },
+                series: [{
+                    name: '教学设备使用趋势',
+                    type: 'line',
+                    data: [1189.5, 1256.1, 1205.4, 1311.6, 1323.3, 1308.6, 1365.3, 1399.5, 1423.5, 1489.5, 1460.2, 1529.7],
+                    smooth: true,
+                    itemStyle: {
+                        normal: {
+                            areaStyle: {
+                                type: 'default'
+                            }
+                        }
+                    },
+                }]
+            };
+            teaching_assets.setOption(option);
+        });
+
+});
+</script>

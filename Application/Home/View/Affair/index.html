@@ -255,10 +255,12 @@ $(document).ready(function() {
                 series: [{
                     name: '男',
                     type: 'line',
+                    smooth: true,
                     data: [(tagTypeBoyRecord['ug1'] / 2507.0).toFixed(3), (tagTypeBoyRecord['ug2'] / 2628.0).toFixed(3), (tagTypeBoyRecord['ug3'] / 2239.0).toFixed(3), (tagTypeBoyRecord['ug4'] / 2099.0).toFixed(3), (tagTypeBoyRecord['mt1'] / 2323.0).toFixed(3), (tagTypeBoyRecord['mt2'] / 2129.0).toFixed(3), (tagTypeBoyRecord['mt3'] / 1881.0).toFixed(3), (tagTypeBoyRecord['doc1'] / 729.0).toFixed(3), (tagTypeBoyRecord['doc2'] / 557.0).toFixed(3), (tagTypeBoyRecord['doc3'] / 644.0).toFixed(3), (tagTypeBoyRecord['doc4'] / 570.0).toFixed(3), (tagTypeBoyRecord['doc5'] / 491.0).toFixed(3)],
                 }, {
                     name: '女',
                     type: 'line',
+                    smooth: true,
                     data: [(tagTypeGirlRecord['ug1'] / 1322.0).toFixed(3), (tagTypeGirlRecord['ug2'] / 1288.0).toFixed(3), (tagTypeGirlRecord['ug3'] / 1339.0).toFixed(3), (tagTypeGirlRecord['ug4'] / 999.0).toFixed(3), (tagTypeGirlRecord['mt1'] / 1617.0).toFixed(3), (tagTypeGirlRecord['mt2'] / 1212.0).toFixed(3), (tagTypeGirlRecord['mt3'] / 1065.0).toFixed(3), (tagTypeGirlRecord['doc1'] / 371.0).toFixed(3), (tagTypeGirlRecord['doc2'] / 249.0).toFixed(3), (tagTypeGirlRecord['doc3'] / 301.0).toFixed(3), (tagTypeGirlRecord['doc4'] / 210.0).toFixed(3), (tagTypeGirlRecord['doc5'] / 208.0).toFixed(3)],
                 }]
             };
@@ -807,18 +809,54 @@ $(document).ready(function() {
                             name: '西区浴室',
                             type: 'line',
                             data: bathRealtime['1000091']['count'],
+                            smooth: true,
+                            stack: '总量',
+                            itemStyle: {
+                                normal: {
+                                    areaStyle: {
+                                        type: 'default'
+                                    }
+                                }
+                            },
                         }, {
                             name: '东区浴室',
                             type: 'line',
                             data: bathRealtime['1000093']['count'],
+                            smooth: true,
+                            stack: '总量',
+                            itemStyle: {
+                                normal: {
+                                    areaStyle: {
+                                        type: 'default'
+                                    }
+                                }
+                            },
                         }, {
                             name: '北区浴室',
                             type: 'line',
                             data: bathRealtime['1000092']['count'],
+                            smooth: true,
+                            stack: '总量',
+                            itemStyle: {
+                                normal: {
+                                    areaStyle: {
+                                        type: 'default'
+                                    }
+                                }
+                            },
                         }, {
                             name: '水控系统',
                             type: 'line',
                             data: bathRealtime['1000095']['count'],
+                            smooth: true,
+                            stack: '总量',
+                            itemStyle: {
+                                normal: {
+                                    areaStyle: {
+                                        type: 'default'
+                                    }
+                                }
+                            },
                         }]
                     };
 
@@ -873,18 +911,54 @@ $(document).ready(function() {
                             name: '西区浴室',
                             type: 'line',
                             data: bathStat['闵行西区浴室'],
+                            smooth: true,
+                            stack: '总量',
+                            itemStyle: {
+                                normal: {
+                                    areaStyle: {
+                                        type: 'default'
+                                    }
+                                }
+                            },
                         }, {
                             name: '东区浴室',
                             type: 'line',
                             data: bathStat['闵行东区浴室'],
+                            smooth: true,
+                            stack: '总量',
+                            itemStyle: {
+                                normal: {
+                                    areaStyle: {
+                                        type: 'default'
+                                    }
+                                }
+                            },
                         }, {
                             name: '北区浴室',
                             type: 'line',
                             data: bathStat['闵行北区浴室'],
+                            smooth: true,
+                            stack: '总量',
+                            itemStyle: {
+                                normal: {
+                                    areaStyle: {
+                                        type: 'default'
+                                    }
+                                }
+                            },
                         }, {
                             name: '水控系统',
                             type: 'line',
                             data: bathStat['六期水控'],
+                            smooth: true,
+                            stack: '总量',
+                            itemStyle: {
+                                normal: {
+                                    areaStyle: {
+                                        type: 'default'
+                                    }
+                                }
+                            },
                         }]
                     };
 
@@ -934,19 +1008,55 @@ $(document).ready(function() {
                 series: [{
                     name: '西区浴室',
                     type: 'line',
+                    smooth: true,
                     data: bathRealtime['1000091']['count'],
+                    stack: '总量',
+                    itemStyle: {
+                        normal: {
+                            areaStyle: {
+                                type: 'default'
+                            }
+                        }
+                    },
                 }, {
                     name: '东区浴室',
                     type: 'line',
+                    smooth: true,
                     data: bathRealtime['1000093']['count'],
+                    stack: '总量',
+                    itemStyle: {
+                        normal: {
+                            areaStyle: {
+                                type: 'default'
+                            }
+                        }
+                    },
                 }, {
                     name: '北区浴室',
                     type: 'line',
+                    smooth: true,
                     data: bathRealtime['1000092']['count'],
+                    stack: '总量',
+                    itemStyle: {
+                        normal: {
+                            areaStyle: {
+                                type: 'default'
+                            }
+                        }
+                    },
                 }, {
                     name: '水控系统',
                     type: 'line',
+                    smooth: true,
                     data: bathRealtime['1000095']['count'],
+                    stack: '总量',
+                    itemStyle: {
+                        normal: {
+                            areaStyle: {
+                                type: 'default'
+                            }
+                        }
+                    },
                 }]
             };
 
