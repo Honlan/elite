@@ -5,6 +5,77 @@ $(document).ready(function() {
     $('#header-right span').text('信息共享');
 });
 </script>
+<style>
+#info {
+	text-align: left;
+}
+#info .info-container {
+	position: relative;
+}
+#info .info-container .info-title {
+	font-size: 16px;
+	padding-left: 15px;
+	border-left: 5px solid #3C833C;
+}
+#info .info-container>a {
+	text-decoration: none;
+	color: #888;
+	position: absolute;
+	right: 0;
+	top: 0;
+	font-size: 13px;
+	transition: color .4s;
+    -o-transition: color .4s;
+    -moz-transition: color .4s;
+    -webkit-transition: color .4s;
+}
+#info .info-container>a:hover {
+	color: #C55252;
+}
+#info .info-content {
+
+}
+#info .info-cell {
+}
+</style>
 <div id="info">
-	
+	<div id="activity" class="info-container">
+		<p class="info-title" style="border-color: #EF3B3B;">活动</p>
+		<a href=""><i class="fa fa-fw fa-location-arrow"></i> More</a>
+		<div class="info-content">
+			<div class="info-cell">
+				
+			</div>
+		</div>
+	</div>
+	<div id="comment" class="info-container">
+		<p class="info-title" style="border-color: #EF863B;">点评</p>
+		<a href=""><i class="fa fa-fw fa-location-arrow"></i> More</a>
+		<div class="info-content"></div>
+	</div>
+	<div id="contest" class="info-container">
+		<p class="info-title" style="border-color: #EFED3B;">比赛</p>
+		<a href=""><i class="fa fa-fw fa-location-arrow"></i> More</a>
+		<div class="info-content"></div>
+	</div>
+	<div id="second-hand" class="info-container">
+		<p class="info-title" style="border-color: #3BEF3D;">二手</p>
+		<a href=""><i class="fa fa-fw fa-location-arrow"></i> More</a>
+		<div class="info-content"></div>
+	</div>
+	<div id="house" class="info-container">
+		<p class="info-title" style="border-color: #3BEFCD;">租房</p>
+		<a href=""><i class="fa fa-fw fa-location-arrow"></i> More</a>
+		<div class="info-content"></div>
+	</div>
+	<div id="intern" class="info-container">
+		<p class="info-title" style="border-color: #3B4BEF;">实习</p>
+		<a href=""><i class="fa fa-fw fa-location-arrow"></i> More</a>
+		<div class="info-content"></div>
+	</div>
+	<div id="bus" class="info-container">
+		<p class="info-title" style="border-color: #DD3BEF;">校车</p>
+		<a href=""><i class="fa fa-fw fa-location-arrow"></i> More</a>
+		<div class="info-content"></div>
+	</div>
 </div>
