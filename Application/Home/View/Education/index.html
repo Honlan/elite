@@ -21,6 +21,70 @@ $(document).ready(function() {
     height: 250px;
     background-color: #222 !important;
 }
+
+#education #research-projects {
+    height: 250px;
+    background-color: #222 !important;
+    position: relative;
+}
+
+#education .education-title {
+    position: absolute;
+    width: 100%;
+    top: 35px;
+    margin-left: -15px;
+    z-index: 999;
+}
+
+#education .education-title span {
+    margin-left: 5px;
+    margin-right: 5px;
+    font-size: 150%;
+    color: rgb(253, 75, 75);
+    position: relative;
+    top: 2px;
+}
+
+#education #research-fees {
+    height: 250px;
+    background-color: #222 !important;
+}
+
+#education #publications {
+    height: 250px;
+    background-color: #222 !important;
+}
+
+#education #publications-stat {
+    position: absolute;
+    right: 50px;
+    top: 80px;
+    line-height: 1.3;
+}
+
+#education #publications-stat span {
+    margin-left: 10px;
+    margin-right: 5px;
+    font-size: 150%;
+    color: rgb(253, 75, 75);
+    position: relative;
+    top: 2px;
+}
+
+#education #papers {
+    height: 250px;
+    background-color: #222 !important;
+}
+
+#education #params {
+    height: 250px;
+    background-color: #222 !important;
+}
+
+#education #students {
+    height: 250px;
+    background-color: #222 !important;
+}
 </style>
 <div id="education">
     <div>
@@ -35,6 +99,39 @@ $(document).ready(function() {
         <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
             <p class="plot-title">教学设备使用趋势</p>
             <div id="teaching-assets"></div>
+        </div>
+    </div>
+    <div class="row" style="margin-top: 30px;">
+        <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+            <p class="plot-title">科研立项统计</p>
+            <h4 class="education-title">共立项<span>1600</span>项</h4>
+            <div id="research-projects"></div>
+        </div>
+        <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+            <p class="plot-title">科研到款统计</p>
+            <h4 class="education-title">共到款<span>19657.1</span>万</h4>
+            <div id="research-fees"></div>
+        </div>
+    </div>
+    <div class="row" style="margin-top: 30px;">
+        <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+            <p class="plot-title">科研著作统计</p>
+            <h4 id="publications-stat">著作共计<br><span>1872</span>部</h4>
+            <div id="publications"></div>
+        </div>
+        <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+            <p class="plot-title">论文发表统计</p>
+            <div id="papers"></div>
+        </div>
+    </div>
+    <div class="row" style="margin-top: 30px;">
+        <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+            <p class="plot-title">校区指标统计</p>
+            <div id="params"></div>
+        </div>
+        <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+            <p class="plot-title">学生分布</p>
+            <div id="students"></div>
         </div>
     </div>
 </div>
@@ -108,10 +205,10 @@ $(document).ready(function() {
                 },
                 calculable: true,
                 grid: {
-                	x: 90,
-                	x2: 30,
-                	y: 40,
-                	y2: 60
+                    x: 90,
+                    x2: 30,
+                    y: 40,
+                    y2: 60
                 },
                 xAxis: [{
                     type: 'category',
@@ -176,10 +273,10 @@ $(document).ready(function() {
                     splitNumber: 4
                 }],
                 grid: {
-                	x: 90,
-                	x2: 30,
-                	y: 40,
-                	y2: 60
+                    x: 90,
+                    x2: 30,
+                    y: 40,
+                    y2: 60
                 },
                 series: [{
                     name: '教学设备使用趋势',
@@ -196,6 +293,407 @@ $(document).ready(function() {
                 }]
             };
             teaching_assets.setOption(option);
+        });
+
+    // 科研立项统计
+    require(
+        [
+            'echarts',
+            'echarts/chart/pie'
+        ],
+        function(ec) {
+            var research_projects = ec.init(document.getElementById('research-projects'), theme);
+            option = {
+                title: {
+                    show: false,
+                    text: '',
+                },
+                tooltip: {
+                    trigger: 'item',
+                    formatter: "{a} <br/>{b} : {c}项 ({d}%)"
+                },
+                legend: {
+                    show: false,
+                    orient: 'vertical',
+                    x: 'left',
+                    data: ['863计划', '973计划', '国家自然基金', '国家社科基金', '科技支持', '科技重大专项', '国家重大工程']
+                },
+                calculable: true,
+                series: [{
+                    name: '科研立项',
+                    type: 'pie',
+                    radius: '40%',
+                    center: ['50%', '60%'],
+                    data: [{
+                        value: 234,
+                        name: '863计划'
+                    }, {
+                        value: 198,
+                        name: '973计划'
+                    }, {
+                        value: 98,
+                        name: '国家自然基金'
+                    }, {
+                        value: 132,
+                        name: '国家社科基金'
+                    }, {
+                        value: 356,
+                        name: '科技支持'
+                    }, {
+                        value: 455,
+                        name: '科技重大专项'
+                    }, {
+                        value: 127,
+                        name: '国家重大工程'
+                    }]
+                }]
+            };
+            research_projects.setOption(option);
+        });
+
+    // 科研到款统计
+    require(
+        [
+            'echarts',
+            'echarts/chart/pie'
+        ],
+        function(ec) {
+            var research_fees = ec.init(document.getElementById('research-fees'), theme);
+            option = {
+                title: {
+                    show: false,
+                    text: '',
+                },
+                tooltip: {
+                    trigger: 'item',
+                    formatter: "{a} <br/>{b} : {c}万 ({d}%)"
+                },
+                legend: {
+                    show: false,
+                    orient: 'vertical',
+                    x: 'left',
+                    data: ['863计划', '973计划', '国家自然基金', '国家社科基金', '科技支持', '科技重大专项', '国家重大工程']
+                },
+                calculable: true,
+                series: [{
+                    name: '科研到款',
+                    type: 'pie',
+                    radius: '40%',
+                    center: ['50%', '60%'],
+                    data: [{
+                        value: 3789.3,
+                        name: '863计划'
+                    }, {
+                        value: 4982.9,
+                        name: '973计划'
+                    }, {
+                        value: 2876.6,
+                        name: '国家自然基金'
+                    }, {
+                        value: 1978.4,
+                        name: '国家社科基金'
+                    }, {
+                        value: 2542.9,
+                        name: '科技支持'
+                    }, {
+                        value: 988.5,
+                        name: '科技重大专项'
+                    }, {
+                        value: 2498.5,
+                        name: '国家重大工程'
+                    }]
+                }]
+            };
+            research_fees.setOption(option);
+        });
+
+    // 出版统计
+    require(
+        [
+            'echarts',
+            'echarts/chart/pie'
+        ],
+        function(ec) {
+            var publications = ec.init(document.getElementById('publications'), theme);
+            option = {
+                title: {
+                    show: false
+                },
+                tooltip: {
+                    trigger: 'item',
+                    formatter: "{a} <br/>{b} : {c}部 ({d}%)"
+                },
+                legend: {
+                    show: false,
+                    orient: 'vertical',
+                    x: 'left',
+                    y: 'center',
+                    padding: [5, 5, 5, 30],
+                    data: ['餐饮', '水果', '咖啡', '活动', '超市', '其他']
+                },
+                calculable: true,
+                series: [{
+                    name: '科研著作',
+                    type: 'pie',
+                    radius: [10, '50%'],
+                    center: ['36%', '50%'],
+                    roseType: 'radius',
+                    // width: '20%', // for funnel
+                    // max: 40, // for funnel
+
+                    data: [{
+                        value: 354,
+                        name: '教材'
+                    }, {
+                        value: 298,
+                        name: '编著'
+                    }, {
+                        value: 176,
+                        name: '工具书、词典'
+                    }, {
+                        value: 230,
+                        name: '作品集'
+                    }, {
+                        value: 416,
+                        name: '外文翻译'
+                    }, {
+                        value: 398,
+                        name: '其他'
+                    }]
+                }]
+            };
+            publications.setOption(option);
+        });
+
+    // 论文统计
+    require(
+        [
+            'echarts',
+            'echarts/chart/bar'
+        ],
+        function(ec) {
+            var papers = ec.init(document.getElementById('papers'), theme);
+            option = {
+                tooltip: {
+                    trigger: 'axis',
+                    axisPointer: { // 坐标轴指示器，坐标轴触发有效
+                        type: 'shadow' // 默认为直线，可选为：'line' | 'shadow'
+                    }
+                },
+                legend: {
+                    x: 'center',
+                    y: 'bottom',
+                    padding: [15, 5, 5, 5],
+                    data: ['SCI', 'A类', 'B类', 'C类', '其他']
+                },
+                calculable: true,
+                xAxis: [{
+                    type: 'value'
+                }],
+                yAxis: [{
+                    type: 'category',
+                    data: ['本科', '硕士', '博士', '教师'],
+                    splitNumber: 4
+                }],
+                grid: {
+                    x: 60,
+                    x2: 50,
+                    y: 40,
+                    y2: 80
+                },
+                series: [{
+                    name: 'SCI',
+                    type: 'bar',
+                    stack: '总量',
+                    itemStyle: {
+                        normal: {
+                            label: {
+                                show: true,
+                                position: 'insideRight'
+                            }
+                        }
+                    },
+                    data: [104, 278, 486, 422]
+                }, {
+                    name: 'A类',
+                    type: 'bar',
+                    stack: '总量',
+                    itemStyle: {
+                        normal: {
+                            label: {
+                                show: true,
+                                position: 'insideRight'
+                            }
+                        }
+                    },
+                    data: [121, 319, 492, 271]
+                }, {
+                    name: 'B类',
+                    type: 'bar',
+                    stack: '总量',
+                    itemStyle: {
+                        normal: {
+                            label: {
+                                show: true,
+                                position: 'insideRight'
+                            }
+                        }
+                    },
+                    data: [139, 351, 172, 261]
+                }, {
+                    name: 'C类',
+                    type: 'bar',
+                    stack: '总量',
+                    itemStyle: {
+                        normal: {
+                            label: {
+                                show: true,
+                                position: 'insideRight'
+                            }
+                        }
+                    },
+                    data: [362, 127, 113, 124]
+                }, {
+                    name: '其他',
+                    type: 'bar',
+                    stack: '总量',
+                    itemStyle: {
+                        normal: {
+                            label: {
+                                show: true,
+                                position: 'insideRight'
+                            }
+                        }
+                    },
+                    data: [163, 392, 221, 294]
+                }]
+            };
+
+            papers.setOption(option);
+        });
+
+    // 校区指标统计
+    require(
+        [
+            'echarts',
+            'echarts/chart/radar'
+        ],
+        function(ec) {
+            var params = ec.init(document.getElementById('params'), theme);
+            option = {
+                title: {
+                    show: false,
+                    text: '',
+                },
+                tooltip: {
+                    trigger: 'axis'
+                },
+                legend: {
+                    orient: 'vertical',
+                    x: 'right',
+                    y: 'center',
+                    data: ['闵行校区', '徐汇校区', '七宝校区', '法华校区', '卢湾校区'],
+                    padding: [5, 10, 5, 5]
+                },
+                polar: [{
+                    indicator: [{
+                        text: '固定资产',
+                    }, {
+                        text: '占地面积',
+                    }, {
+                        text: '馆藏书量',
+                    }, {
+                        text: '附属单位',
+                    }, {
+                        text: '学生数量',
+                    }, {
+                        text: '教师数量',
+                    }],
+                    scale: true,
+                    center: ['40%', '50%'],
+                    radius: '64%'
+                }],
+                calculable: true,
+                series: [{
+                    name: '指标计算',
+                    type: 'radar',
+                    data: [{
+                        value: [4576, 5422, 380, 67, 144987, 2874],
+                        name: '闵行校区',
+                        symbol: 'none'
+                    }, {
+                        value: [1265, 1342, 129, 12, 32865, 876],
+                        name: '徐汇校区',
+                        symbol: 'none'
+                    }, {
+                        value: [398, 879, 76, 10, 13782, 283],
+                        name: '七宝校区',
+                        symbol: 'none'
+                    }, {
+                        value: [472, 762, 82, 9, 15338, 261],
+                        name: '法华校区',
+                        symbol: 'none'
+                    }, {
+                        value: [287, 452, 24, 6, 9877, 142],
+                        name: '卢湾校区',
+                        symbol: 'none'
+                    }]
+                }]
+            };
+
+            params.setOption(option);
+        });
+
+    // 出版统计
+    require(
+        [
+            'echarts',
+            'echarts/chart/pie'
+        ],
+        function(ec) {
+            var students = ec.init(document.getElementById('students'), theme);
+            option = {
+                title: {
+                    show: false
+                },
+                tooltip: {
+                    trigger: 'item',
+                    formatter: "{a} <br/>{b} : {c}人 ({d}%)"
+                },
+                legend: {
+                    orient: 'vertical',
+                    x: 'left',
+                    y: 'center',
+                    padding: [5, 5, 5, 15],
+                    data: ['本科生', '硕士生', '博士生', '在职硕士生', '在职博士生']
+                },
+                calculable: true,
+                series: [{
+                    name: '学生分布',
+                    type: 'pie',
+                    radius: [10, '50%'],
+                    center: ['64%', '50%'],
+                    roseType: 'radius',
+
+                    data: [{
+                        value: 68573,
+                        name: '本科生'
+                    }, {
+                        value: 59372,
+                        name: '硕士生'
+                    }, {
+                        value: 31972,
+                        name: '博士生'
+                    }, {
+                        value: 9387,
+                        name: '在职硕士生'
+                    }, {
+                        value: 4872,
+                        name: '在职博士生'
+                    }]
+                }]
+            };
+            students.setOption(option);
         });
 
 });
