@@ -5,3 +5,46 @@ $(document).ready(function() {
     $('#header-right span').text('Elite助手');
 });
 </script>
+
+<script src="__PUBLIC__/js/Helper/app.js" type="text/javascript"></script>
+<script src="__PUBLIC__/js/Helper/index.js" type="text/javascript"></script>
+<script src="__PUBLIC__/js/Helper/fullcalendar.min.js" type="text/javascript"></script>
+
+<div class="span6">
+
+	<!-- BEGIN PORTLET-->
+
+	<div class="portlet box blue calendar">
+
+		<div class="portlet-title">
+
+			<div class="caption"><i class="icon-calendar"></i>Calendar</div>
+
+		</div>
+
+		<div class="portlet-body light-grey">
+
+			<div id="calendar">
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<!-- END PORTLET-->
+
+</div>
+<script>
+
+	jQuery(document).ready(function() {    
+
+	   App.init(); // initlayout and core plugins
+
+	   Index.init();
+
+	   Index.initCalendar(); // init index page's custom scripts
+
+	});
+
+</script>

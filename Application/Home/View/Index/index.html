@@ -1913,28 +1913,30 @@ $(document).ready(function() {
         } //function (echarts, BMapExtension) 
     ); //require
 
+
     // 预测人流量
-    // 地图风格
-    // 百度地图API功能
     var map3 = new BMap.Map("catermap"); // 创建地图实例
     map3.setMapStyle({
-        style: "light"
+        style: "hardedge"   // 地图风格
     });
     var point = new BMap.Point(121.44821, 31.033276);
     // var marker = new BMap.Marker(point);
     map3.centerAndZoom(point, 16); // 初始化地图，设置中心点坐标和地图级别
-    map3.disableScrollWheelZoom();
+    // map3.disableScrollWheelZoom();
+    map3.addControl(new BMap.NavigationControl()); // 添加默认缩放平移控件,左上角  
+    map3.addControl(new BMap.ScaleControl()); // 添加默认比例尺控件  
+
     // 信息窗
     // var sContent ='<div id="info_windows'+ i + '"></div>';
     // var infoWindow = new BMap.InfoWindow(sContent);  // 创建信息窗口对象
     // map3.addOverlay(marker);
 
     // 批量添加信息窗
-    var data_info = [[121.438114, 31.028263, "minhang1", "地点：闵行第一食堂"],
-                     [121.44282, 31.029385, "minhang2", "地点：闵行第二食堂"],
-                     [121.439622, 31.03299, "minhang3", "地点：闵行第三食堂"],
-                     [121.433711, 31.031559, "minhang4", "地点：闵行第四食堂"],
-                     [121.447819, 31.030151, "minhang5", "地点：闵行第五食堂"]
+    var data_info = [[121.438114, 31.028263, "minhang1", "闵行第一食堂"],
+                     [121.44282, 31.029385, "minhang2", "闵行第二食堂"],
+                     [121.439622, 31.03299, "minhang3", "闵行第三食堂"],
+                     [121.433711, 31.031559, "minhang4", "闵行第四食堂"],
+                     [121.447819, 31.030151, "minhang5", "闵行第五食堂"]
                     ];
     var opts = {
         width : 650,     // 信息窗口宽度
@@ -1942,233 +1944,1236 @@ $(document).ready(function() {
         enableMessage:true//设置允许信息窗发送短息
     };
 
-    // 对每个Marker循环
-    for(var i=0;i<data_info.length;i++){
-        var marker = new BMap.Marker(new BMap.Point(data_info[i][0],data_info[i][1]));  // 创建标注
-        // 不同食堂的标签
-        map3.addOverlay(marker);               // 将标注添加到地图中
-        var sContent ='<div id="info_windows'+ (i+1) + '" style="height:300px; width:650px"></div>';
-        wid = 'info_windows' + (i+1);
-        mensa_id = data_info[i][2];
-        var infoWindow = new BMap.InfoWindow(sContent,opts);  // 创建信息窗口对象
-        // 每个窗口的侦听函数
-        marker.addEventListener("click", function(){
-            this.openInfoWindow(infoWindow);
-            //图片加载完毕重绘infowindow
-            document.getElementById(wid).onload = function (){
-               infoWindow.redraw();   //防止在网速较慢，图片未加载时，生成的信息框高度比图片的总高度小，导致图片部分被隐藏
+    // Infowindows1
+    var wid1 = "info_windows1"  // minhang1
+    var sContent1 ='<div id="info_windows1" style="height:300px; width:650px"></div>'; 
+    var mensa_id1 = data_info[0][2];
+    var mensa_name1 = data_info[0][3];
+    var point1 = new BMap.Point(data_info[0][0],data_info[0][1]);
+    var marker1 = new BMap.Marker(point1);
+    var infoWindow1 = new BMap.InfoWindow(sContent1);  // 创建信息窗口对象
+    map3.addOverlay(marker1);
+    marker1.addEventListener("click", function(){
+        this.openInfoWindow(infoWindow1);
+        //图片加载完毕重绘infowindow
+        document.getElementById(wid1).onload = function (){
+           infoWindow1.redraw();   //防止在网速较慢，图片未加载时，生成的信息框高度比图片的总高度小，导致图片部分被隐藏
+        }
+        // Infowindow 请求数据
+        // 构造指定日期字符串,用于展示指定日期的当前时刻
+        function CurentTime() {
+            var now = new Date();
+
+            var year = 2014; //年
+            var month = 11; //月
+            var day = 03; //日
+
+            var hh = now.getHours(); //时
+            var mm = now.getMinutes(); //分
+
+            // IE兼容，要将"-"替换为"/""
+            // var clock = year + "-";
+            var clock = year + "/";
+
+            if (month < 10)
+                clock += "0";
+
+            //clock += month + "-";
+            clock += month + "/";
+
+            if (day < 10)
+                clock += "0";
+
+            clock += day + " ";
+
+            if (hh < 10)
+                clock += "0";
+
+            clock += hh + ":";
+            if (mm < 10) clock += '0';
+            clock += mm;
+            return (clock);
+        }
+        // 将获取的时间转化为距00:00:00起始时间的分钟数
+        function DeltaMinutes() {
+            // 指定日期的记录开始时刻，默认为 20130725 00:00:00
+            // IE浏览器支持的格式，要将"-"替换为"/""
+            var starttime = new Date("2014/11/03 05:00:00");
+            // 指定日期的当前时刻
+            var showtime = new Date(CurentTime());
+            // 计算分钟差
+            var delta = showtime.getTime() - starttime.getTime();
+            deltam = delta / (1000 * 60);
+            // return deltam;
+            return 750;
+        }
+        // 非常重要的查询函数，返回当前时刻的预测窗口
+        function MensaPredict(query, mensa) {
+            // 绘制MarkPoint
+            df = {};
+
+            // 请求数据
+            result = $.ajax({
+                // url: "http://localhost:8088/elite/index.php/Home/Index/mensa_predict/query/" + query + "/mensa/" + mensa,
+                url: "{:U('Index/mensa_predict')}",
+                type: 'POST',
+                async: false, 
+                data: {
+                    query: query,
+                    mensa: mensa
+                },
+                dataType: 'json',
+                error: function() {},
+                success: function(data) {
+                    data;
+                }
+            }).responseJSON;
+
+            // 提取用于绘制Amount的数据
+            var result_list = [];
+            //mensa_key = Object.keys(dd[0])
+            for (var i in Object.keys(result)) {
+                var temp = parseFloat(result[i][mensa]);
+                result_list.push(temp);
             }
-            // Infowindow 请求数据
-            // 构造指定日期字符串,用于展示指定日期的当前时刻
-            function CurentTime() {
-                var now = new Date();
-
-                var year = 2014; //年
-                var month = 11; //月
-                var day = 03; //日
-
-                var hh = now.getHours(); //时
-                var mm = now.getMinutes(); //分
-
-                // IE兼容，要将"-"替换为"/""
-                // var clock = year + "-";
-                var clock = year + "/";
-
-                if (month < 10)
-                    clock += "0";
-
-                //clock += month + "-";
-                clock += month + "/";
-
-                if (day < 10)
-                    clock += "0";
-
-                clock += day + " ";
-
-                if (hh < 10)
-                    clock += "0";
-
-                clock += hh + ":";
-                if (mm < 10) clock += '0';
-                clock += mm;
-                return (clock);
+            // 计算当前时刻在窗口中的位置
+            now_idx = Math.ceil((query-300)/5);
+            if(now_idx<25){
+                now_idx = now_idx;
             }
-            // 将获取的时间转化为距00:00:00起始时间的分钟数
-            function DeltaMinutes() {
-                // 指定日期的记录开始时刻，默认为 20130725 00:00:00
-                // IE浏览器支持的格式，要将"-"替换为"/""
-                var starttime = new Date("2014/11/03 05:00:00");
-                // 指定日期的当前时刻
-                var showtime = new Date(CurentTime());
-                // 计算分钟差
-                var delta = showtime.getTime() - starttime.getTime();
-                deltam = delta / (1000 * 60);
-                // return deltam;
-                return 750;
+            else if(now_idx>181){
+                now_idx = 25+now_idx-181;
             }
-            // 非常重要的查询函数，返回当前时刻的预测窗口
-            function MensaPredict(query, mensa) {
-                // 绘制MarkPoint
-                df = {};
-
-                // 请求数据
-                result = $.ajax({
-                    url: "http://localhost:8088/elite/index.php/Home/Index/mensa_predict/query/" + query + "/mensa/" + mensa,
-                    //url: "{:U('Index/mensa_predict')}",
-                    type: 'GET',
-                    async: false, 
-                    // data: {
-                    //     query: query
-                    // },
-                    dataType: 'json',
-                    error: function() {},
-                    success: function(data) {
-                        data;
-                    }
-                }).responseJSON;
-
-                // 提取用于绘制Amount的数据
-                var result_list = [];
-                //mensa_key = Object.keys(dd[0])
-                for (var i in Object.keys(result)) {
-                    var temp = parseFloat(result[i][mensa]);
-                    result_list.push(temp);
-                }
-                // 计算当前时刻在窗口中的位置
-                now_idx = Math.ceil((query-300)/5);
-                if(now_idx<25){
-                    now_idx = now_idx;
-                }
-                else if(now_idx>181){
-                    now_idx = 25+now_idx-181;
-                }
-                else{
-                    now_idx = 25;
-                }
-                return {
-                    dad: result_list,
-                    now: now_idx
-                };
-            } 
-            // 加载数据
-            //mensa_frame = MensaPredict(DeltaMinutes(), mensa_id);  // 食堂的数据库名信息可以从data_info中得到
-            mensa_frame = MensaPredict(750, mensa_id);  // 食堂的数据库名信息可以从data_info中得到
-            mensa_list = mensa_frame.dad;
-            now_idx = mensa_frame.now;
-            now_date = CurentTime();
-            // ECharts绘图 
-            require(
-                [
-                    'echarts',
-                    'echarts/chart/line' // 使用柱状图就加载line模块，按需加载
-                ],
-                function(ec) {
-                    var mensa_ratios = ec.init(document.getElementById(wid), 'shine');
-                    option = {
-                        title : {
-                            x: 'left',
-                            text : '食堂人流量预测',
-                            subtext : '历史数据预测'
+            else{
+                now_idx = 25;
+            }
+            return {
+                dad: result_list,
+                now: now_idx
+            };
+        } 
+        // 加载数据
+        mensa_frame = MensaPredict(DeltaMinutes(), mensa_id1);  // 食堂的数据库名信息可以从data_info中得到
+        mensa_list = mensa_frame.dad;
+        now_idx = mensa_frame.now;
+        now_date = CurentTime();
+        // ECharts绘图 
+        require(
+            [
+                'echarts',
+                'echarts/chart/line' // 使用柱状图就加载line模块，按需加载
+            ],
+            function(ec) {
+                var mensa_ratios = ec.init(document.getElementById(wid1), 'shine');
+                option = {
+                    title : {
+                        x: 'left',
+                        text : '食堂人流量预测',
+                        subtext : '历史数据预测'
+                    },
+                    tooltip : {
+                        //trigger: 'item'
+                        trigger: 'item',
+                        formatter : function (params) {
+                            var date = new Date(params.value[0]);
+                            data = date.getFullYear() + '-'
+                                   + (date.getMonth() + 1) + '-'
+                                   + date.getDate() + ' '
+                                   + date.getHours() + ':'
+                                   + date.getMinutes();
+                            return data + '<br/>'
+                                   + params.value[1];
+                        }
+                    },
+                    toolbox: {
+                        show : true,
+                        x: 'right',
+                        orient: 'vertical',                            
+                        feature : {
+                            mark : {show: true},
+                            dataView : {show: true, readOnly: false},
+                            restore : {show: true},
+                            saveAsImage : {show: true}
+                        }
+                    },
+                    dataZoom: {
+                        show: true,
+                        //x: 'center',
+                        //orient: 'vertical',                            
+                        start : 25
+                    },
+                    legend : {
+                        show: true,
+                        data : ['历史流量', '预测流量']
+                    },
+                    grid: {
+                        y2: 80
+                    },
+                    xAxis : [
+                        {
+                            type : 'time',
+                            splitNumber:5
+                        }
+                    ],
+                    yAxis : [
+                        {
+                            type : 'value'
+                        }
+                    ],
+                    series : [
+                        {
+                            name: '历史流量',
+                            type: 'bar',
+                            showAllSymbol: true,
+                            symbolSize: function (value){
+                                return Math.round(value[2]/10) + 2;
+                            },                               
+                            data: (function () {
+                                var d = [];
+                                var len = 1;
+                                var value;
+                                while (len < now_idx) { // len从1到now_idx, 窗口前24位(历史流量)
+                                    d.push([
+                                        new Date(2015, 6, 12, 0, DeltaMinutes()-now_idx*5+len*5),   // 历史数据的时间轴,前两个小时
+                                        mensa_list[len-1] // js数组从0开始
+                                    ]);
+                                    len++;
+                                }
+                                len1 = 0;
+                                while (len1 < 48-now_idx + 1) { // 补充后面的空白数据+观测数据(当前时刻)1
+                                    d.push([
+                                        new Date(2015, 6, 12, 0, DeltaMinutes()+len1*5),   // 当前时刻以及预测数据的时间轴
+                                        "-" // 空白,历史数据没有预测
+                                    ]);
+                                    len1++;
+                                }
+                                return d;
+                            })()
                         },
-                        tooltip : {
-                            trigger: 'item'
-                            // trigger: 'item',
-                            // formatter : function (params) {
-                            //     var date = new Date(params.value[0]);
-                            //     data = date.getFullYear() + '-'
-                            //            + (date.getMonth() + 1) + '-'
-                            //            + date.getDate() + ' '
-                            //            + date.getHours() + ':'
-                            //            + date.getMinutes();
-                            //     return data + '<br/>'
-                            //            + params.value[1];
-                            // }
-                        },
-                        toolbox: {
-                            show : true,
-                            x: 'right',
-                            orient: 'vertical',                            
-                            feature : {
-                                mark : {show: true},
-                                dataView : {show: true, readOnly: false},
-                                restore : {show: true},
-                                saveAsImage : {show: true}
-                            }
-                        },
-                        dataZoom: {
-                            show: true,
-                            x: 'center',
-                            //orient: 'vertical',                            
-                            start : 25
-                        },
-                        legend : {
-                            show: true,
-                            data : ['历史流量', '预测流量']
-                        },
-                        grid: {
-                            y2: 80
-                        },
-                        xAxis : [
-                            {
-                                type : 'time',
-                                splitNumber:5
-                            }
-                        ],
-                        yAxis : [
-                            {
-                                type : 'value'
-                            }
-                        ],
-                        series : [
-                            {
-                                name: '历史流量',
-                                type: 'bar',
-                                showAllSymbol: true,
-                                symbolSize: function (value){
-                                    return Math.round(value[2]/10) + 2;
-                                },                               
-                                data: (function () {
-                                    var d = [];
-                                    var len = 1;
-                                    var value;
-                                    while (len < now_idx) { // len从1到now_idx, 窗口前24位(历史流量)
-                                        d.push([
-                                            new Date(2014, 9, 1, 0, len * 10000),
-                                            mensa_list[len-1] // js数组从0开始
-                                        ]);
-                                        len++;
-                                    }
-                                    return d;
-                                })()
+                        {
+                            name: '预测流量',
+                            type: 'bar',
+                            showAllSymbol: true,
+                            symbolSize: function (value){
+                                return Math.round(value[2]/10) + 2;
                             },
-                            {
-                                name: '预测流量',
-                                type: 'bar',
-                                showAllSymbol: true,
-                                symbolSize: function (value){
-                                    return Math.round(value[2]/10) + 2;
-                                },                               
-                                data: (function () {
-                                    var d = [];
-                                    var len = 1;   // 
-                                    var value;
-                                    while (len <= (48-now_idx)) { // len从25到48, 窗口后24位(观测值+预测流量)
-                                        d.push([
-                                            new Date(2014, 9, 1, 0, len * 10000),
-                                            mensa_list[now_idx+(len-1)-1]
-                                        ]);
-                                        len++;
-                                    }
-                                    return d;
-                                })()
-                            }                            
-                        ]
-                    };
-                    mensa_ratios.setOption(option);
+                            data: (function () {
+                                var d = [];
+                                var len = 1;
+                                var value;
+                                while (len < now_idx) { // len从1到now_idx, 窗口前24位(历史流量)
+                                    d.push([
+                                        new Date(2015, 6, 12, 0, DeltaMinutes()-now_idx*5+len*5),   // 历史数据的时间轴,前两个小时
+                                        "-" // js数组从0开始
+                                    ]);
+                                    len++;
+                                }
+                                len1 = 0;
+                                while (len1 < 48-now_idx + 1) { // 补充后面的空白数据+观测数据(当前时刻)1
+                                    d.push([
+                                        new Date(2015, 6, 12, 0, DeltaMinutes()+len1*5),   // 当前时刻以及预测数据的时间轴
+                                        mensa_list[now_idx+(len1-1)-1] // 空白,历史数据没有预测
+                                    ]);
+                                    len1++;
+                                }
+                                return d;
+                            })()                               
+                            
+                        }                            
+                    ]
+                };
+                mensa_ratios.setOption(option);
+            }
+        ); //require
+    });
+    marker1.addEventListener("mouseover", function(e) {  
+        this.setTitle("商户: " + mensa_name1);  
+    });
+
+    // Infowindows2
+    var wid2 = "info_windows2"  // minhang2
+    var sContent2 ='<div id="info_windows2" style="height:300px; width:650px"></div>'; 
+    var mensa_id2 = data_info[1][2];
+    var mensa_name2 = data_info[1][3];
+    var point2 = new BMap.Point(data_info[1][0],data_info[1][1]);
+    var marker2 = new BMap.Marker(point2);
+    var infoWindow2 = new BMap.InfoWindow(sContent2);  // 创建信息窗口对象
+    map3.addOverlay(marker2);
+    marker2.addEventListener("click", function(){
+        this.openInfoWindow(infoWindow2);
+        //图片加载完毕重绘infowindow
+        document.getElementById(wid2).onload = function (){
+           infoWindow2.redraw();   //防止在网速较慢，图片未加载时，生成的信息框高度比图片的总高度小，导致图片部分被隐藏
+        }
+        // Infowindow 请求数据
+        // 构造指定日期字符串,用于展示指定日期的当前时刻
+        function CurentTime() {
+            var now = new Date();
+
+            var year = 2014; //年
+            var month = 11; //月
+            var day = 03; //日
+
+            var hh = now.getHours(); //时
+            var mm = now.getMinutes(); //分
+
+            // IE兼容，要将"-"替换为"/""
+            // var clock = year + "-";
+            var clock = year + "/";
+
+            if (month < 10)
+                clock += "0";
+
+            //clock += month + "-";
+            clock += month + "/";
+
+            if (day < 10)
+                clock += "0";
+
+            clock += day + " ";
+
+            if (hh < 10)
+                clock += "0";
+
+            clock += hh + ":";
+            if (mm < 10) clock += '0';
+            clock += mm;
+            return (clock);
+        }
+        // 将获取的时间转化为距00:00:00起始时间的分钟数
+        function DeltaMinutes() {
+            // 指定日期的记录开始时刻，默认为 20130725 00:00:00
+            // IE浏览器支持的格式，要将"-"替换为"/""
+            var starttime = new Date("2014/11/03 05:00:00");
+            // 指定日期的当前时刻
+            var showtime = new Date(CurentTime());
+            // 计算分钟差
+            var delta = showtime.getTime() - starttime.getTime();
+            deltam = delta / (1000 * 60);
+            // return deltam;
+            return 750;
+        }
+        // 非常重要的查询函数，返回当前时刻的预测窗口
+        function MensaPredict(query, mensa) {
+            // 绘制MarkPoint
+            df = {};
+
+            // 请求数据
+            result = $.ajax({
+                // url: "http://localhost:8088/elite/index.php/Home/Index/mensa_predict/query/" + query + "/mensa/" + mensa,
+                url: "{:U('Index/mensa_predict')}",
+                type: 'POST',
+                async: false, 
+                data: {
+                    query: query,
+                    mensa: mensa
+                },
+                dataType: 'json',
+                error: function() {},
+                success: function(data) {
+                    data;
                 }
-            ); //require
-        });
-        
-    }  
-});
+            }).responseJSON;
+
+            // 提取用于绘制Amount的数据
+            var result_list = [];
+            //mensa_key = Object.keys(dd[0])
+            for (var i in Object.keys(result)) {
+                var temp = parseFloat(result[i][mensa]);
+                result_list.push(temp);
+            }
+            // 计算当前时刻在窗口中的位置
+            now_idx = Math.ceil((query-300)/5);
+            if(now_idx<25){
+                now_idx = now_idx;
+            }
+            else if(now_idx>181){
+                now_idx = 25+now_idx-181;
+            }
+            else{
+                now_idx = 25;
+            }
+            return {
+                dad: result_list,
+                now: now_idx
+            };
+        } 
+        // 加载数据
+        mensa_frame = MensaPredict(DeltaMinutes(), mensa_id2);  // 食堂的数据库名信息可以从data_info中得到
+        mensa_list = mensa_frame.dad;
+        now_idx = mensa_frame.now;
+        now_date = CurentTime();
+        // ECharts绘图 
+        require(
+            [
+                'echarts',
+                'echarts/chart/line' // 使用柱状图就加载line模块，按需加载
+            ],
+            function(ec) {
+                var mensa_ratios = ec.init(document.getElementById(wid2), 'shine');
+                option = {
+                    title : {
+                        x: 'left',
+                        text : '食堂人流量预测',
+                        subtext : '历史数据预测'
+                    },
+                    tooltip : {
+                        //trigger: 'item'
+                        trigger: 'item',
+                        formatter : function (params) {
+                            var date = new Date(params.value[0]);
+                            data = date.getFullYear() + '-'
+                                   + (date.getMonth() + 1) + '-'
+                                   + date.getDate() + ' '
+                                   + date.getHours() + ':'
+                                   + date.getMinutes();
+                            return data + '<br/>'
+                                   + params.value[1];
+                        }
+                    },
+                    toolbox: {
+                        show : true,
+                        x: 'right',
+                        orient: 'vertical',                            
+                        feature : {
+                            mark : {show: true},
+                            dataView : {show: true, readOnly: false},
+                            restore : {show: true},
+                            saveAsImage : {show: true}
+                        }
+                    },
+                    dataZoom: {
+                        show: true,
+                        //x: 'center',
+                        //orient: 'vertical',                            
+                        start : 25
+                    },
+                    legend : {
+                        show: true,
+                        data : ['历史流量', '预测流量']
+                    },
+                    grid: {
+                        y2: 80
+                    },
+                    xAxis : [
+                        {
+                            type : 'time',
+                            splitNumber:5
+                        }
+                    ],
+                    yAxis : [
+                        {
+                            type : 'value'
+                        }
+                    ],
+                    series : [
+                        {
+                            name: '历史流量',
+                            type: 'bar',
+                            showAllSymbol: true,
+                            symbolSize: function (value){
+                                return Math.round(value[2]/10) + 2;
+                            },                               
+                            data: (function () {
+                                var d = [];
+                                var len = 1;
+                                var value;
+                                while (len < now_idx) { // len从1到now_idx, 窗口前24位(历史流量)
+                                    d.push([
+                                        new Date(2015, 6, 12, 0, DeltaMinutes()-now_idx*5+len*5),   // 历史数据的时间轴,前两个小时
+                                        mensa_list[len-1] // js数组从0开始
+                                    ]);
+                                    len++;
+                                }
+                                len1 = 0;
+                                while (len1 < 48-now_idx + 1) { // 补充后面的空白数据+观测数据(当前时刻)1
+                                    d.push([
+                                        new Date(2015, 6, 12, 0, DeltaMinutes()+len1*5),   // 当前时刻以及预测数据的时间轴
+                                        "-" // 空白,历史数据没有预测
+                                    ]);
+                                    len1++;
+                                }
+                                return d;
+                            })()
+                        },
+                        {
+                            name: '预测流量',
+                            type: 'bar',
+                            showAllSymbol: true,
+                            symbolSize: function (value){
+                                return Math.round(value[2]/10) + 2;
+                            },
+                            data: (function () {
+                                var d = [];
+                                var len = 1;
+                                var value;
+                                while (len < now_idx) { // len从1到now_idx, 窗口前24位(历史流量)
+                                    d.push([
+                                        new Date(2015, 6, 12, 0, DeltaMinutes()-now_idx*5+len*5),   // 历史数据的时间轴,前两个小时
+                                        "-" // js数组从0开始
+                                    ]);
+                                    len++;
+                                }
+                                len1 = 0;
+                                while (len1 < 48-now_idx + 1) { // 补充后面的空白数据+观测数据(当前时刻)1
+                                    d.push([
+                                        new Date(2015, 6, 12, 0, DeltaMinutes()+len1*5),   // 当前时刻以及预测数据的时间轴
+                                        mensa_list[now_idx+(len1-1)-1] // 空白,历史数据没有预测
+                                    ]);
+                                    len1++;
+                                }
+                                return d;
+                            })()                               
+                            
+                        }                            
+                    ]
+                };
+                mensa_ratios.setOption(option);
+            }
+        ); //require
+    });
+    marker2.addEventListener("mouseover", function(e) {  
+        this.setTitle("商户: " + mensa_name2);  
+    });
+
+    // Infowindows3
+    var wid3 = "info_windows3"  // minhang3
+    var sContent3 ='<div id="info_windows3" style="height:300px; width:650px"></div>'; 
+    var mensa_id3 = data_info[2][2];
+    var mensa_name3 = data_info[2][3];
+    var point3 = new BMap.Point(data_info[2][0],data_info[2][1]);
+    var marker3 = new BMap.Marker(point3);
+    var infoWindow3 = new BMap.InfoWindow(sContent3);  // 创建信息窗口对象
+    map3.addOverlay(marker3);
+    marker3.addEventListener("click", function(){
+        this.openInfoWindow(infoWindow3);
+        //图片加载完毕重绘infowindow
+        document.getElementById(wid3).onload = function (){
+           infoWindow3.redraw();   //防止在网速较慢，图片未加载时，生成的信息框高度比图片的总高度小，导致图片部分被隐藏
+        }
+        // Infowindow 请求数据
+        // 构造指定日期字符串,用于展示指定日期的当前时刻
+        function CurentTime() {
+            var now = new Date();
+
+            var year = 2014; //年
+            var month = 11; //月
+            var day = 03; //日
+
+            var hh = now.getHours(); //时
+            var mm = now.getMinutes(); //分
+
+            // IE兼容，要将"-"替换为"/""
+            // var clock = year + "-";
+            var clock = year + "/";
+
+            if (month < 10)
+                clock += "0";
+
+            //clock += month + "-";
+            clock += month + "/";
+
+            if (day < 10)
+                clock += "0";
+
+            clock += day + " ";
+
+            if (hh < 10)
+                clock += "0";
+
+            clock += hh + ":";
+            if (mm < 10) clock += '0';
+            clock += mm;
+            return (clock);
+        }
+        // 将获取的时间转化为距00:00:00起始时间的分钟数
+        function DeltaMinutes() {
+            // 指定日期的记录开始时刻，默认为 20130725 00:00:00
+            // IE浏览器支持的格式，要将"-"替换为"/""
+            var starttime = new Date("2014/11/03 05:00:00");
+            // 指定日期的当前时刻
+            var showtime = new Date(CurentTime());
+            // 计算分钟差
+            var delta = showtime.getTime() - starttime.getTime();
+            deltam = delta / (1000 * 60);
+            // return deltam;
+            return 750;
+        }
+        // 非常重要的查询函数，返回当前时刻的预测窗口
+        function MensaPredict(query, mensa) {
+            // 绘制MarkPoint
+            df = {};
+
+            // 请求数据
+            result = $.ajax({
+                // url: "http://localhost:8088/elite/index.php/Home/Index/mensa_predict/query/" + query + "/mensa/" + mensa,
+                url: "{:U('Index/mensa_predict')}",
+                type: 'POST',
+                async: false, 
+                data: {
+                    query: query,
+                    mensa: mensa
+                },
+                dataType: 'json',
+                error: function() {},
+                success: function(data) {
+                    data;
+                }
+            }).responseJSON;
+
+            // 提取用于绘制Amount的数据
+            var result_list = [];
+            //mensa_key = Object.keys(dd[0])
+            for (var i in Object.keys(result)) {
+                var temp = parseFloat(result[i][mensa]);
+                result_list.push(temp);
+            }
+            // 计算当前时刻在窗口中的位置
+            now_idx = Math.ceil((query-300)/5);
+            if(now_idx<25){
+                now_idx = now_idx;
+            }
+            else if(now_idx>181){
+                now_idx = 25+now_idx-181;
+            }
+            else{
+                now_idx = 25;
+            }
+            return {
+                dad: result_list,
+                now: now_idx
+            };
+        }                 
+        // 加载数据
+        mensa_frame = MensaPredict(DeltaMinutes(), mensa_id3);  // 食堂的数据库名信息可以从data_info中得到
+        mensa_list = mensa_frame.dad;
+        now_idx = mensa_frame.now;
+        now_date = CurentTime();
+        // ECharts绘图 
+        require(
+            [
+                'echarts',
+                'echarts/chart/line' // 使用柱状图就加载line模块，按需加载
+            ],
+            function(ec) {
+                var mensa_ratios = ec.init(document.getElementById(wid3), 'shine');
+                option = {
+                    title : {
+                        x: 'left',
+                        text : '食堂人流量预测',
+                        subtext : '历史数据预测'
+                    },
+                    tooltip : {
+                        //trigger: 'item'
+                        trigger: 'item',
+                        formatter : function (params) {
+                            var date = new Date(params.value[0]);
+                            data = date.getFullYear() + '-'
+                                   + (date.getMonth() + 1) + '-'
+                                   + date.getDate() + ' '
+                                   + date.getHours() + ':'
+                                   + date.getMinutes();
+                            return data + '<br/>'
+                                   + params.value[1];
+                        }
+                    },
+                    toolbox: {
+                        show : true,
+                        x: 'right',
+                        orient: 'vertical',                            
+                        feature : {
+                            mark : {show: true},
+                            dataView : {show: true, readOnly: false},
+                            restore : {show: true},
+                            saveAsImage : {show: true}
+                        }
+                    },
+                    dataZoom: {
+                        show: true,
+                        //x: 'center',
+                        //orient: 'vertical',                            
+                        start : 25
+                    },
+                    legend : {
+                        show: true,
+                        data : ['历史流量', '预测流量']
+                    },
+                    grid: {
+                        y2: 80
+                    },
+                    xAxis : [
+                        {
+                            type : 'time',
+                            splitNumber:5
+                        }
+                    ],
+                    yAxis : [
+                        {
+                            type : 'value'
+                        }
+                    ],
+                    series : [
+                        {
+                            name: '历史流量',
+                            type: 'bar',
+                            showAllSymbol: true,
+                            symbolSize: function (value){
+                                return Math.round(value[2]/10) + 2;
+                            },                               
+                            data: (function () {
+                                var d = [];
+                                var len = 1;
+                                var value;
+                                while (len < now_idx) { // len从1到now_idx, 窗口前24位(历史流量)
+                                    d.push([
+                                        new Date(2015, 6, 12, 0, DeltaMinutes()-now_idx*5+len*5),   // 历史数据的时间轴,前两个小时
+                                        mensa_list[len-1] // js数组从0开始
+                                    ]);
+                                    len++;
+                                }
+                                len1 = 0;
+                                while (len1 < 48-now_idx + 1) { // 补充后面的空白数据+观测数据(当前时刻)1
+                                    d.push([
+                                        new Date(2015, 6, 12, 0, DeltaMinutes()+len1*5),   // 当前时刻以及预测数据的时间轴
+                                        "-" // 空白,历史数据没有预测
+                                    ]);
+                                    len1++;
+                                }
+                                return d;
+                            })()
+                        },
+                        {
+                            name: '预测流量',
+                            type: 'bar',
+                            showAllSymbol: true,
+                            symbolSize: function (value){
+                                return Math.round(value[2]/10) + 2;
+                            },
+                            data: (function () {
+                                var d = [];
+                                var len = 1;
+                                var value;
+                                while (len < now_idx) { // len从1到now_idx, 窗口前24位(历史流量)
+                                    d.push([
+                                        new Date(2015, 6, 12, 0, DeltaMinutes()-now_idx*5+len*5),   // 历史数据的时间轴,前两个小时
+                                        "-" // js数组从0开始
+                                    ]);
+                                    len++;
+                                }
+                                len1 = 0;
+                                while (len1 < 48-now_idx + 1) { // 补充后面的空白数据+观测数据(当前时刻)1
+                                    d.push([
+                                        new Date(2015, 6, 12, 0, DeltaMinutes()+len1*5),   // 当前时刻以及预测数据的时间轴
+                                        mensa_list[now_idx+(len1-1)-1] // 空白,历史数据没有预测
+                                    ]);
+                                    len1++;
+                                }
+                                return d;
+                            })()                               
+                            
+                        }                            
+                    ]
+                };
+                mensa_ratios.setOption(option);
+            }
+        ); //require
+    });
+    marker3.addEventListener("mouseover", function(e) {  
+        this.setTitle("商户: " + mensa_name3);  
+    });    
+
+    // Infowindows4
+    var wid4 = "info_windows4"  // minhang4
+    var sContent4 ='<div id="info_windows4" style="height:300px; width:650px"></div>'; 
+    var mensa_id4 = data_info[3][2];
+    var mensa_name4 = data_info[3][3];
+    var point4 = new BMap.Point(data_info[3][0],data_info[3][1]);
+    var marker4 = new BMap.Marker(point4);
+    var infoWindow4 = new BMap.InfoWindow(sContent4);  // 创建信息窗口对象
+    map3.addOverlay(marker4);
+    marker4.addEventListener("click", function(){
+        this.openInfoWindow(infoWindow4);
+        //图片加载完毕重绘infowindow
+        document.getElementById(wid4).onload = function (){
+           infoWindow4.redraw();   //防止在网速较慢，图片未加载时，生成的信息框高度比图片的总高度小，导致图片部分被隐藏
+        }
+        // Infowindow 请求数据
+        // 构造指定日期字符串,用于展示指定日期的当前时刻
+        function CurentTime() {
+            var now = new Date();
+
+            var year = 2014; //年
+            var month = 11; //月
+            var day = 03; //日
+
+            var hh = now.getHours(); //时
+            var mm = now.getMinutes(); //分
+
+            // IE兼容，要将"-"替换为"/""
+            // var clock = year + "-";
+            var clock = year + "/";
+
+            if (month < 10)
+                clock += "0";
+
+            //clock += month + "-";
+            clock += month + "/";
+
+            if (day < 10)
+                clock += "0";
+
+            clock += day + " ";
+
+            if (hh < 10)
+                clock += "0";
+
+            clock += hh + ":";
+            if (mm < 10) clock += '0';
+            clock += mm;
+            return (clock);
+        }
+        // 将获取的时间转化为距00:00:00起始时间的分钟数
+        function DeltaMinutes() {
+            // 指定日期的记录开始时刻，默认为 20130725 00:00:00
+            // IE浏览器支持的格式，要将"-"替换为"/""
+            var starttime = new Date("2014/11/03 05:00:00");
+            // 指定日期的当前时刻
+            var showtime = new Date(CurentTime());
+            // 计算分钟差
+            var delta = showtime.getTime() - starttime.getTime();
+            deltam = delta / (1000 * 60);
+            // return deltam;
+            return 750;
+        }
+        // 非常重要的查询函数，返回当前时刻的预测窗口
+        function MensaPredict(query, mensa) {
+            // 绘制MarkPoint
+            df = {};
+
+            // 请求数据
+            result = $.ajax({
+                // url: "http://localhost:8088/elite/index.php/Home/Index/mensa_predict/query/" + query + "/mensa/" + mensa,
+                url: "{:U('Index/mensa_predict')}",
+                type: 'POST',
+                async: false, 
+                data: {
+                    query: query,
+                    mensa: mensa
+                },
+                dataType: 'json',
+                error: function() {},
+                success: function(data) {
+                    data;
+                }
+            }).responseJSON;
+
+            // 提取用于绘制Amount的数据
+            var result_list = [];
+            //mensa_key = Object.keys(dd[0])
+            for (var i in Object.keys(result)) {
+                var temp = parseFloat(result[i][mensa]);
+                result_list.push(temp);
+            }
+            // 计算当前时刻在窗口中的位置
+            now_idx = Math.ceil((query-300)/5);
+            if(now_idx<25){
+                now_idx = now_idx;
+            }
+            else if(now_idx>181){
+                now_idx = 25+now_idx-181;
+            }
+            else{
+                now_idx = 25;
+            }
+            return {
+                dad: result_list,
+                now: now_idx
+            };
+        }                 
+        // 加载数据
+        mensa_frame = MensaPredict(DeltaMinutes(), mensa_id4);  // 食堂的数据库名信息可以从data_info中得到
+        mensa_list = mensa_frame.dad;
+        now_idx = mensa_frame.now;
+        now_date = CurentTime();
+        // ECharts绘图 
+        require(
+            [
+                'echarts',
+                'echarts/chart/line' // 使用柱状图就加载line模块，按需加载
+            ],
+            function(ec) {
+                var mensa_ratios = ec.init(document.getElementById(wid4), 'shine');
+                option = {
+                    title : {
+                        x: 'left',
+                        text : '食堂人流量预测',
+                        subtext : '历史数据预测'
+                    },
+                    tooltip : {
+                        //trigger: 'item'
+                        trigger: 'item',
+                        formatter : function (params) {
+                            var date = new Date(params.value[0]);
+                            data = date.getFullYear() + '-'
+                                   + (date.getMonth() + 1) + '-'
+                                   + date.getDate() + ' '
+                                   + date.getHours() + ':'
+                                   + date.getMinutes();
+                            return data + '<br/>'
+                                   + params.value[1];
+                        }
+                    },
+                    toolbox: {
+                        show : true,
+                        x: 'right',
+                        orient: 'vertical',                            
+                        feature : {
+                            mark : {show: true},
+                            dataView : {show: true, readOnly: false},
+                            restore : {show: true},
+                            saveAsImage : {show: true}
+                        }
+                    },
+                    dataZoom: {
+                        show: true,
+                        //x: 'center',
+                        //orient: 'vertical',                            
+                        start : 25
+                    },
+                    legend : {
+                        show: true,
+                        data : ['历史流量', '预测流量']
+                    },
+                    grid: {
+                        y2: 80
+                    },
+                    xAxis : [
+                        {
+                            type : 'time',
+                            splitNumber:5
+                        }
+                    ],
+                    yAxis : [
+                        {
+                            type : 'value'
+                        }
+                    ],
+                    series : [
+                        {
+                            name: '历史流量',
+                            type: 'bar',
+                            showAllSymbol: true,
+                            symbolSize: function (value){
+                                return Math.round(value[2]/10) + 2;
+                            },                               
+                            data: (function () {
+                                var d = [];
+                                var len = 1;
+                                var value;
+                                while (len < now_idx) { // len从1到now_idx, 窗口前24位(历史流量)
+                                    d.push([
+                                        new Date(2015, 6, 12, 0, DeltaMinutes()-now_idx*5+len*5),   // 历史数据的时间轴,前两个小时
+                                        mensa_list[len-1] // js数组从0开始
+                                    ]);
+                                    len++;
+                                }
+                                len1 = 0;
+                                while (len1 < 48-now_idx + 1) { // 补充后面的空白数据+观测数据(当前时刻)1
+                                    d.push([
+                                        new Date(2015, 6, 12, 0, DeltaMinutes()+len1*5),   // 当前时刻以及预测数据的时间轴
+                                        "-" // 空白,历史数据没有预测
+                                    ]);
+                                    len1++;
+                                }
+                                return d;
+                            })()
+                        },
+                        {
+                            name: '预测流量',
+                            type: 'bar',
+                            showAllSymbol: true,
+                            symbolSize: function (value){
+                                return Math.round(value[2]/10) + 2;
+                            },
+                            data: (function () {
+                                var d = [];
+                                var len = 1;
+                                var value;
+                                while (len < now_idx) { // len从1到now_idx, 窗口前24位(历史流量)
+                                    d.push([
+                                        new Date(2015, 6, 12, 0, DeltaMinutes()-now_idx*5+len*5),   // 历史数据的时间轴,前两个小时
+                                        "-" // js数组从0开始
+                                    ]);
+                                    len++;
+                                }
+                                len1 = 0;
+                                while (len1 < 48-now_idx + 1) { // 补充后面的空白数据+观测数据(当前时刻)1
+                                    d.push([
+                                        new Date(2015, 6, 12, 0, DeltaMinutes()+len1*5),   // 当前时刻以及预测数据的时间轴
+                                        mensa_list[now_idx+(len1-1)-1] // 空白,历史数据没有预测
+                                    ]);
+                                    len1++;
+                                }
+                                return d;
+                            })()                               
+                            
+                        }                            
+                    ]
+                };
+                mensa_ratios.setOption(option);
+            }
+        ); //require
+    });
+    marker4.addEventListener("mouseover", function(e) {  
+        this.setTitle("商户: " + mensa_name4);  
+    }); 
+
+    // Infowindows5
+    var wid5 = "info_windows5"  // minhang5
+    var sContent5 ='<div id="info_windows5" style="height:300px; width:650px"></div>'; 
+    var mensa_id5 = data_info[4][2];
+    var mensa_name5 = data_info[4][3];
+    var point5 = new BMap.Point(data_info[4][0],data_info[4][1]);
+    var marker5 = new BMap.Marker(point5);
+    var infoWindow5 = new BMap.InfoWindow(sContent5);  // 创建信息窗口对象
+    map3.addOverlay(marker5);
+    marker5.addEventListener("click", function(){
+        this.openInfoWindow(infoWindow5);
+        //图片加载完毕重绘infowindow
+        document.getElementById(wid5).onload = function (){
+           infoWindow5.redraw();   //防止在网速较慢，图片未加载时，生成的信息框高度比图片的总高度小，导致图片部分被隐藏
+        }
+        // Infowindow 请求数据
+        // 构造指定日期字符串,用于展示指定日期的当前时刻
+        function CurentTime() {
+            var now = new Date();
+
+            var year = 2014; //年
+            var month = 11; //月
+            var day = 03; //日
+
+            var hh = now.getHours(); //时
+            var mm = now.getMinutes(); //分
+
+            // IE兼容，要将"-"替换为"/""
+            // var clock = year + "-";
+            var clock = year + "/";
+
+            if (month < 10)
+                clock += "0";
+
+            //clock += month + "-";
+            clock += month + "/";
+
+            if (day < 10)
+                clock += "0";
+
+            clock += day + " ";
+
+            if (hh < 10)
+                clock += "0";
+
+            clock += hh + ":";
+            if (mm < 10) clock += '0';
+            clock += mm;
+            return (clock);
+        }
+        // 将获取的时间转化为距00:00:00起始时间的分钟数
+        function DeltaMinutes() {
+            // 指定日期的记录开始时刻，默认为 20130725 00:00:00
+            // IE浏览器支持的格式，要将"-"替换为"/""
+            var starttime = new Date("2014/11/03 05:00:00");
+            // 指定日期的当前时刻
+            var showtime = new Date(CurentTime());
+            // 计算分钟差
+            var delta = showtime.getTime() - starttime.getTime();
+            deltam = delta / (1000 * 60);
+            // return deltam;
+            return 750;
+        }
+        // 非常重要的查询函数，返回当前时刻的预测窗口
+        function MensaPredict(query, mensa) {
+            // 绘制MarkPoint
+            df = {};
+
+            // 请求数据
+            result = $.ajax({
+                // url: "http://localhost:8088/elite/index.php/Home/Index/mensa_predict/query/" + query + "/mensa/" + mensa,
+                url: "{:U('Index/mensa_predict')}",
+                type: 'POST',
+                async: false, 
+                data: {
+                    query: query,
+                    mensa: mensa
+                },
+                dataType: 'json',
+                error: function() {},
+                success: function(data) {
+                    data;
+                }
+            }).responseJSON;
+
+            // 提取用于绘制Amount的数据
+            var result_list = [];
+            //mensa_key = Object.keys(dd[0])
+            for (var i in Object.keys(result)) {
+                var temp = parseFloat(result[i][mensa]);
+                result_list.push(temp);
+            }
+            // 计算当前时刻在窗口中的位置
+            now_idx = Math.ceil((query-300)/5);
+            if(now_idx<25){
+                now_idx = now_idx;
+            }
+            else if(now_idx>181){
+                now_idx = 25+now_idx-181;
+            }
+            else{
+                now_idx = 25;
+            }
+            return {
+                dad: result_list,
+                now: now_idx
+            };
+        }                 
+        // 加载数据
+        mensa_frame = MensaPredict(DeltaMinutes(), mensa_id5);  // 食堂的数据库名信息可以从data_info中得到
+        mensa_list = mensa_frame.dad;
+        now_idx = mensa_frame.now;
+        now_date = CurentTime();
+        // ECharts绘图 
+        require(
+            [
+                'echarts',
+                'echarts/chart/line' // 使用柱状图就加载line模块，按需加载
+            ],
+            function(ec) {
+                var mensa_ratios = ec.init(document.getElementById(wid5), 'shine');
+                option = {
+                    title : {
+                        x: 'left',
+                        text : '食堂人流量预测',
+                        subtext : '历史数据预测'
+                    },
+                    tooltip : {
+                        //trigger: 'item'
+                        trigger: 'item',
+                        formatter : function (params) {
+                            var date = new Date(params.value[0]);
+                            data = date.getFullYear() + '-'
+                                   + (date.getMonth() + 1) + '-'
+                                   + date.getDate() + ' '
+                                   + date.getHours() + ':'
+                                   + date.getMinutes();
+                            return data + '<br/>'
+                                   + params.value[1];
+                        }
+                    },
+                    toolbox: {
+                        show : true,
+                        x: 'right',
+                        orient: 'vertical',                            
+                        feature : {
+                            mark : {show: true},
+                            dataView : {show: true, readOnly: false},
+                            restore : {show: true},
+                            saveAsImage : {show: true}
+                        }
+                    },
+                    dataZoom: {
+                        show: true,
+                        //x: 'center',
+                        //orient: 'vertical',                            
+                        start : 25
+                    },
+                    legend : {
+                        show: true,
+                        data : ['历史流量', '预测流量']
+                    },
+                    grid: {
+                        y2: 80
+                    },
+                    xAxis : [
+                        {
+                            type : 'time',
+                            splitNumber:5
+                        }
+                    ],
+                    yAxis : [
+                        {
+                            type : 'value'
+                        }
+                    ],
+                    series : [
+                        {
+                            name: '历史流量',
+                            type: 'bar',
+                            showAllSymbol: true,
+                            symbolSize: function (value){
+                                return Math.round(value[2]/10) + 2;
+                            },                               
+                            data: (function () {
+                                var d = [];
+                                var len = 1;
+                                var value;
+                                while (len < now_idx) { // len从1到now_idx, 窗口前24位(历史流量)
+                                    d.push([
+                                        new Date(2015, 6, 12, 0, DeltaMinutes()-now_idx*5+len*5),   // 历史数据的时间轴,前两个小时
+                                        mensa_list[len-1] // js数组从0开始
+                                    ]);
+                                    len++;
+                                }
+                                len1 = 0;
+                                while (len1 < 48-now_idx + 1) { // 补充后面的空白数据+观测数据(当前时刻)1
+                                    d.push([
+                                        new Date(2015, 6, 12, 0, DeltaMinutes()+len1*5),   // 当前时刻以及预测数据的时间轴
+                                        "-" // 空白,历史数据没有预测
+                                    ]);
+                                    len1++;
+                                }
+                                return d;
+                            })()
+                        },
+                        {
+                            name: '预测流量',
+                            type: 'bar',
+                            showAllSymbol: true,
+                            symbolSize: function (value){
+                                return Math.round(value[2]/10) + 2;
+                            },
+                            data: (function () {
+                                var d = [];
+                                var len = 1;
+                                var value;
+                                while (len < now_idx) { // len从1到now_idx, 窗口前24位(历史流量)
+                                    d.push([
+                                        new Date(2015, 6, 12, 0, DeltaMinutes()-now_idx*5+len*5),   // 历史数据的时间轴,前两个小时
+                                        "-" // js数组从0开始
+                                    ]);
+                                    len++;
+                                }
+                                len1 = 0;
+                                while (len1 < 48-now_idx + 1) { // 补充后面的空白数据+观测数据(当前时刻)1
+                                    d.push([
+                                        new Date(2015, 6, 12, 0, DeltaMinutes()+len1*5),   // 当前时刻以及预测数据的时间轴
+                                        mensa_list[now_idx+(len1-1)-1] // 空白,历史数据没有预测
+                                    ]);
+                                    len1++;
+                                }
+                                return d;
+                            })()                               
+                            
+                        }                            
+                    ]
+                };
+                mensa_ratios.setOption(option);
+            }
+        ); //require
+    });
+    marker5.addEventListener("mouseover", function(e) {  
+        this.setTitle("商户: " + mensa_name5);  
+    }); 
+
+
+});//(document).ready(function(){
 </script>
