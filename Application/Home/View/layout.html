@@ -11,6 +11,7 @@
     <meta name="author" content="" />
     <script src="http://cdn.bootcss.com/jquery/2.1.4/jquery.min.js"></script>
     <link href="http://cdn.bootcss.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet" />
+    <link href='http://www.youziku.com/webfont/CSS/2491f8afe8211fe76a9da645ea77c63a' rel='stylesheet' type='text/css' />
     <script src="http://cdn.bootcss.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=Dyse6HrsPb7CGCENfhUlHh03"></script>
     <script type="text/javascript" src="http://api.map.baidu.com/library/TrafficControl/1.4/src/TrafficControl_min.js"></script>
@@ -56,7 +57,7 @@
             });
         });
 
-        $('a#nav-login').click(function(){
+        $('a#nav-login').click(function() {
             event.preventDefault();
             $('#login-modal').modal();
         })
@@ -77,7 +78,7 @@
                 success: function(data) {
                     if (data == 1) {
                         window.location.href = target;
-                    } else if (data == 0){
+                    } else if (data == 0) {
                         $('#login-modal .modal-body').append($('<p style="color:rgb(232, 53, 53);margin-left:5ox;margin-top:12px;">账号不存在或密码错误</p>'));
                     }
                 }
@@ -115,7 +116,7 @@
                     <a id="nav-web" href="{:U('Web/index')}"><i class="fa fa-fw fa-paper-plane-o"></i><span>网站统计</span></a>
                     <if condition="isset($_SESSION['elite_uid'])">
                         <a id="nav-quit" href="{:U('Login/quit')}"><i class="fa fa-fw fa-close"></i><span>注销登录</span></a>
-                    <else/>
+                        <else/>
                         <a id="nav-login" href=""><i class="fa fa-fw fa-check"></i><span>用户登录</span></a>
                     </if>
                 </div>

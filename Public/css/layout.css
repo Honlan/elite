@@ -88,6 +88,7 @@ header {
     top: 0;
     width: 100%;
     z-index: 9999;
+    font-family: ruibo356345;
 }
 
 header h1 {
@@ -144,12 +145,12 @@ header #header-right #indicators li {
 }
 
 header #header-right #indicators li:hover {
-	color: #eee;
+    color: #eee;
     cursor: pointer;
 }
 
 header #header-right #indicators li.active {
-	color: #eee;
+    color: #eee;
 }
 
 .BMap_cpyCtrl,
@@ -184,6 +185,7 @@ footer h3 {
 #login-modal .modal-dialog {
     margin: 80px auto;
 }
+
 #login-modal .modal-content {
     background-color: rgba(255, 255, 255, 0.85);
     border-radius: 5px;
@@ -208,8 +210,9 @@ footer h3 {
     margin-top: 5px;
     margin-bottom: 5px;
 }
+
 #login-modal label {
-	margin-right: 10px;
+    margin-right: 10px;
 }
 
 #login-modal p {
