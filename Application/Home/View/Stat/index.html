@@ -226,7 +226,7 @@ $(document).ready(function() {
 #stat #my-evaluation {
     height: 250px;
     background-color: #222 !important;
-    padding: 40px;
+    padding: 50px;
 }
 
 #stat #my-evaluation h3 {
@@ -246,22 +246,33 @@ $(document).ready(function() {
 #stat #my-recommendation {
     height: 250px;
     background-color: #222 !important;
-    padding: 20px 20%;
+    padding-top: 50px;
+    font-size: 13px;
+    color: #ddd;
 }
-
-#stat #my-recommendation h4 {
-    margin-top: 0;
-    padding-top: 25px;
-    margin-bottom: 20px;
-}
-
-#stat #my-recommendation span {
-    background-color: rgba(250, 250, 250, 0.9);
-    color: #222;
+#stat #my-recommendation a {
+    color: rgb(247, 91, 91);
+    background-color: #222;
+    border: 1px solid rgb(247, 91, 91);
+    position: relative;
+    top: 30px;
+    padding: 10px 20px;
+    text-decoration: none;
     border-radius: 3px;
-    margin-bottom: 8px;
-    padding: 2px 3px;
-    display: block;
+    font-size: 18px;
+    transition: color .2s;
+    -o-transition: color .2s;
+    -moz-transition: color .2s;
+    -webkit-transition: color .2s;
+    transition: background-color .2s;
+    -o-transition: background-color .2s;
+    -moz-transition: background-color .2s;
+    -webkit-transition: background-color .2s;
+    box-shadow: 3px 3px 3px rgba(10, 10, 10, 1);
+}
+#stat #my-recommendation a:hover {
+    color: #eee;
+    background-color: rgb(247, 91, 91);
 }
 </style>
 <div id="stat">
@@ -351,23 +362,18 @@ $(document).ready(function() {
             <div id="my-focus"></div>
         </div>
         <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
-            <p class="plot-title">个人评价</p>
+            <p class="plot-title">我的评价</p>
             <div id="my-evaluation">
                 <h3></h3>
                 <p></p>
             </div>
         </div>
         <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
-            <p class="plot-title">兴趣推荐</p>
+            <p class="plot-title">我的推荐</p>
             <div id="my-recommendation">
-                <div style="float:left;">
-                    <h4 style="color:rgb(89, 89, 255);">推荐好友</h4>
-                    <span>2139589</span><span>9587287</span><span>1098276</span><span>8768162</span>
-                </div>
-                <div style="float:right;">
-                    <h4 style="color:rgb(255, 89, 89);">推荐食堂</h4>
-                    <span>绿园餐厅</span><span>上海快餐</span><span>教工餐厅</span><span>新疆餐厅</span>
-                </div>
+                <p>访问Elite助手</p>
+                <p>获取为你私人定制的推荐</p>
+                <a href="{:U('Helper/index')}">Elite助手</a>
             </div>
         </div>
     </div>

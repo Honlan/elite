@@ -7,75 +7,535 @@ $(document).ready(function() {
 </script>
 <style>
 #info {
-	text-align: left;
+    text-align: left;
 }
-#info .info-container {
-	position: relative;
-}
-#info .info-container .info-title {
-	font-size: 16px;
-	padding-left: 15px;
-	border-left: 5px solid #3C833C;
-}
-#info .info-container>a {
-	text-decoration: none;
-	color: #888;
-	position: absolute;
-	right: 0;
-	top: 0;
-	font-size: 13px;
-	transition: color .4s;
-    -o-transition: color .4s;
-    -moz-transition: color .4s;
-    -webkit-transition: color .4s;
-}
-#info .info-container>a:hover {
-	color: #C55252;
-}
-#info .info-content {
 
+#info .info-container {
+    position: relative;
+    margin-bottom: 30px;
 }
+
+#info .info-container .info-title {
+    font-size: 16px;
+    padding-left: 15px;
+    border-left: 5px solid #3C833C;
+    margin-bottom: 15px;
+}
+
+#info .info-container>a {
+    text-decoration: none;
+    color: #888;
+    position: absolute;
+    right: 0;
+    top: 5px;
+    font-size: 13px;
+    transition: color .2s;
+    -o-transition: color .2s;
+    -moz-transition: color .2s;
+    -webkit-transition: color .2s;
+}
+
+#info .info-container>a:hover {
+    color: #C55252;
+}
+
 #info .info-cell {
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+#info .info-cell:hover img {
+    transform: scale(1.1);
+    -o-transform: scale(1.1);
+    -moz-transform: scale(1.1);
+    -webkit-transform: scale(1.1);
+}
+
+#info .info-poster {
+    overflow: hidden;
+}
+
+#info .info-poster img {
+    width: 100%;
+    /*border-bottom: 1px solid #ddd;*/
+    
+    transition: transform .2s;
+    -o-transition: -o-transform .2s;
+    -moz-transition: -moz-transform .2s;
+    -webkit-transition: -webkit-transform .2s;
+}
+
+#info .info-cell:hover .info-description {
+    background-color: rgb(242, 109, 78);
+    color: white;
+}
+
+#info .info-description {
+    padding: 10px;
+    background-color: #fff;
+    color: #333;
+    height: 54px;
+    transition: color .2s;
+    -o-transition: color .2s;
+    -moz-transition: color .2s;
+    -webkit-transition: color .2s;
+    transition: background-color .2s;
+    -o-transition: background-color .2s;
+    -moz-transition: background-color .2s;
+    -webkit-transition: background-color .2s;
+}
+
+#info .info-description p {
+    margin-bottom: 0;
+}
+
+#info #busMap {
+    width: 100%;
+    height: 450px;
+}
+#info #infowindow {
+	text-align: center;
+}
+#info #infowindow p {
+	margin: 0;
+}
+#info #infowindow span {
+	display: block;
+	color: red;
+	font-size: 25px;
+	margin-top: 10px;
 }
 </style>
 <div id="info">
-	<div id="activity" class="info-container">
-		<p class="info-title" style="border-color: #EF3B3B;">活动</p>
-		<a href=""><i class="fa fa-fw fa-location-arrow"></i> More</a>
-		<div class="info-content">
-			<div class="info-cell">
-				
-			</div>
-		</div>
-	</div>
-	<div id="comment" class="info-container">
-		<p class="info-title" style="border-color: #EF863B;">点评</p>
-		<a href=""><i class="fa fa-fw fa-location-arrow"></i> More</a>
-		<div class="info-content"></div>
-	</div>
-	<div id="contest" class="info-container">
-		<p class="info-title" style="border-color: #EFED3B;">比赛</p>
-		<a href=""><i class="fa fa-fw fa-location-arrow"></i> More</a>
-		<div class="info-content"></div>
-	</div>
-	<div id="second-hand" class="info-container">
-		<p class="info-title" style="border-color: #3BEF3D;">二手</p>
-		<a href=""><i class="fa fa-fw fa-location-arrow"></i> More</a>
-		<div class="info-content"></div>
-	</div>
-	<div id="house" class="info-container">
-		<p class="info-title" style="border-color: #3BEFCD;">租房</p>
-		<a href=""><i class="fa fa-fw fa-location-arrow"></i> More</a>
-		<div class="info-content"></div>
-	</div>
-	<div id="intern" class="info-container">
-		<p class="info-title" style="border-color: #3B4BEF;">实习</p>
-		<a href=""><i class="fa fa-fw fa-location-arrow"></i> More</a>
-		<div class="info-content"></div>
-	</div>
-	<div id="bus" class="info-container">
-		<p class="info-title" style="border-color: #DD3BEF;">校车</p>
-		<a href=""><i class="fa fa-fw fa-location-arrow"></i> More</a>
-		<div class="info-content"></div>
-	</div>
+    <div id="activity" class="info-container">
+        <p class="info-title" style="border-color: #EF3B3B;">活动</p>
+        <a href=""><i class="fa fa-fw fa-location-arrow"></i> More</a>
+        <div class="info-content row">
+            <div class="col-xs-4 col-sm-2 col-md-2 col-lg-2">
+                <div class="info-cell">
+                    <div class="info-poster">
+                        <img src="__PUBLIC__/img/info/activity1.jpg">
+                    </div>
+                    <div class="info-description">
+                        <p>插花艺术体验课程</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-4 col-sm-2 col-md-2 col-lg-2">
+                <div class="info-cell">
+                    <div class="info-poster">
+                        <img src="__PUBLIC__/img/info/activity2.jpg">
+                    </div>
+                    <div class="info-description">
+                        <p>魔术协会暑期第二课堂手法班</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-4 col-sm-2 col-md-2 col-lg-2">
+                <div class="info-cell">
+                    <div class="info-poster">
+                        <img src="__PUBLIC__/img/info/activity3.jpg">
+                    </div>
+                    <div class="info-description">
+                        <p>寻找交大最美女生</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-4 col-sm-2 col-md-2 col-lg-2">
+                <div class="info-cell">
+                    <div class="info-poster">
+                        <img src="__PUBLIC__/img/info/activity4.jpg">
+                    </div>
+                    <div class="info-description">
+                        <p>小学期美妆课开始报名啦</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-4 col-sm-2 col-md-2 col-lg-2">
+                <div class="info-cell">
+                    <div class="info-poster">
+                        <img src="__PUBLIC__/img/info/activity5.jpg">
+                    </div>
+                    <div class="info-description">
+                        <p>水彩零基础第二课堂</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-4 col-sm-2 col-md-2 col-lg-2">
+                <div class="info-cell">
+                    <div class="info-poster">
+                        <img src="__PUBLIC__/img/info/activity6.jpg">
+                    </div>
+                    <div class="info-description">
+                        <p>跑虫聚乐部第二课堂</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="comment" class="info-container">
+        <p class="info-title" style="border-color: #EF863B;">点评</p>
+        <a href=""><i class="fa fa-fw fa-location-arrow"></i> More</a>
+        <div class="info-content row">
+            <div class="col-xs-4 col-sm-2 col-md-2 col-lg-2">
+                <div class="info-cell">
+                    <div class="info-poster">
+                        <img src="__PUBLIC__/img/info/comment1.jpg">
+                    </div>
+                    <div class="info-description">
+                        <p>联华超市/华联超市生活超市优惠券</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-4 col-sm-2 col-md-2 col-lg-2">
+                <div class="info-cell">
+                    <div class="info-poster">
+                        <img src="__PUBLIC__/img/info/comment2.jpg">
+                    </div>
+                    <div class="info-description">
+                        <p>肯德基优惠券上海250店通用</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-4 col-sm-2 col-md-2 col-lg-2">
+                <div class="info-cell">
+                    <div class="info-poster">
+                        <img src="__PUBLIC__/img/info/comment3.jpg">
+                    </div>
+                    <div class="info-description">
+                        <p>好乐迪KTV4小时畅快淋漓欢唱券</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-4 col-sm-2 col-md-2 col-lg-2">
+                <div class="info-cell">
+                    <div class="info-poster">
+                        <img src="__PUBLIC__/img/info/comment4.jpg">
+                    </div>
+                    <div class="info-description">
+                        <p>来伊份生活零食小吃商城</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-4 col-sm-2 col-md-2 col-lg-2">
+                <div class="info-cell">
+                    <div class="info-poster">
+                        <img src="__PUBLIC__/img/info/comment5.jpg">
+                    </div>
+                    <div class="info-description">
+                        <p>东瀛国际造型首席设计师单人洗剪吹</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-4 col-sm-2 col-md-2 col-lg-2">
+                <div class="info-cell">
+                    <div class="info-poster">
+                        <img src="__PUBLIC__/img/info/comment6.jpg">
+                    </div>
+                    <div class="info-description">
+                        <p>查理士下午茶甜点豪华双人套餐</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="contest" class="info-container">
+        <p class="info-title" style="border-color: #EFED3B;">比赛</p>
+        <a href=""><i class="fa fa-fw fa-location-arrow"></i> More</a>
+        <div class="info-content row">
+            <div class="col-xs-4 col-sm-2 col-md-2 col-lg-2">
+                <div class="info-cell">
+                    <div class="info-poster">
+                        <img src="__PUBLIC__/img/info/contest1.jpg">
+                    </div>
+                    <div class="info-description">
+                        <p>“以青春之名”2015届本科毕业生演讲比赛</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-4 col-sm-2 col-md-2 col-lg-2">
+                <div class="info-cell">
+                    <div class="info-poster">
+                        <img src="__PUBLIC__/img/info/contest2.jpg">
+                    </div>
+                    <div class="info-description">
+                        <p>2015上海高校营销精英挑战赛</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-4 col-sm-2 col-md-2 col-lg-2">
+                <div class="info-cell">
+                    <div class="info-poster">
+                        <img src="__PUBLIC__/img/info/contest3.jpg">
+                    </div>
+                    <div class="info-description">
+                        <p>中国高校风险管理与控制能力挑战赛</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-4 col-sm-2 col-md-2 col-lg-2">
+                <div class="info-cell">
+                    <div class="info-poster">
+                        <img src="__PUBLIC__/img/info/contest4.jpg">
+                    </div>
+                    <div class="info-description">
+                        <p>共创未来－2015中美青年创客大赛</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-4 col-sm-2 col-md-2 col-lg-2">
+                <div class="info-cell">
+                    <div class="info-poster">
+                        <img src="__PUBLIC__/img/info/contest5.jpg">
+                    </div>
+                    <div class="info-description">
+                        <p>2015通联杯量化投资策略大赛</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-4 col-sm-2 col-md-2 col-lg-2">
+                <div class="info-cell">
+                    <div class="info-poster">
+                        <img src="__PUBLIC__/img/info/contest6.jpg">
+                    </div>
+                    <div class="info-description">
+                        <p>2015联想TSS贺卡设计大赛</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="second-hand" class="info-container">
+        <p class="info-title" style="border-color: #3BEF3D;">二手</p>
+        <a href=""><i class="fa fa-fw fa-location-arrow"></i> More</a>
+        <div class="info-content row">
+            <div class="col-xs-4 col-sm-2 col-md-2 col-lg-2">
+                <div class="info-cell">
+                    <div class="info-poster">
+                        <img src="__PUBLIC__/img/info/second1.jpg">
+                    </div>
+                    <div class="info-description">
+                        <p>全新温馨布艺沙发期待新主人</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-4 col-sm-2 col-md-2 col-lg-2">
+                <div class="info-cell">
+                    <div class="info-poster">
+                        <img src="__PUBLIC__/img/info/second2.jpg">
+                    </div>
+                    <div class="info-description">
+                        <p>办公室专用舒适大气皮椅转让</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-4 col-sm-2 col-md-2 col-lg-2">
+                <div class="info-cell">
+                    <div class="info-poster">
+                        <img src="__PUBLIC__/img/info/second3.jpg">
+                    </div>
+                    <div class="info-description">
+                        <p>九成新港版移动苹果6转手</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-4 col-sm-2 col-md-2 col-lg-2">
+                <div class="info-cell">
+                    <div class="info-poster">
+                        <img src="__PUBLIC__/img/info/second4.jpg">
+                    </div>
+                    <div class="info-description">
+                        <p>学姐专属全新印花美美衬衫出手</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-4 col-sm-2 col-md-2 col-lg-2">
+                <div class="info-cell">
+                    <div class="info-poster">
+                        <img src="__PUBLIC__/img/info/second5.png">
+                    </div>
+                    <div class="info-description">
+                        <p>出一个八成新的真皮军绿手提包</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-4 col-sm-2 col-md-2 col-lg-2">
+                <div class="info-cell">
+                    <div class="info-poster">
+                        <img src="__PUBLIC__/img/info/second6.jpg">
+                    </div>
+                    <div class="info-description">
+                        <p>九成新给力拉风大龟王出手</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="house" class="info-container">
+        <p class="info-title" style="border-color: #3BEFCD;">租房</p>
+        <a href=""><i class="fa fa-fw fa-location-arrow"></i> More</a>
+        <div class="info-content row">
+            <div class="col-xs-4 col-sm-2 col-md-2 col-lg-2">
+                <div class="info-cell">
+                    <div class="info-poster">
+                        <img src="__PUBLIC__/img/info/house1.jpg">
+                    </div>
+                    <div class="info-description">
+                        <p>永平路金榜六期精装单人间出租</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-4 col-sm-2 col-md-2 col-lg-2">
+                <div class="info-cell">
+                    <div class="info-poster">
+                        <img src="__PUBLIC__/img/info/house2.jpg">
+                    </div>
+                    <div class="info-description">
+                        <p>交大近紫竹朝南通光主卧出租</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-4 col-sm-2 col-md-2 col-lg-2">
+                <div class="info-cell">
+                    <div class="info-poster">
+                        <img src="__PUBLIC__/img/info/house3.jpg">
+                    </div>
+                    <div class="info-description">
+                        <p>寻一名清洁有爱的萌妹子室友一起合租</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-4 col-sm-2 col-md-2 col-lg-2">
+                <div class="info-cell">
+                    <div class="info-poster">
+                        <img src="__PUBLIC__/img/info/house4.jpg">
+                    </div>
+                    <div class="info-description">
+                        <p>沧源三村精装单人次卧出租</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-4 col-sm-2 col-md-2 col-lg-2">
+                <div class="info-cell">
+                    <div class="info-poster">
+                        <img src="__PUBLIC__/img/info/house5.jpg">
+                    </div>
+                    <div class="info-description">
+                        <p>北欧丽景精装舒适单间出租</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-4 col-sm-2 col-md-2 col-lg-2">
+                <div class="info-cell">
+                    <div class="info-poster">
+                        <img src="__PUBLIC__/img/info/house6.jpg">
+                    </div>
+                    <div class="info-description">
+                        <p>好第坊温馨单人间出租，你值得拥有</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="intern" class="info-container">
+        <p class="info-title" style="border-color: #3B4BEF;">实习</p>
+        <a href=""><i class="fa fa-fw fa-location-arrow"></i> More</a>
+        <div class="info-content row">
+            <div class="col-xs-4 col-sm-2 col-md-2 col-lg-2">
+                <div class="info-cell">
+                    <div class="info-poster">
+                        <img src="__PUBLIC__/img/info/intern1.jpg">
+                    </div>
+                    <div class="info-description">
+                        <p>百度上海运营部招前端工程师实习生</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-4 col-sm-2 col-md-2 col-lg-2">
+                <div class="info-cell">
+                    <div class="info-poster">
+                        <img src="__PUBLIC__/img/info/intern2.jpg">
+                    </div>
+                    <div class="info-description">
+                        <p>杭州阿里软件开发部招聘JAVA工程师实习生</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-4 col-sm-2 col-md-2 col-lg-2">
+                <div class="info-cell">
+                    <div class="info-poster">
+                        <img src="__PUBLIC__/img/info/intern3.jpg">
+                    </div>
+                    <div class="info-description">
+                        <p>腾讯深圳总部招聘安卓IOS工程师实习生</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-4 col-sm-2 col-md-2 col-lg-2">
+                <div class="info-cell">
+                    <div class="info-poster">
+                        <img src="__PUBLIC__/img/info/intern4.jpg">
+                    </div>
+                    <div class="info-description">
+                        <p>上海爱立信招聘后端运维工程师实习生</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-4 col-sm-2 col-md-2 col-lg-2">
+                <div class="info-cell">
+                    <div class="info-poster">
+                        <img src="__PUBLIC__/img/info/intern5.jpg">
+                    </div>
+                    <div class="info-description">
+                        <p>新浪人事部招聘HR实习生</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-4 col-sm-2 col-md-2 col-lg-2">
+                <div class="info-cell">
+                    <div class="info-poster">
+                        <img src="__PUBLIC__/img/info/intern6.jpg">
+                    </div>
+                    <div class="info-description">
+                        <p>网易杭州研究中心招聘技术实习生</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="bus" class="info-container">
+        <p class="info-title" style="border-color: #DD3BEF;">校车</p>
+        <a href=""><i class="fa fa-fw fa-location-arrow"></i> More</a>
+        <div class="info-content" id="busMap"></div>
+    </div>
 </div>
+<script>
+$(document).ready(function() {
+    $('#info .info-container>a').click(function() {
+        event.preventDefault();
+    });
+
+    var map = new BMap.Map("busMap"); // 创建地图实例
+    map.centerAndZoom(new BMap.Point(121.44821, 31.033276), 16); // 初始化地图，设置中心点坐标和地图级别
+    map.disableScrollWheelZoom();
+    map.setMapStyle({
+        style: "hardedge"
+    });
+    var markers = [];
+    var lat = 31.033276,
+        lng = 121.44821;
+    for (var i = 0; i < 40; i++) {
+        var marker = new BMap.Marker(new BMap.Point(lng + (Math.random() - 0.5) * 0.024, lat + (Math.random() - 0.5) * 0.006));
+        marker.setIcon(new BMap.Icon(PUBLIC + '/img/bus.png', new BMap.Size(40, 40), {
+            imageOffset: new BMap.Size(0, 0), 
+            anchor: new BMap.Size(16, 31),
+            imageSize: new BMap.Size(35, 35)
+        }));
+        marker.addEventListener('click', function(){
+        	this.openInfoWindow(new BMap.InfoWindow('<div id="infowindow"><p>当前运载人数<span>' + (Math.floor(Math.random() * 20) + 5) + '</span></p></div>'));
+        });
+        map.addOverlay(marker);
+        markers.push(marker);
+    };
+});
+</script>
