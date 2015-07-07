@@ -6,12 +6,78 @@ $(document).ready(function() {
 });
 </script>
 <style>
-#web h2 {
-	font-size: 80px;
-	color: rgb(199, 52, 52);
+#web #basci-stat {
+	position: relative;
+	padding: 50px;
+}
+#web #basci-stat h2 {
+    font-size: 100px;
+    margin-top: 40px;
+    color: rgb(199, 52, 52);
+}
+#web #basci-stat #trade {
+	position: absolute;
+	left: 10%;
+	top: 30px;
+	display: none;
+}
+#web #basci-stat #wifi {
+	position: absolute;
+	right: 10%;
+	top: 30px;
+	display: none;
+}
+#web #basci-stat #student {
+	position: absolute;
+	left: 10%;
+	bottom: 30px;
+	display: none;
+}
+#web #basci-stat #other {
+	position: absolute;
+	right: 10%;
+	bottom: 30px;
+	display: none;
+}
+#web #basci-stat h4 {
+	font-size: 15px;
+	color: #ccc;
+}
+#web #basci-stat p {
+	font-size: 25px;
+	margin-top: 15px;
 }
 </style>
 <div id="web">
-    <h1>历史访问量</h1>
-    <h2>{$pv}</h2>
+    <div id="basci-stat">
+        <h1>历史访问量</h1>
+        <h2>{$pv}</h2>
+        <div id="trade">
+        	<h4>一卡通交易数量</h4>
+        	<p style="color:rgb(158, 160, 73)">7915289</p>
+        </div>
+        <div id="wifi">
+        	<h4>校园网访问数量</h4>
+        	<p style="color:rgb(73, 160, 153)">12736408</p>
+        </div>
+        <div id="student">
+        	<h4>学生账户总数量</h4>
+        	<p style="color:rgb(73, 101, 160)">30861</p>
+        </div>
+        <div id="other">
+        	<h4>其他智慧校园数据</h4>
+        	<p style="color:rgb(85, 160, 73)">待续</p>
+        </div>
+    </div>
 </div>
+<script>
+$(document).ready(function(){
+	$('#web #basci-stat #trade').fadeIn(200, function(){
+		$('#web #basci-stat #wifi').fadeIn(200, function(){
+			$('#web #basci-stat #student').fadeIn(200, function(){
+				$('#web #basci-stat #other').fadeIn(200);
+			});
+		});
+	});
+});
+</script>
