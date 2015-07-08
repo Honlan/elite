@@ -110,9 +110,9 @@ class IndexController extends Controller {
     // 预测食堂人流量
     public function mensa_predict(){
         // 传参
-        $query = $_GET['query'];
+        $query = $_POST['query'];
         //$mensa = $_GET['mensa'];
-        $mensa = $_GET['mensa'];        
+        $mensa = $_POST['mensa'];        
         // 边界条件
         // query是从00:00:00开始的分钟数,减去偏移量300
         // 预测的slice是5min,故还需除以5
