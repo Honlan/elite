@@ -57,8 +57,7 @@ class IndexController extends Controller {
         $map['times'] = array('between',array($time_now, $time_next));
         // 把查询条件传入查询方法
         $data = $Mensa->where($map)->select();
-        $data1 = json_encode($data);
-        echo $data1;
+        echo json_encode($data);
     }
     
     // 获取各食堂消费数据
@@ -81,8 +80,7 @@ class IndexController extends Controller {
         $select_query = $select_header.$select_time.$select_group;
         //echo $select_query;
         $data = $Mensa->query($select_query);
-        $data1 = json_encode($data);
-        echo $data1;
+        echo json_encode($data);
     }    
 
     // 获取消费总额数据
@@ -141,8 +139,6 @@ class IndexController extends Controller {
         $select_query = $select_header.$select_mensa.$select_windows;
         // echo $select_query;
         $data = $Ratios->query($select_query);
-        $data1 = json_encode($data);
-        echo $data1;
+        echo json_encode($data);
     }   
-
 }
