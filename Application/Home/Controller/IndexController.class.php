@@ -44,8 +44,8 @@ class IndexController extends Controller {
         $type = $_POST['type'];
 
 		$timeformat = "%Y-%m-%d %X";
-		$Mensa = M('mensa'); // 实例化Mensa对象
-        //$Mensa = M('oneday'); // 实例化oneday对象
+		//$Mensa = M('mensa'); // 实例化Mensa对象
+        $Mensa = M('oneday'); // 实例化oneday对象
         // 数据初始化时间
         $stamp0 = "2014-11-03 05:00:00";
         $stamp1 = "2014-11-03 05:01:00";
@@ -67,8 +67,8 @@ class IndexController extends Controller {
         $query = $_POST['query'];
 
         $timeformat = "%Y-%m-%d %X";
-        $Mensa = M('mensa'); // 实例化Mensa对象
-        //$Mensa = M('oneday'); // 实例化oneday对象
+        //$Mensa = M('mensa'); // 实例化Mensa对象
+        $Mensa = M('oneday'); // 实例化oneday对象
         // 数据初始化时间
         $stamp0 = "2014-11-03 05:00:00";
         $stamp1 = "2014-11-03 05:01:00";
@@ -91,8 +91,8 @@ class IndexController extends Controller {
         $query = $_POST['query'];
 
 		$timeformat = "%Y-%m-%d %X";
-        $Mensa = M('mensa'); // 实例化Mensa对象
-        //$Mensa = M('oneday'); // 实例化oneday对象
+        //$Mensa = M('mensa'); // 实例化Mensa对象
+        $Mensa = M('oneday'); // 实例化oneday对象
         // 数据初始化时间
         $stamp0 = "2014-11-03 05:00:00";
         // 时间的查询条件
