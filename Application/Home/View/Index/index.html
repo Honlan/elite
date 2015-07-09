@@ -108,11 +108,28 @@ $(document).ready(function() {
                 <p class="plot-title">实时人群监测</p>
                 <div id="allmap"></div>
                 <div id="mapButtons">
-                    <span id="mapButton1" class="hotmap">显示当前热力图</span>
-                    <span id="mapButton2" class="hotmap">显示高峰热力图</span>
-                    <span id="mapButton3" class="hotmap">显示平峰热力图</span>
-                    <span id="mapButton4">关闭热力图</span>
+                    <span id="mapButton1" class="hotmap" onclick="openHeatmapNow()">显示当前热力图</span>
+                    <span id="mapButton2" class="hotmap" onclick="openHeatmapHigh()">显示高峰热力图</span>
+                    <span id="mapButton3" class="hotmap" onclick="openHeatmapSmooth()">显示平峰热力图</span>
+                    <span id="mapButton4" onclick="closeHeatmap()">关闭热力图</span>
                 </div>
+            <script type="text/javascript">
+				// 定义开关热力图的函数
+				function openHeatmapNow(){
+				  heatmapOverlay_now.show();
+				}        
+				function openHeatmapHigh(){
+				  heatmapOverlay_high.show();
+				}
+				function openHeatmapSmooth(){
+				  heatmapOverlay_smooth.show();
+				}
+				function closeHeatmap(){
+				  heatmapOverlay_now.hide();
+				  heatmapOverlay_high.hide();
+				  heatmapOverlay_smooth.hide();
+				}
+            </script>
             </div>
             <div id="mobility-stat" class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
                 <p class="plot-title">人群分布 TOP 5</p>
@@ -333,9 +350,8 @@ $(document).ready(function() {
                     for (idx = 0; idx < num; idx++) {
                         //console.log(idx);
                         temppoints = new Object();
-                        //temppoints.lng = 121.564813 + (0.15*2)*(Math.random()-0.5); //随机数其实是在-0.15~+0.15区间的
-                        temppoints.lng = 121.564813 + (0.15 * 2) * (Math.random() - 0.7); //随机数其实是在-0.15~+0.15区间的
-                        temppoints.lat = 29.866791 + (0.10 * 2) * (Math.random() - 0.1);
+                        temppoints.lng = 121.436606 + (0.02 * 2) * (Math.random() - 0.7); //随机数其实是在-0.15~+0.15区间的
+                        temppoints.lat = 31.029354 + (0.02 * 2) * (Math.random() - 0.1);
                         temppoints.count = Math.ceil(100 * Math.random());
                         heatpoints[idx] = temppoints;
                     }
@@ -348,9 +364,8 @@ $(document).ready(function() {
                     for (idx = 0; idx < num; idx++) {
                         //console.log(idx);
                         temppoints = new Object();
-                        //temppoints.lng = 121.564813 + (0.15*2)*(Math.random()-0.5); //随机数其实是在-0.15~+0.15区间的
-                        temppoints.lng = 121.564813 + (0.12 * 2) * (Math.random() - 0.3); //随机数其实是在-0.15~+0.15区间的
-                        temppoints.lat = 29.866791 + (0.10 * 2) * (Math.random() - 0.7);
+                        temppoints.lng = 121.436606 + (0.04 * 2) * (Math.random() - 0.5); //随机数其实是在-0.15~+0.15区间的
+                        temppoints.lat = 31.029354 + (0.04 * 2) * (Math.random() - 0.2);
                         temppoints.count = Math.ceil(100 * Math.random());
                         heatpoints[idx] = temppoints;
                     }
