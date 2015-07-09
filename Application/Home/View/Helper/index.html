@@ -6,35 +6,707 @@ $(document).ready(function() {
 });
 </script>
 
-<script src="__PUBLIC__/js/Helper/app.js" type="text/javascript"></script>
-<script src="__PUBLIC__/js/Helper/index.js" type="text/javascript"></script>
-<script src="__PUBLIC__/js/Helper/fullcalendar.min.js" type="text/javascript"></script>
+<style>
+#helper {
+    text-align: left;
+}
 
-<div class="span6">
+#helper #activity-freq {	
+    height: 300px;
+    background-color: #222 !important;
+    margin-bottom: 30px;
+}
+#helper #teaching-assets {
+    height: 300px;
+    background-color: #222 !important;
+    margin-bottom: 30px;
+}
+#helper #feature-compare {
+    height: 300px;
+    background-color: #222 !important;
+    margin-bottom: 30px;
+}
+#helper #calendar {
+    background-color: #222 !important;
+    margin-bottom: 30px;
+}
+#helper #timeline {
+	background-color: #222 !important;
+    margin-bottom: 30px;
+}
 
-	<!-- BEGIN PORTLET-->
+#helper #personal-info {
+    height: 267px;
+    background-color: #222;
+    text-align: left;
+    padding: 20px 30px;
+}
+#helper #personal-info .fa-male {
+    position: absolute;
+    font-size: 110px;
+    color: rgb(54, 114, 205);
+    right: 20px;
+    top: 70px;
+}
+#helper #personal-info .fa-female {
+    position: absolute;
+    font-size: 110px;
+    color: rgb(205, 54, 77);
+    right: 20px;
+    top: 70px;
+}
+#helper #personal-info .fa-graduation-cap {
+    position: absolute;
+    font-size: 110px;
+    color: rgb(205, 54, 77);
+    right: 20px;
+    top: 70px;
+}
 
-	<div class="portlet box blue calendar">
+#helper #life-reminder {
+    margin-top: 10px;
+}
+#helper #life-reminder #SJTU {
+    color: rgb(57, 168, 63);
+    margin-left: 10px;
+}
+#helper #life-reminder ul {
+    list-style-type: none;
+}
+#helper #life-reminder ul li {
+    position: relative;
+    margin-bottom: 3px;
+    left: -30px;
+    color: #999;
+}
+#helper #life-reminder ul li .fa {
+    margin-right: 5px;
+}
+#helper #life-reminder ul li .number {
+    margin-left: 5px;
+    margin-right: 5px;
+    font-size: 16px;
+}
+#helper #life-reminder p:first-child {
+    font-size: 16px;
+}
+#helper #life-reminder #since {
+    position: absolute;
+    right: 40px;
+    bottom: 10px;
+    font-size: 13px;
+}
 
-		<div class="portlet-title">
+#helper #study-reminder {
+    margin-top: 10px;
+}
+#helper #study-reminder #SJTU {
+    color: rgb(57, 168, 63);
+    margin-left: 10px;
+}
+#helper #study-reminder ul {
+    list-style-type: none;
+}
+#helper #study-reminder ul li {
+    position: relative;
+    margin-bottom: 3px;
+    left: -30px;
+    color: #999;
+}
+#helper #study-reminder ul li .fa {
+    margin-right: 5px;
+}
+#helper #study-reminder ul li .number {
+    margin-left: 5px;
+    margin-right: 5px;
+    font-size: 16px;
+}
+#helper #study-reminder p:first-child {
+    font-size: 16px;
+}
+#helper #study-reminder #since {
+    position: absolute;
+    right: 40px;
+    bottom: 10px;
+    font-size: 13px;
+}
 
-			<div class="caption"><i class="icon-calendar"></i>Calendar</div>
+#helper #activity-smart-delivery {
+	height: 267px;
+	background-color: #222 !important;
+	margin-top: 0px;
+    margin-bottom: 30px;
+}
 
-		</div>
+#helper #course-smart-delivery {
+	height: 267px;
+	background-color: #222 !important;
+	margin-top: 0px;
+    margin-bottom: 30px;
+}
 
-		<div class="portlet-body light-grey">
+#helper .info-container {
+    position: relative;
+    margin-bottom: 30px;
+}
+#helper .info-container .info-title {
+    font-size: 16px;
+    padding-left: 15px;
+    border-left: 5px solid #3C833C;
+    margin-bottom: 15px;
+    margin-top: 40px;
+}
+#helper .info-container>a {
+    text-decoration: none;
+    color: #888;
+    position: absolute;
+    right: 0;
+    top: 5px;
+    font-size: 13px;
+    transition: color .2s;
+    -o-transition: color .2s;
+    -moz-transition: color .2s;
+    -webkit-transition: color .2s;
+}
+#helper .info-container>a:hover {
+    color: #C55252;
+}
+#helper .info-cell {
+    border-radius: 10px;
+    cursor: pointer;
+}
+#helper .info-cell:hover img {
+    transform: scale(1.1);
+    -o-transform: scale(1.1);
+    -moz-transform: scale(1.1);
+    -webkit-transform: scale(1.1);
+}
+#helper .info-poster {
+    overflow: hidden;
+}
+#helper .info-poster img {
+    width: 100%;
+    /*border-bottom: 1px solid #ddd;*/
+    
+    transition: transform .2s;
+    -o-transition: -o-transform .2s;
+    -moz-transition: -moz-transform .2s;
+    -webkit-transition: -webkit-transform .2s;
+}
+#helper .info-cell:hover .info-description {
+    background-color: rgb(242, 109, 78);
+    color: white;
+}
+#helper .info-description {
+    padding: 5px;
+    background-color: #fff;
+    color: #333;
+    height: 24px;
+    transition: color .2s;
+    -o-transition: color .2s;
+    -moz-transition: color .2s;
+    -webkit-transition: color .2s;
+    transition: background-color .2s;
+    -o-transition: background-color .2s;
+    -moz-transition: background-color .2s;
+    -webkit-transition: background-color .2s;
+}
+#helper .info-description p {
+    margin-bottom: 0;
+}
 
-			<div id="calendar">
+</style>
+<head>
+<link href="__PUBLIC__/Helper/media/css/fullcalendar.css" rel="stylesheet" type="text/css"/>
+<link href="__PUBLIC__/Helper/media/css/timeline.css" rel="stylesheet" type="text/css"/>
+</head>
 
+<div id="helper">
+	<div class="row">
+        <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+            <p class="plot-title">校园活动频次</p>
+            <div id="activity-freq"></div>
+        </div>
+        <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+            <p class="plot-title">生活特征比较</p>
+            <div id="feature-compare"></div>
+        </div>    
+    </div>
+
+
+	<div class="row">
+        <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
+            <p class="plot-title">生活预警</p>
+			<div id="personal-info">
+	            <p><span>学号：</span>79161579</p>
+	            <p><span>类别：</span>硕士</p>
+	            <i class="fa fa-fw fa-male"></i>
+	            <div id="life-reminder">
+					<p style="margin-bottom: 5px;"><span class="male">根据你</span>近期在<span id="SJTU">交大</span>的生活习惯</p>
+	                <ul>
+	                    <li><span class="fa fa-fw fa-heart-o"></span>生活习惯综合得分为<span class="number" style="color:rgb(62, 203, 176);">42</span>分</li>
+	                    <li><span class="fa fa-fw fa-book"></span>学习习惯综合得分为<span class="number" style="color:rgb(203, 62, 185);">87</span>分</li>
+	                    <li><span class="fa fa-fw fa-futbol-o"></span>活动习惯综合得分为<span class="number" style="color:rgb(203, 126, 62)">67</span>分</li>
+	                    <li><span class="fa fa-fw fa-book"></span>你的生活质量目前属于<span class="number" style="color:rgb(173, 203, 62)">中等偏上</span></li>
+	                </ul>
+	                <p id="since"><i>Since <span id="entry-date">2014-09-01</span></i></p>         	
+	            </div>
+        	</div>
+        </div>
+        <div class="col-xs-12 col-sm-8 col-md-8 col-lg-8">
+            <p class="plot-title">近期可以改善你生活质量的活动</p>
+            <div id="activity-smart-delivery" class="info-container">
+		    	<div class="info-content row">
+		            <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+		                <div class="info-cell">
+		                    <div class="info-poster">
+		                        <img src="__PUBLIC__/img/info/activity1.jpg">
+		                    </div>
+		                    <div class="info-description">
+		                        <p>插花艺术体验课程</p>
+		                    </div>
+		                </div>
+		            </div>
+		            <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+		                <div class="info-cell">
+		                    <div class="info-poster">
+		                        <img src="__PUBLIC__/img/info/activity2.jpg">
+		                    </div>
+		                    <div class="info-description">
+		                        <p>魔术协会暑期第二课堂手法班</p>
+		                    </div>
+		                </div>
+		            </div>
+		            <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+		                <div class="info-cell">
+		                    <div class="info-poster">
+		                        <img src="__PUBLIC__/img/info/activity3.jpg">
+		                    </div>
+		                    <div class="info-description">
+		                        <p>寻找交大最美女生</p>
+		                    </div>
+		                </div>
+		            </div>
+		        </div>
+        	</div>
+        </div>    
+    </div>
+
+    <div class="row">
+        <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
+            <p class="plot-title">学习预警</p>
+			<div id="personal-info">
+	            <p><span>学号：</span>79161579</p>
+	            <p><span>类别：</span>硕士</p>
+	            <i class="fa fa-fw fa-graduation-cap"></i>
+	            <div id="study-reminder">
+					<p style="margin-bottom: 5px;"><span class="male">根据你</span>近期在<span id="SJTU">交大</span>的学习习惯</p>
+	                <ul>
+	                    <li><span class="fa fa-fw fa-book"></span>去图书馆次数为<span class="number" style="color:rgb(62, 203, 176);">5</span>次/每周</li>
+	                    <li><span class="fa fa-fw fa-wifi"></span>WiFi浏览时长为<span class="number" style="color:rgb(203, 62, 185);">10</span>时/每天</li>
+                  		<li><span class="fa fa-fw fa-search"></span>搜索倾向为<span class="number" style="color:rgb(173, 203, 62)">娱乐</span>型</li>	                    
+	                    <li><span class="fa fa-fw fa-smile-o"></span>生活质量<span class="number" style="color:rgb(203, 126, 62)">中等偏上</span></li>
+	                    <li><span class="fa fa-fw fa-bell-o"></span>因此对你学习成绩给出<span class="number" style="color:rgb(255, 255, 0)">黄色</span>预警</li>	  
+	                </ul>
+	                <p id="since"><i>Since <span id="entry-date">2014-09-01</span></i></p>         	
+	            </div>
+        	</div>
+        </div>
+        <div class="col-xs-12 col-sm-8 col-md-8 col-lg-8">
+            <p class="plot-title">你可能需要的课程</p>
+            <div id="course-smart-delivery" class="info-container">
+		    	<div class="info-content row">
+		            <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+		                <div class="info-cell">
+		                    <div class="info-poster">
+		                        <img src="__PUBLIC__/img/course/python.png" href="https://www.coursera.org/course/pythonlearn">
+		                    </div>
+		                    <div class="info-description">
+		                        <p>Coursera: 人人都懂的编程课(Python)</p>
+		                    </div>
+		                </div>
+		            </div>
+		            <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+		                <div class="info-cell">
+		                    <div class="info-poster">
+		                        <img src="__PUBLIC__/img/course/NLP.png">
+		                    </div>
+		                    <div class="info-description" href="https://www.coursera.org/course/nlp">
+		                        <p>Edx: 自然语言处理</p>
+		                    </div>
+		                </div>
+		            </div>
+		            <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+		                <div class="info-cell">
+		                    <div class="info-poster">
+		                        <img src="__PUBLIC__/img/course/stanford_ie.png" href="http://scpd.stanford.edu/public/category/courseCategoryCertificateProfile.do?method=load&certificateId=14800052">
+		                    </div>
+		                    <div class="info-description">
+		                        <p>Stanford Online: Stanford Innovation and Entrepreneurship Certificate</p>
+		                    </div>
+		                </div>
+		            </div>
+		        </div>
+        	</div>
+        </div>    
+    </div>
+
+    <div class="row">
+    	
+    	<div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+			<div class="col-xs-12">
+		        <p class="plot-title"><i class="icon-book"></i>预警系统</p>
+		        <div id="remainder-explain">
+					<div class="list-group">
+						<a class="list-group-item list-group-item-success">绿色预警:学业正常,无危险</a>
+						<a class="list-group-item list-group-item-info">蓝色预警:学业有挂科风险,需加紧复习</a>
+						<a class="list-group-item list-group-item-warning">黄色预警:学业如此以往必定挂科,需引起重视</a>
+						<a class="list-group-item list-group-item-danger">红色预警:学业如此以往多门挂科</a>
+					</div>
+		        </div>
 			</div>
 
-		</div>
+	    	<div class="col-xs-12">
+		        <p class="plot-title"><i class="icon-calendar"></i>近期待办事项</p>
+		        <div id="calendar"></div>
+	    	</div>		
+	    </div>
 
+		<div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+    		<p class="plot-title"><i class="icon-clock"></i>近期活动</p>
+			<div id="timeline">
+			    <ul class="timeline">
+			        <li>
+			          <div class="timeline-badge"><i class="glyphicon glyphicon-check"></i></div>
+			          <div class="timeline-panel">
+			            <div class="timeline-heading">
+			              <h4 class="timeline-title">主图书馆</h4>
+			              <p><small class="text-muted"><i class="glyphicon glyphicon-time"></i> 3 hours ago</small></p>
+			            </div>
+			            <div class="timeline-body">
+			              <p>操作 : 借阅图书[《激荡三十年》、《数据挖掘导论》] </p>
+			            </div>
+			          </div>
+			        </li>
+			        <li class="timeline-inverted">
+			          <div class="timeline-badge warning"><i class="glyphicon glyphicon-credit-card"></i></div>
+			          <div class="timeline-panel">
+			            <div class="timeline-heading">
+			              <h4 class="timeline-title">主图书馆</h4>
+			              <p><small class="text-muted"><i class="glyphicon glyphicon-time"></i> 4 hours ago</small></p>
+			            </div>
+			            <div class="timeline-body">
+			              <p>操作 : 门禁刷卡</p>
+			            </div>
+			          </div>
+			        </li>
+			        <li>
+			          <div class="timeline-badge danger"><i class="glyphicon glyphicon-credit-card"></i></div>
+			          <div class="timeline-panel">
+			            <div class="timeline-heading">
+			              <h4 class="timeline-title">闵行第三食堂</h4>
+			              <p><small class="text-muted"><i class="glyphicon glyphicon-time"></i> 4.5 hours ago</small></p>
+			            </div>
+			            <div class="timeline-body">
+			              <p>操作 : 窗口消费[12元]</p>
+			            </div>
+			          </div>
+			        </li>
+			        <li class="timeline-inverted">
+			          <div class="timeline-panel">
+			            <div class="timeline-heading">
+			              <h4 class="timeline-title">SJTU WiFi</h4>
+			              <p><small class="text-muted"><i class="glyphicon glyphicon-time"></i> 5 hours ago</small></p>
+			            </div>
+			            <div class="timeline-body">
+			              <p>操作 : 接入</p>
+			            </div>
+			          </div>
+			        </li>
+					<li>
+					  <div class="timeline-badge info"><i class="glyphicon glyphicon-floppy-disk"></i></div>
+					  <div class="timeline-panel">
+					    <div class="timeline-heading">
+					      <h4 class="timeline-title">东三区 D20宿舍</h4>
+					    </div>
+					    <div class="timeline-body">
+					      <p>操作 : 门禁刷卡[内]</p>
+					    </div>
+					  </div>
+					</li>							        
+			    </ul>
+			</div>
+    	</div>    
 	</div>
 
-	<!-- END PORTLET-->
+    <div id="comment" class="info-container">
+        <p class="info-title" style="border-color: #EF863B;">你可能感兴趣的商户</p>
+        <a href=""><i class="fa fa-fw fa-location-arrow"></i> More</a>
+        <div class="info-content row">
+            <div class="col-xs-4 col-sm-2 col-md-2 col-lg-2">
+                <div class="info-cell">
+                    <div class="info-poster">
+                        <img src="__PUBLIC__/img/info/comment1.jpg">
+                    </div>
+                    <div class="info-description">
+                        <p>联华超市/华联超市生活超市优惠券</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-4 col-sm-2 col-md-2 col-lg-2">
+                <div class="info-cell">
+                    <div class="info-poster">
+                        <img src="__PUBLIC__/img/info/comment2.jpg">
+                    </div>
+                    <div class="info-description">
+                        <p>肯德基优惠券上海250店通用</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-4 col-sm-2 col-md-2 col-lg-2">
+                <div class="info-cell">
+                    <div class="info-poster">
+                        <img src="__PUBLIC__/img/info/comment3.jpg">
+                    </div>
+                    <div class="info-description">
+                        <p>好乐迪KTV4小时畅快淋漓欢唱券</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-4 col-sm-2 col-md-2 col-lg-2">
+                <div class="info-cell">
+                    <div class="info-poster">
+                        <img src="__PUBLIC__/img/info/comment4.jpg">
+                    </div>
+                    <div class="info-description">
+                        <p>来伊份生活零食小吃商城</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-4 col-sm-2 col-md-2 col-lg-2">
+                <div class="info-cell">
+                    <div class="info-poster">
+                        <img src="__PUBLIC__/img/info/comment5.jpg">
+                    </div>
+                    <div class="info-description">
+                        <p>东瀛国际造型首席设计师单人洗剪吹</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-4 col-sm-2 col-md-2 col-lg-2">
+                <div class="info-cell">
+                    <div class="info-poster">
+                        <img src="__PUBLIC__/img/info/comment6.jpg">
+                    </div>
+                    <div class="info-description">
+                        <p>查理士下午茶甜点豪华双人套餐</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+	<div id="contest" class="info-container">
+        <p class="info-title" style="border-color: #EFED3B;">你可能感兴趣的比赛</p>
+        <a href=""><i class="fa fa-fw fa-location-arrow"></i> More</a>
+        <div class="info-content row">
+            <div class="col-xs-4 col-sm-2 col-md-2 col-lg-2">
+                <div class="info-cell">
+                    <div class="info-poster">
+                        <img src="__PUBLIC__/img/info/contest1.jpg">
+                    </div>
+                    <div class="info-description">
+                        <p>“以青春之名”2015届本科毕业生演讲比赛</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-4 col-sm-2 col-md-2 col-lg-2">
+                <div class="info-cell">
+                    <div class="info-poster">
+                        <img src="__PUBLIC__/img/info/contest2.jpg">
+                    </div>
+                    <div class="info-description">
+                        <p>2015上海高校营销精英挑战赛</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-4 col-sm-2 col-md-2 col-lg-2">
+                <div class="info-cell">
+                    <div class="info-poster">
+                        <img src="__PUBLIC__/img/info/contest3.jpg">
+                    </div>
+                    <div class="info-description">
+                        <p>中国高校风险管理与控制能力挑战赛</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-4 col-sm-2 col-md-2 col-lg-2">
+                <div class="info-cell">
+                    <div class="info-poster">
+                        <img src="__PUBLIC__/img/info/contest4.jpg">
+                    </div>
+                    <div class="info-description">
+                        <p>共创未来－2015中美青年创客</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-4 col-sm-2 col-md-2 col-lg-2">
+                <div class="info-cell">
+                    <div class="info-poster">
+                        <img src="__PUBLIC__/img/info/contest5.jpg">
+                    </div>
+                    <div class="info-description">
+                        <p>2015通联杯量化投资策略大赛</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-4 col-sm-2 col-md-2 col-lg-2">
+                <div class="info-cell">
+                    <div class="info-poster">
+                        <img src="__PUBLIC__/img/info/contest6.jpg">
+                    </div>
+                    <div class="info-description">
+                        <p>2015联想TSS贺卡设计大赛</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
 </div>
+
+<script>
+$(document).ready(function() {
+    // 校园活动频次
+    require(
+        [
+            'echarts',
+            'echarts/chart/line'
+        ],
+        function(ec) {
+            var activity_freq = ec.init(document.getElementById('activity-freq'), theme);
+			option = {
+			    tooltip : {
+			        trigger: 'axis'
+			    },
+			    legend: {
+			        data:['WiFi请求频次', '一卡通使用频次', '校园活动频次']
+			    },
+			    toolbox: {
+			        show : false,
+			        feature : {
+			            mark : {show: true},
+			            dataView : {show: true, readOnly: false},
+			            magicType : {show: true, type: ['line', 'bar', 'stack', 'tiled']},
+			            restore : {show: true},
+			            saveAsImage : {show: true}
+			        }
+			    },
+			    calculable : true,
+			    xAxis : [
+			        {
+			            type : 'category',
+			            boundaryGap : false,
+			            data : ['周一','周二','周三','周四','周五','周六','周日']
+			        }
+			    ],
+			    yAxis : [
+			        {
+			            type : 'value'
+			        }
+			    ],
+			    series : [
+			        {
+			            name:'WiFi请求频次',
+			            type:'line',
+			            data:[20, 22, 30, 33, 29, 53, 61]
+			        },
+			        {
+			            name:'一卡通使用频次',
+			            type:'line',
+			            data:[15, 13, 17, 13, 19, 6, 9]
+			        },
+			        {
+			            name:'校园活动频次',
+			            type:'line',
+			            data:[35, 35, 47, 46, 48, 59, 70]
+			        }				        
+			    ]
+			};
+            activity_freq.setOption(option);
+        });
+
+    // 生活特征比较
+    require(
+        [
+            'echarts',
+            'echarts/chart/bar'
+        ],
+        function(ec) {
+            var feature_compare = ec.init(document.getElementById('feature-compare'), theme);
+			option = {
+			    title : {
+			    	show: false,
+			        text: '生活特征比较',
+			        subtext: '数据来自WiFi和一卡通数据'
+			    },
+			    tooltip : {
+			        trigger: 'axis'
+			    },
+			    legend: {
+			        data:['学霸', '大众', '学渣', '你']
+			    },
+			    toolbox: {
+			        show : false,
+			        feature : {
+			            mark : {show: true},
+			            dataView : {show: true, readOnly: false},
+			            magicType: {show: true, type: ['line', 'bar']},
+			            restore : {show: true},
+			            saveAsImage : {show: true}
+			        }
+			    },
+			    calculable : true,
+			    xAxis : [
+			    	{
+			            type : 'category',
+			            data : ['图书馆次数/周','WiFi请求频次/天','专注指数','勤奋指数','就餐指数','睡眠指数','健康指数']
+			        }
+			    ],
+			    yAxis : [
+			        {
+			            type : 'value',
+			            boundaryGap : [0, 0.01]
+			        }
+			    ],
+			    series : [
+			        {
+			            name:'学霸',
+			            type:'bar',
+			            data:[10, 35, 50, 49, 25, 29, 32]
+			        },
+			        {
+			            name:'大众',
+			            type:'bar',
+			            data:[6, 50, 30, 24, 23, 53, 35]
+			        },
+			        {
+			            name:'学渣',
+			            type:'bar',
+			            data:[1, 70, 10, 12, 17, 45, 31]
+			        },
+			        {
+			            name:'你',
+			            type:'bar',
+			            data:[4, 60, 31, 27, 21, 50, 36]
+			        }
+			    ]
+			};
+            feature_compare.setOption(option);
+        });
+});
+</script>
+
 <script>
 
 	jQuery(document).ready(function() {    
@@ -48,3 +720,25 @@ $(document).ready(function() {
 	});
 
 </script>
+
+<!-- BEGIN PAGE LEVEL SCRIPTS -->
+
+<script src="__PUBLIC__/Helper/media/js/app.js" type="text/javascript"></script>
+
+<script src="__PUBLIC__/Helper/media/js/index.js" type="text/javascript"></script>        
+
+<!-- END PAGE LEVEL SCRIPTS -->  
+
+<!-- BEGIN CORE PLUGINS -->
+
+<script src="__PUBLIC__/Helper/media/js/jquery-1.10.1.min.js" type="text/javascript"></script>
+
+<script src="__PUBLIC__/Helper/media/js/jquery-migrate-1.2.1.min.js" type="text/javascript"></script>
+
+<!-- IMPORTANT! Load jquery-ui-1.10.1.custom.min.js before bootstrap.min.js to fix bootstrap tooltip conflict with jquery ui tooltip -->
+
+<script src="__PUBLIC__/Helper/media/js/jquery-ui-1.10.1.custom.min.js" type="text/javascript"></script>      
+
+<script src="__PUBLIC__/Helper/media/js/bootstrap.min.js" type="text/javascript"></script>
+
+<script src="__PUBLIC__/Helper/media/js/fullcalendar.min.js"></script>
