@@ -12,9 +12,46 @@ $(document).ready(function() {
     display: none;
 }
 
+#mobility #realtime-mobility {
+    position: relative;
+}
+
 #mobility #realtime-mobility #allmap {
     height: 400px;
     padding: 0 20px;
+}
+#mobility #realtime-mobility #mapButtons {
+    position: absolute;
+    right: 30px;
+    bottom: 8px;
+}
+#mobility #realtime-mobility #mapButtons span {
+    display: block;
+    color: #222;
+    border: 1px solid #222;
+    padding: 3px 5px;
+    border-radius: 3px;
+    margin-bottom: 6px;
+    background-color: rgba(240, 240, 240, 0.6);
+    transition: color .2s;
+    -o-transition: color .2s;
+    -moz-transition: color .2s;
+    -webkit-transition: color .2s;
+    transition: background-color .2s;
+    -o-transition: background-color .2s;
+    -moz-transition: background-color .2s;
+    -webkit-transition: background-color .2s;
+}
+#mobility #realtime-mobility #mapButtons span:hover {
+    color: white;
+    background-color: rgba(15, 15, 15, 0.6);
+    border-color: rgba(15, 15, 15, 0.6);
+    cursor: pointer;
+}
+#mobility #realtime-mobility #mapButtons span.active {
+    color: white;
+    background-color: rgba(15, 15, 15, 0.6);
+    border-color: rgba(15, 15, 15, 0.6);
 }
 
 #mobility #realtime-mobility #mobility-stat #crowd_top5,
@@ -70,6 +107,12 @@ $(document).ready(function() {
             <div class="col-xs-12 col-sm-8 col-md-8 col-lg-8">
                 <p class="plot-title">实时人群监测</p>
                 <div id="allmap"></div>
+                <div id="mapButtons">
+                    <span id="mapButton1" class="hotmap">显示当前热力图</span>
+                    <span id="mapButton2" class="hotmap">显示高峰热力图</span>
+                    <span id="mapButton3" class="hotmap">显示平峰热力图</span>
+                    <span id="mapButton4">关闭热力图</span>
+                </div>
             </div>
             <div id="mobility-stat" class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
                 <p class="plot-title">人群分布 TOP 5</p>
@@ -123,6 +166,15 @@ $(document).ready(function() {
             $('#sub-nav #indicators li').removeClass('active');
             $('#sub-nav #indicators li[name="cater-predict"]').addClass('active');
         }
+    });
+
+    $('#mobility #realtime-mobility #mapButtons span.hotmap').click(function(){
+        $('#mobility #realtime-mobility #mapButtons span.hotmap').removeClass('active');
+        $(this).addClass('active');
+    });
+
+    $('#mobility #realtime-mobility #mapButtons span#mapButton4').click(function(){
+        $('#mobility #realtime-mobility #mapButtons span.hotmap').removeClass('active');
     });
 
     // 实时状态监测

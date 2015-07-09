@@ -24,6 +24,6 @@ class LoginController extends Controller {
 
     public function quit(){
     	session('elite_uid', null);
-    	$this->redirect('Index/index');
+    	$this->redirect('Web/index');
     }
 }
