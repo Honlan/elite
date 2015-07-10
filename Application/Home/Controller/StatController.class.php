@@ -15,11 +15,43 @@ class StatController extends CommonController {
     	}
     	$this->tTraffic = json_encode($tTraffic);
     	$this->yTraffic = json_encode($yTraffic);
-    	$this->display();
+
+        $this->display();
     }
 
     public function friend(){
-    	$elite_uid = $_SESSION['elite_uid'];
-    	echo '{"nodes":[{"group": 1, "name": "E72970"}, {"group": 1, "name": "D55866"}, {"group": 4, "name": "A50783"}, {"group": 6, "name": "C42994"}, {"group": 3, "name": "B52303"}, {"group": 3, "name": "A78954"}, {"group": 1, "name": "E58644"}, {"group": 1, "name": "B78206"}, {"group": 1, "name": "E39931"}], "links": [{"source": 0, "target": 1, "value": 12},{"source": 0, "target": 2, "value": 12},{"source": 0, "target": 3, "value": 12},{"source": 0, "target": 4, "value": 12},{"source": 0, "target": 5, "value": 12},{"source": 0, "target": 6, "value": 12},{"source": 0, "target": 7, "value": 12},{"source": 0, "target": 8, "value": 12}]}';
+        $elite_uid = $_SESSION['elite_uid'];
+    	$map = array();
+        $map['id'] = array('like', $elite_uid.'%');
+        $friends = M('users_friends')->where($map)->find();
+        if (count($friends) == 0) {
+            echo '{"nodes":[], "links":[]}';
+        } else {
+            $account = $friends['id'];
+            $account = explode(':', $account);
+            $group = $account[1];
+            $account = $account[0];
+            $from = '{"source": 0, "target": 1, "value": 12}';
+
+            $friends = explode(',', $friends['friends']);
+            $node = '[';
+            $link = '[';
+            $node = $node.'{"group": '.$group.', "name": '.$account.'},';
+            foreach ($friends as $key => $value) {
+                $value = explode(':', $value);
+                $account = $value[0];
+                $group = $value[1];
+                $count = $value[2]; 
+                $node = $node.'{"group": '.$group.', "name": '.$account.'},';
+
+                $link = $link.'{"source": 0, "target": '.($key+1).', "value": '.$count.'},';
+            }
+            $node = substr($node, 0, strlen($node)-1);
+            $node = $node.']';
+            $link = substr($link, 0, strlen($link)-1);
+            $link = $link.']';
+            $result = '{"nodes":'.$node.', "links":'.$link.'}';
+            echo $result;
+        }
     }
 }
