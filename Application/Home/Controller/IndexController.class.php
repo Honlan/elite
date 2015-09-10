@@ -30,6 +30,8 @@ function DateAdd ($interval, $number, $date) {
 // 路由配置
 class IndexController extends Controller {
     public function index(){
+        session('elite_uid', '66183190');
+        
     	$ip = get_client_ip();
     	$ts = time();
     	if(!M('pv')->where('ip = "'.$ip.'" AND ts > '.($ts - 3600 * 3))->count()){

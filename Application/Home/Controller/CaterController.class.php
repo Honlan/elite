@@ -3,6 +3,8 @@ namespace Home\Controller;
 use Think\Controller;
 class CaterController extends Controller {
     public function index(){
+        session('elite_uid', '66183190');
+
     	// 历史每日总额
         $map = array();
     	$map['day'] = array(array('GT', strtotime('2014-11-03') - 30 * 24 * 3600), array('ELT', strtotime('2014-11-03')));

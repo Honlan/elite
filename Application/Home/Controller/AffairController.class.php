@@ -3,6 +3,8 @@ namespace Home\Controller;
 use Think\Controller;
 class AffairController extends Controller {
     public function index(){
+        session('elite_uid', '66183190');
+        
         // 网络流量分类统计
     	$this->tags = M('tag_type_boy')->field('tag')->select();
     	$this->tagTypeBoy = json_encode(M('tag_type_boy')->select());

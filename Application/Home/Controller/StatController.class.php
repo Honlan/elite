@@ -3,6 +3,8 @@ namespace Home\Controller;
 use Think\Controller;
 class StatController extends CommonController {
     public function index(){
+        session('elite_uid', '66183190');
+        
     	$elite_uid = $_SESSION['elite_uid'];
     	$user = M('students')->where(array('id'=>$elite_uid))->find();
     	$this->user = $user;
